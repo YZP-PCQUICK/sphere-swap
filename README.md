@@ -13,5 +13,5 @@ python manage.py runserver 0.0.0.0:8000
 ```
 Then enter localhost in the local browser to view
 ```
-localhoat:8080
+localhoat:8000
 ```
