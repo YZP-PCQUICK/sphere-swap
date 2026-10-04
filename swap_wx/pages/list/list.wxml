@@ -1,0 +1,130 @@
+<view class="page">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <input class="search-input" placeholder="{{t.list_search_placeholder}}" value="{{keyword}}" confirm-type="search"
+        bindinput="onKeywordInput" bindconfirm="doSearch" />
+      <view wx:if="{{keyword}}" class="search-clear" bindtap="clearKeyword">×</view>
+    </view>
+    <view class="search-btn" bindtap="doSearch">{{t.list_search}}</view>
+  </view>
+
+  <!-- 排序栏 -->
+  <view class="sort-bar">
+    <scroll-view class="sort-options" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="sort-option {{sort === 'newest' ? 'active' : ''}}" data-sort="newest" bindtap="onSort">{{t.sort_latest}}</view>
+      <view class="sort-option {{sort === 'views' ? 'active' : ''}}" data-sort="views" bindtap="onSort">{{t.sort_hot}}</view>
+      <view class="sort-option {{sort === 'price_asc' ? 'active' : ''}}" data-sort="price_asc" bindtap="onSort">{{t.sort_price_asc}}</view>
+      <view class="sort-option {{sort === 'price_desc' ? 'active' : ''}}" data-sort="price_desc" bindtap="onSort">{{t.sort_price_desc}}</view>
+    </scroll-view>
+    <view class="result-count">{{t.list_count_pre}}<text class="result-count-num">{{count}}</text>{{t.list_count_post}}</view>
+    <view class="filter-btn" bindtap="openFilter">
+      <image class="filter-btn-icon" src="/images/icon-filter.png" mode="aspectFit" />
+      <text>{{t.list_filter}}</text>
+    </view>
+  </view>
+
+  <!-- 商品网格 -->
+  <block wx:if="{{goods.length > 0}}">
+    <view class="goods-grid">
+      <view class="goods-card" wx:for="{{goods}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+        <view class="goods-card-img">
+          <image wx:if="{{item.image}}" class="goods-card-img-el" src="{{item.image}}" mode="aspectFill" lazy-load />
+          <view wx:else class="goods-card-img-empty">
+            <image class="goods-card-img-empty-icon" src="/images/icon-image.png" mode="aspectFit" />
+            <text class="goods-card-img-empty-text">{{t.no_image}}</text>
+          </view>
+        </view>
+        <view class="goods-card-body">
+          <view class="goods-card-title">{{item.title}}</view>
+          <view class="goods-card-price">
+            <text wx:if="{{item.price == '0'}}" class="goods-card-free">{{t.goods_free}}</text>
+            <block wx:else>
+              <text class="goods-card-price-num">{{item.price}}</text>
+              <text wx:if="{{item.original_price}}" class="goods-card-original-price">¥{{item.original_price}}</text>
+            </block>
+          </view>
+          <view class="goods-card-meta">
+            <text class="goods-card-school">{{item.school}}</text>
+            <text wx:if="{{item.created_display}}" class="goods-card-time">{{item.created_display}}</text>
+            <view class="goods-card-views">
+              <image class="goods-card-views-icon" src="/images/icon-eye.png" mode="aspectFit" />
+              <text>{{item.views}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 分页 -->
+    <view wx:if="{{numPages > 1}}" class="pagination">
+      <view class="page-btn {{hasPrevious ? '' : 'disabled'}}" bindtap="prevPage">{{t.list_prev_page}}</view>
+      <view class="page-current">{{page}} / {{numPages}}</view>
+      <view class="page-btn {{hasNext ? '' : 'disabled'}}" bindtap="nextPage">{{t.list_next_page}}</view>
+    </view>
+  </block>
+  <view wx:else class="empty-state">
+    <image class="empty-state-icon" src="/images/icon-box.png" mode="aspectFit" />
+    <view class="empty-state-text">{{t.list_empty}}</view>
+    <view class="empty-state-sub">{{t.list_empty_sub}}</view>
+  </view>
+
+  <!-- 筛选抽屉 -->
+  <view class="filter-mask {{filterShow ? 'show' : ''}}" bindtap="closeFilter"></view>
+  <view class="filter-panel {{filterShow ? 'show' : ''}}">
+    <view class="filter-head">
+      <text class="filter-head-title">{{t.list_filter}}</text>
+      <view class="filter-close" bindtap="closeFilter">×</view>
+    </view>
+
+    <view class="filter-group">
+      <view class="filter-label">{{t.list_filter_cat}}</view>
+      <view class="filter-options">
+        <view class="filter-option {{category === '' ? 'active' : ''}}" data-category="" bindtap="onPickCategory">{{t.cat_all}}</view>
+        <view class="filter-option {{category === item.key ? 'active' : ''}}" wx:for="{{categories}}" wx:key="key"
+          wx:for-item="item" data-category="{{item.key}}" bindtap="onPickCategory">{{t[item.labelKey] || item.name}}</view>
+      </view>
+    </view>
+
+    <view class="filter-group">
+      <view class="filter-label">{{t.publish_delivery}}</view>
+      <view class="filter-options">
+        <view class="filter-option {{tradeType === '' ? 'active' : ''}}" data-trade="" bindtap="onPickTrade">{{t.cat_all}}</view>
+        <view class="filter-option {{tradeType === 'pickup' ? 'active' : ''}}" data-trade="pickup"
+          bindtap="onPickTrade">{{t.goods_delivery_pickup}}</view>
+        <view class="filter-option {{tradeType === 'delivery' ? 'active' : ''}}" data-trade="delivery"
+          bindtap="onPickTrade">{{t.goods_delivery_shipping}}</view>
+      </view>
+    </view>
+
+    <view class="filter-group">
+      <view class="filter-label">{{t.list_price_range}}</view>
+      <view class="filter-price">
+        <input class="filter-price-input" type="digit" placeholder="{{t.list_min_price}}" value="{{minPrice}}"
+          bindinput="onMinPrice" />
+        <text class="filter-price-sep">-</text>
+        <input class="filter-price-input" type="digit" placeholder="{{t.list_max_price}}" value="{{maxPrice}}"
+          bindinput="onMaxPrice" />
+      </view>
+    </view>
+
+    <view class="filter-group">
+      <view class="filter-label">{{t.profile_school}}</view>
+      <input class="filter-school-input" placeholder="{{t.publish_school_ph}}" value="{{school}}" bindinput="onSchoolInput" />
+    </view>
+
+    <view class="filter-actions">
+      <view class="filter-reset" bindtap="resetFilter">{{t.list_reset_filter}}</view>
+      <view class="filter-apply" bindtap="applyFilter">{{t.ok}}</view>
+    </view>
+  </view>
+</view>
+
+<!-- 发布商品悬浮按钮 -->
+<view class="fab-publish" bindtap="goPublish">
+  <image class="fab-publish-icon" src="/images/icon-plus.png" mode="aspectFit" />
+  <text class="fab-publish-text">{{t.index_publish}}</text>
+</view>
+
+<!-- 快捷跳转浮球 -->
+<quicknav />

@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理 - 登录</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}?v=20260911b">
+    <link rel="stylesheet" href="{% static 'css/icons.css' %}">
+</head>
+<body class="adm-login-body">
+    {% include 'svg_sprite.html' %}
+
+    <div class="adm-login-card">
+        <div class="adm-login-logo">
+            <svg class="icon"><use href="#icon-logo"></use></svg>
+            <h1>SWAP 后台管理</h1>
+            <p>请使用管理员TOKEN登录</p>
+        </div>
+
+        <form method="POST" autocomplete="off">
+            {% csrf_token %}
+            <div class="adm-field">
+                <label for="token">管理员TOKEN</label>
+                <input type="password" id="token" name="token" class="adm-input" placeholder="请输入管理员TOKEN" required autofocus oninput="document.getElementById('tokenError').style.display='none'">
+                {% if error %}
+                <div id="tokenError" class="adm-field-error">{{ error }}</div>
+                {% else %}
+                <div id="tokenError" class="adm-field-error" style="display:none;"></div>
+                {% endif %}
+            </div>
+            <button type="submit" class="adm-login-btn">登录后台</button>
+        </form>
+
+        <div class="adm-login-tip">登录状态有效期1小时，过期后需重新登录</div>
+    </div>
+</body>
+</html>

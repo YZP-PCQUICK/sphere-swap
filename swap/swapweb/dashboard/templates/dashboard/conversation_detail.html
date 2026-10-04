@@ -1,0 +1,96 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}交易详情 - {{ conversation.goods.title }}{% endblock %}
+
+{% block content %}
+<div class="adm-page">
+    <a href="{% url 'dashboard:conversation_list' %}" class="adm-back">
+        <svg class="icon"><use href="#icon-filter"></use></svg>返回交易列表
+    </a>
+
+    <div class="adm-header">
+        <div>
+            <h1>交易详情</h1>
+            <p class="adm-sub">会话ID: {{ conversation.id }}</p>
+        </div>
+        <span class="adm-badge {% if conversation.status == 'completed' %}success{% elif conversation.status == 'confirmed' %}warning{% else %}info{% endif %}">
+            {{ conversation.get_status_display }}
+        </span>
+    </div>
+
+    <!-- 会话信息卡片 -->
+    <div class="adm-card adm-page adm-delay-1">
+        <h2 class="adm-card-title">
+            <svg class="icon"><use href="#icon-box"></use></svg>{{ conversation.goods.title }}
+        </h2>
+        <div class="adm-parties">
+            <div class="adm-party">
+                {% if conversation.buyer.avatar %}
+                <img src="{{ conversation.buyer.avatar.url }}" alt="买家头像" class="adm-avatar" onerror="this.onerror=null; this.outerHTML='<div class=&quot;adm-avatar-fallback&quot;><svg class=&quot;icon&quot;><use href=&quot;#icon-default-avatar&quot;></use></svg></div>';">
+                {% else %}
+                <div class="adm-avatar-fallback">
+                    <svg class="icon"><use href="#icon-default-avatar"></use></svg>
+                </div>
+                {% endif %}
+                <div>
+                    <div class="adm-party-name">买家：{{ conversation.buyer.nickname|default:conversation.buyer.email }}</div>
+                    <div class="adm-party-school">{{ conversation.buyer.school|default:'未填写学校' }}</div>
+                </div>
+            </div>
+
+            <div class="adm-vs">↔</div>
+
+            <div class="adm-party">
+                {% if conversation.seller.avatar %}
+                <img src="{{ conversation.seller.avatar.url }}" alt="卖家头像" class="adm-avatar" onerror="this.onerror=null; this.outerHTML='<div class=&quot;adm-avatar-fallback&quot;><svg class=&quot;icon&quot;><use href=&quot;#icon-default-avatar&quot;></use></svg></div>';">
+                {% else %}
+                <div class="adm-avatar-fallback">
+                    <svg class="icon"><use href="#icon-default-avatar"></use></svg>
+                </div>
+                {% endif %}
+                <div>
+                    <div class="adm-party-name">卖家：{{ conversation.seller.nickname|default:conversation.seller.email }}</div>
+                    <div class="adm-party-school">{{ conversation.seller.school|default:'未填写学校' }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 聊天记录 -->
+    <div class="adm-card adm-page adm-delay-2" style="margin-top:16px;">
+        <h3 class="adm-card-title">
+            <svg class="icon"><use href="#icon-message"></use></svg>聊天消息 ({{ messages|length }})
+        </h3>
+        <div class="adm-msg-list">
+            {% for msg in messages %}
+            <div class="adm-msg {% if msg.sender == conversation.buyer %}buyer{% else %}seller{% endif %}">
+                {% if msg.sender.avatar %}
+                <img src="{{ msg.sender.avatar.url }}" alt="{{ msg.sender.nickname }}" class="adm-avatar" onerror="this.onerror=null; this.outerHTML='<div class=&quot;adm-avatar-fallback&quot;><svg class=&quot;icon&quot;><use href=&quot;#icon-default-avatar&quot;></use></svg></div>';">
+                {% else %}
+                <div class="adm-avatar-fallback">
+                    <svg class="icon"><use href="#icon-default-avatar"></use></svg>
+                </div>
+                {% endif %}
+                <div class="adm-msg-body">
+                    <div class="adm-msg-sender">{{ msg.sender.nickname|default:msg.sender.email }}</div>
+                    <div class="adm-msg-bubble">
+                        {% if msg.msg_type == 'text' %}
+                        {{ msg.content }}
+                        {% elif msg.msg_type == 'image' %}
+                        <img src="{{ msg.file.url }}" alt="图片消息" class="adm-msg-img">
+                        {% elif msg.msg_type == 'video' %}
+                        <video controls class="adm-msg-video">
+                            <source src="{{ msg.file.url }}" type="video/mp4">
+                            您的浏览器不支持视频播放
+                        </video>
+                        {% endif %}
+                    </div>
+                    <div class="adm-msg-time">{{ msg.created_at|date:'Y-m-d H:i' }}</div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="adm-empty">暂无聊天消息</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

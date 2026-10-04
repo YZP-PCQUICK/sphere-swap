@@ -1,0 +1,588 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}商品列表 - SWAP校园交易平台{% endblock %}
+
+{% block extra_css %}
+<style>
+    .list-layout {
+        display: flex;
+        gap: 24px;
+    }
+
+    .filter-sidebar {
+        width: 240px;
+        flex-shrink: 0;
+    }
+
+    .filter-card {
+        background: var(--bg-white);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 16px;
+        position: sticky;
+        top: 80px;
+    }
+
+    .filter-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: var(--text-primary);
+    }
+
+    .filter-group {
+        margin-bottom: 20px;
+    }
+
+    .filter-label {
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+        font-weight: 500;
+    }
+
+    .filter-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .filter-option {
+        padding: 6px 14px;
+        background: var(--bg-page);
+        border-radius: var(--radius-full);
+        font-size: 13px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        border: 1px solid transparent;
+    }
+
+    .filter-option:hover {
+        color: var(--primary-color);
+        background: var(--primary-bg);
+    }
+
+    .filter-option.active {
+        background: var(--primary-gradient);
+        color: white;
+    }
+
+    .filter-input {
+        width: 100%;
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    .filter-price {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .filter-price input {
+        flex: 1;
+        min-width: 0;
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+
+    .filter-btn {
+        width: 100%;
+        padding: 10px;
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        border-radius: var(--radius-md);
+        font-size: 14px;
+        cursor: pointer;
+        margin-top: 12px;
+    }
+
+    .goods-main {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .sort-bar {
+        background: var(--bg-white);
+        border-radius: var(--radius-lg);
+        padding: 14px 20px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .sort-options {
+        display: flex;
+        gap: 4px;
+    }
+
+    .sort-option {
+        padding: 6px 16px;
+        font-size: 14px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        border-radius: var(--radius-sm);
+        transition: all var(--transition-fast);
+    }
+
+    .sort-option:hover {
+        color: var(--primary-color);
+    }
+
+    .sort-option.active {
+        color: var(--primary-color);
+        background: var(--primary-bg);
+        font-weight: 500;
+    }
+
+    .result-count {
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+
+    .result-count strong {
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+    .mobile-filter-btn {
+        display: none;
+    }
+
+    .mobile-filter-mask {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 200;
+    }
+
+    .mobile-filter-mask.show {
+        display: block;
+    }
+
+    .mobile-filter-panel {
+        position: fixed;
+        right: -100%;
+        top: 0;
+        bottom: 0;
+        width: 84%;
+        max-width: 340px;
+        background: var(--bg-white);
+        z-index: 201;
+        transition: right var(--transition-normal);
+        visibility: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 16px;
+        padding-bottom: calc(16px + env(safe-area-inset-bottom));
+    }
+
+    .mobile-filter-panel.show {
+        right: 0;
+        visibility: visible;
+    }
+
+    .mobile-filter-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+    }
+
+    .mobile-filter-head h3 {
+        margin: 0;
+        font-size: 17px;
+    }
+
+    .mobile-filter-close {
+        width: 40px;
+        height: 40px;
+        font-size: 22px;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+
+    .mobile-filter-close:active {
+        background: var(--bg-page);
+    }
+
+    /* 筛选卡片被移动到抽屉内时，取消桌面端的吸顶与卡片样式 */
+    .mobile-filter-panel .filter-card {
+        position: static;
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    @media (max-width: 768px) {
+        .list-layout {
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .filter-sidebar {
+            display: none;
+        }
+
+        /* 排序栏换行：排序选项独占一行可横滑，数量与筛选按钮一行 */
+        .sort-bar {
+            padding: 10px 12px;
+            border-radius: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .sort-options {
+            width: 100%;
+            order: 1;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            gap: 2px;
+        }
+
+        .sort-option {
+            flex-shrink: 0;
+            padding: 8px 14px;
+            font-size: 13px;
+        }
+
+        .result-count {
+            order: 2;
+            margin-right: auto;
+            font-size: 13px;
+        }
+
+        .mobile-filter-btn {
+            order: 3;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 14px;
+            background: var(--primary-bg);
+            color: var(--primary-color);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            cursor: pointer;
+        }
+    }
+</style>
+{% endblock %}
+
+
+
+{% block content %}
+<div class="list-layout">
+    <!-- 侧边筛选栏 -->
+    <aside class="filter-sidebar">
+        <div class="filter-card">
+            <h3 class="filter-title">筛选</h3>
+            
+            <div class="filter-group">
+                <div class="filter-label">分类</div>
+                <div class="filter-options">
+                    <div class="filter-option {% if not category %}active{% endif %}" data-category="">全部</div>
+                    {% for cat_key, cat_name in categories %}
+                    <div class="filter-option {% if category == cat_key %}active{% endif %}" data-category="{{ cat_key }}">{{ cat_name }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <div class="filter-label">交易方式</div>
+                <div class="filter-options">
+                    <div class="filter-option {% if not trade_type %}active{% endif %}" data-trade="">全部</div>
+                    <div class="filter-option {% if trade_type == 'pickup' %}active{% endif %}" data-trade="pickup">自提</div>
+                    <div class="filter-option {% if trade_type == 'delivery' %}active{% endif %}" data-trade="delivery">配送</div>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <div class="filter-label">价格区间</div>
+                <form method="get" class="filter-price">
+                    {% if keyword %}<input type="hidden" name="keyword" value="{{ keyword }}">{% endif %}
+                    {% if category %}<input type="hidden" name="category" value="{{ category }}">{% endif %}
+                    {% if trade_type %}<input type="hidden" name="trade_type" value="{{ trade_type }}">{% endif %}
+                    <input type="number" name="min_price" placeholder="最低" value="{{ min_price }}" class="filter-input">
+                    <span style="color:var(--text-light);">-</span>
+                    <input type="number" name="max_price" placeholder="最高" value="{{ max_price }}" class="filter-input">
+                </form>
+            </div>
+
+            <div class="filter-group">
+                <div class="filter-label">学校</div>
+                <form method="get">
+                    {% if keyword %}<input type="hidden" name="keyword" value="{{ keyword }}">{% endif %}
+                    {% if category %}<input type="hidden" name="category" value="{{ category }}">{% endif %}
+                    <input type="text" name="school" placeholder="输入学校名称" value="{{ school }}" class="filter-input">
+                </form>
+            </div>
+
+            <button type="button" class="reset-btn" style="width:100%;padding:10px;background:var(--bg-page);color:var(--text-secondary);border:none;border-radius:var(--radius-md);font-size:14px;cursor:pointer;margin-top:0;">重置筛选</button>
+        </div>
+    </aside>
+
+    <!-- 商品主区域 -->
+    <div class="goods-main">
+        <div class="sort-bar">
+            <div class="sort-options">
+                <div class="sort-option {% if sort == 'newest' or not sort %}active{% endif %}" data-sort="newest">最新</div>
+                <div class="sort-option {% if sort == 'views' %}active{% endif %}" data-sort="views">最热</div>
+                <div class="sort-option {% if sort == 'price_asc' %}active{% endif %}" data-sort="price_asc">价格↑</div>
+                <div class="sort-option {% if sort == 'price_desc' %}active{% endif %}" data-sort="price_desc">价格↓</div>
+            </div>
+            <div class="result-count">
+                共 <strong>{{ goods_list.paginator.count }}</strong> 件商品
+            </div>
+            <div class="mobile-filter-btn" onclick="toggleMobileFilter()">
+                <svg class="icon" style="width:14px;height:14px;vertical-align:-1px;"><use href="#icon-filter"></use></svg>
+                筛选
+            </div>
+        </div>
+
+        {% if goods_list %}
+        <div class="goods-grid">
+            {% for goods in goods_list %}
+            <article class="goods-card">
+                <a href="{% url 'goods:detail' goods.id %}" aria-label="{{ goods.title }}">
+                    <div class="goods-card-img">
+                        {% with first_img=goods.images.first %}
+                            {% if first_img %}
+                            <img src="{{ first_img.image.url }}" alt="{{ goods.title }}" loading="lazy" width="220" height="200">
+                            {% else %}
+                            <div style="width:100%;height:100%;background:var(--bg-page);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-light);gap:6px;">
+                                <svg class="icon" style="width:36px;height:36px;"><use href="#icon-image"></use></svg>
+                                <span style="font-size:13px;">暂无图片</span>
+                            </div>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                    <div class="goods-card-body">
+                        <div class="goods-card-title">{{ goods.title }}</div>
+                        <div class="goods-card-price">
+                            {% if goods.price == 0 %}
+                            <span style="color: var(--success-color);">免费</span>
+                            {% else %}
+                            {{ goods.price }}
+                            {% if goods.original_price %}
+                            <span class="goods-card-original-price">¥{{ goods.original_price }}</span>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                        <div class="goods-card-meta">
+                            <span class="goods-card-school">{{ goods.school }}</span>
+                            <span class="goods-card-publish-time" style="margin-right:8px;">{{ goods.created_at|date:"m-d H:i" }}</span>
+                            <span class="goods-card-views">
+                                <svg class="icon" style="width:14px;height:14px;vertical-align:-2px;"><use href="#icon-eye"></use></svg>
+                                {{ goods.views }}
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+            {% endfor %}
+        </div>
+
+        <!-- 分页 -->
+        {% if goods_list.paginator.num_pages > 1 %}
+        <div class="pagination">
+            {% if goods_list.has_previous %}
+            <a href="?page={{ goods_list.previous_page_number }}{% if keyword %}&keyword={{ keyword }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}{% if school %}&school={{ school }}{% endif %}{% if trade_type %}&trade_type={{ trade_type }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}">上一页</a>
+            {% else %}
+            <span class="disabled">上一页</span>
+            {% endif %}
+
+            <span class="current">{{ goods_list.number }} / {{ goods_list.paginator.num_pages }}</span>
+
+            {% if goods_list.has_next %}
+            <a href="?page={{ goods_list.next_page_number }}{% if keyword %}&keyword={{ keyword }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}{% if school %}&school={{ school }}{% endif %}{% if trade_type %}&trade_type={{ trade_type }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}">下一页</a>
+            {% else %}
+            <span class="disabled">下一页</span>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="empty-state" style="background:var(--bg-white);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+            <div class="empty-state-icon"><svg class="icon" style="width:36px;height:36px;"><use href="#icon-search"></use></svg></div>
+            <div class="empty-state-text">没有找到相关商品</div>
+            <p style="margin-top:8px;font-size:13px;">换个关键词试试？</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- 移动端筛选面板 -->
+<div class="mobile-filter-mask" id="mobileFilterMask" onclick="toggleMobileFilter()"></div>
+<div class="mobile-filter-panel" id="mobileFilterPanel">
+    <div class="mobile-filter-head">
+        <h3>筛选</h3>
+        <button type="button" class="mobile-filter-close" onclick="toggleMobileFilter()" aria-label="关闭筛选">&times;</button>
+    </div>
+    <!-- 移动端时桌面筛选卡片会被 JS 移入此容器，完整保留分类/交易方式/价格/学校筛选 -->
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function toggleMobileFilter() {
+        const mask = document.getElementById('mobileFilterMask');
+        const panel = document.getElementById('mobileFilterPanel');
+        mask.classList.toggle('show');
+        panel.classList.toggle('show');
+    }
+
+    // 统一的筛选参数管理
+    document.addEventListener('DOMContentLoaded', function() {
+        // 移动端：把桌面筛选卡片移动到抽屉面板内（移动节点可保留全部已绑定事件）
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            const panel = document.getElementById('mobileFilterPanel');
+            const card = document.querySelector('.filter-card');
+            if (panel && card) {
+                panel.appendChild(card);
+            }
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const minPriceInput = document.querySelector('input[name="min_price"]');
+        const maxPriceInput = document.querySelector('input[name="max_price"]');
+        const schoolInput = document.querySelector('input[name="school"]');
+
+        // 初始化输入框
+        if (minPriceInput && urlParams.get('min_price')) {
+            minPriceInput.value = urlParams.get('min_price');
+        }
+        if (maxPriceInput && urlParams.get('max_price')) {
+            maxPriceInput.value = urlParams.get('max_price');
+        }
+        if (schoolInput && urlParams.get('school')) {
+            schoolInput.value = urlParams.get('school');
+        }
+
+        // 构建筛选URL（保留所有当前参数）
+        function buildFilterUrl(updates) {
+            const params = new URLSearchParams();
+            urlParams.forEach((value, key) => {
+                if (key !== 'page') {
+                    params.set(key, value);
+                }
+            });
+            // 应用更新
+            if (updates) {
+                updates.forEach((value, key) => {
+                    if (value === '' || value === null) {
+                        params.delete(key);
+                    } else {
+                        params.set(key, value);
+                    }
+                });
+            }
+            // 用输入框的当前值覆盖（空值也要删除参数）
+            if (minPriceInput) {
+                if (minPriceInput.value) {
+                    params.set('min_price', minPriceInput.value);
+                } else {
+                    params.delete('min_price');
+                }
+            }
+            if (maxPriceInput) {
+                if (maxPriceInput.value) {
+                    params.set('max_price', maxPriceInput.value);
+                } else {
+                    params.delete('max_price');
+                }
+            }
+            if (schoolInput) {
+                if (schoolInput.value) {
+                    params.set('school', schoolInput.value);
+                } else {
+                    params.delete('school');
+                }
+            }
+            return `/list/?${params.toString()}`;
+        }
+
+        // 分类按钮 - 直接点击跳转（筛选卡片可能已被移动到移动端抽屉内，选择器不依赖父级容器）
+        const categoryOptions = document.querySelectorAll('.filter-option[data-category]');
+        categoryOptions.forEach(btn => {
+            const catKey = btn.getAttribute('data-category') || '';
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const updates = new URLSearchParams();
+                if (catKey === '') {
+                    updates.set('category', '');
+                } else {
+                    updates.set('category', catKey);
+                }
+                window.location.href = buildFilterUrl(updates);
+            });
+        });
+
+        // 交易方式按钮
+        const tradeOptions = document.querySelectorAll('.filter-option[data-trade]');
+        tradeOptions.forEach(btn => {
+            const tradeVal = btn.getAttribute('data-trade') || '';
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const updates = new URLSearchParams();
+                updates.set('trade_type', tradeVal);
+                window.location.href = buildFilterUrl(updates);
+            });
+        });
+
+        // 排序按钮
+        const sortOptions = document.querySelectorAll('.sort-option');
+        sortOptions.forEach(btn => {
+            const sortVal = btn.getAttribute('data-sort') || '';
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const updates = new URLSearchParams();
+                updates.set('sort', sortVal);
+                window.location.href = buildFilterUrl(updates);
+            });
+        });
+
+        // 价格区间回车筛选
+        const priceInputs = [minPriceInput, maxPriceInput].filter(Boolean);
+        priceInputs.forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    window.location.href = buildFilterUrl();
+                }
+            });
+        });
+
+        // 学校回车筛选
+        if (schoolInput) {
+            schoolInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    window.location.href = buildFilterUrl();
+                }
+            });
+        }
+
+        // 重置按钮
+        const resetBtn = document.querySelector('.reset-btn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = '/list/';
+            });
+        }
+    });
+</script>
+{% endblock %}

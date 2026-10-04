@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}我的会话 - SWAP校园交易平台{% endblock %}
+
+
+
+{% block extra_css %}
+<style>
+    .conv-page { max-width: 720px; margin: 0 auto; }
+    .conv-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .conv-title { font-size: 22px; font-weight: 700; }
+    .conv-list { display: flex; flex-direction: column; gap: 12px; }
+    .conv-item {
+        display: flex; align-items: center; gap: 14px; padding: 16px;
+        background: var(--bg-white); border-radius: var(--radius-md);
+        border: 1px solid var(--border-light); cursor: pointer; transition: all .25s;
+    }
+    .conv-item:hover { border-color: var(--primary-color); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+    .conv-thumb { width: 60px; height: 60px; border-radius: var(--radius-sm); object-fit: cover; background: var(--bg-page); flex-shrink: 0; }
+    .conv-body { flex: 1; min-width: 0; }
+    .conv-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .conv-peername { font-weight: 600; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .conv-last { font-size: 13px; color: var(--text-secondary); margin-top: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .conv-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+    .conv-price { font-size: 14px; font-weight: 700; color: var(--error-color); }
+    .conv-status { font-size: 11px; padding: 2px 8px; border-radius: 4px; background: var(--bg-page); color: var(--text-secondary); }
+    .conv-status.confirmed { background: #E7F6EC; color: #07C160; }
+    .conv-status.completed { background: #EBF1FF; color: var(--primary-color); }
+    .conv-badge {
+        min-width: 18px; height: 18px; border-radius: 9px; background: var(--error-color);
+        color: #fff; font-size: 11px; display: flex; align-items: center; justify-content: center; padding: 0 5px;
+    }
+    .conv-empty { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
+    .conv-empty-icon { font-size: 48px; color: var(--text-light); margin-bottom: 12px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="conv-page">
+    <div class="conv-header">
+        <h2 class="conv-title">我的会话</h2>
+    </div>
+
+    {% if conversations %}
+    <div class="conv-list">
+        {% for conv in conversations %}
+        <a href="{% url 'chat:room' conv.id %}" class="conv-item" data-conv-id="{{ conv.id }}">
+            <img class="conv-thumb" src="{{ conv.goods.get_first_image }}" alt="{{ conv.goods.title }} 商品图片" onerror="this.src=''" loading="lazy" style="display:flex;align-items:center;justify-content:center;">
+            <div class="conv-body">
+                <div class="conv-row">
+                    <span class="conv-peername">{{ conv.goods.title }}</span>
+                </div>
+                <div class="conv-last">{{ conv.last_message|default:'开始交流吧' }}</div>
+            </div>
+            <div class="conv-meta">
+                <span class="conv-price">¥{{ conv.goods.price }}</span>
+                <span class="conv-status {% if conv.status == 'confirmed' %}confirmed{% elif conv.status == 'completed' %}completed{% endif %}">
+                    {{ conv.get_status_display }}
+                </span>
+                {# 始终渲染数字徽章（未读为0时隐藏），保证轮询能实时更新显隐 #}
+                {% if conv.buyer == user and conv.buyer_unread or conv.seller == user and conv.seller_unread %}
+                <span class="conv-badge">
+                    {% if conv.buyer == user %}{{ conv.buyer_unread }}{% else %}{{ conv.seller_unread }}{% endif %}
+                </span>
+                {% else %}
+                <span class="conv-badge" style="display:none;">0</span>
+                {% endif %}
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="conv-empty">
+        <div class="conv-empty-icon">
+            <svg class="icon" style="width:48px;height:48px;color:var(--text-light);"><use href="#icon-message"></use></svg>
+        </div>
+        <p>还没有任何会话</p>
+        <p style="margin-top:6px;font-size:13px;">去逛一逛，看到心仪的商品发起交流吧</p>
+        <a href="{% url 'goods:list' %}" class="btn btn-primary" style="margin-top:20px;">去逛逛</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}我的收藏 - SWAP校园交易平台{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .page-title {
+        font-size: 22px;
+        font-weight: 700;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2 class="page-title">我的收藏</h2>
+</div>
+
+{% if fav_list %}
+<div class="goods-grid">
+    {% for fav in fav_list %}
+    <a href="{% url 'goods:detail' fav.goods.id %}" class="goods-card">
+        <div class="goods-card-img">
+            {% with first_img=fav.goods.images.first %}
+                {% if first_img %}
+                <img src="{{ first_img.image.url }}" alt="{{ fav.goods.title }}" loading="lazy" width="220" height="200" decoding="async">
+                {% else %}
+                <div style="width:100%;height:100%;background:var(--bg-page);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-light);gap:6px;">
+                    <svg class="icon" style="width:36px;height:36px;"><use href="#icon-image"></use></svg>
+                    <span style="font-size:13px;">暂无图片</span>
+                </div>
+                {% endif %}
+            {% endwith %}
+            {% if fav.goods.status != 'on_sale' %}
+            <div style="position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;color:white;font-size:14px;font-weight:600;z-index:2;">
+                {% if fav.goods.status == 'sold' %}已售出{% else %}已下架{% endif %}
+            </div>
+            {% endif %}
+        </div>
+        <div class="goods-card-body">
+            <div class="goods-card-title">{{ fav.goods.title }}</div>
+            <div class="goods-card-price">{{ fav.goods.price }}</div>
+            <div class="goods-card-meta">
+                <span class="goods-card-school">{{ fav.goods.school }}</span>
+                <span class="goods-card-views">
+                    <svg class="icon" style="width:14px;height:14px;vertical-align:-2px;"><use href="#icon-eye"></use></svg>
+                    {{ fav.goods.views }}
+                </span>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state" style="background:var(--bg-white);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+    <div class="empty-state-icon"><svg class="icon" style="width:36px;height:36px;"><use href="#icon-heart"></use></svg></div>
+    <div class="empty-state-text">还没有收藏的商品</div>
+    <a href="{% url 'goods:list' %}" class="btn btn-primary" style="margin-top:16px;">去逛逛</a>
+</div>
+{% endif %}
+{% endblock %}

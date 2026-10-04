@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "SWAP校园交易平台",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "navigationBarBackgroundColor": "#ffffff",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+    "quicknav": "/components/quicknav/quicknav"
+  }
+}

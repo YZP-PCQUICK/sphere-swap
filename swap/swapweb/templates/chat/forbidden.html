@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}无权访问 - SWAP{% endblock %}
+{% block content %}
+<div class="empty-state" style="margin-top:60px;">
+    <div class="empty-state-icon">
+        <svg class="icon" style="width:40px;height:40px;color:var(--warning-color);"><use href="#icon-warning"></use></svg>
+    </div>
+    <div class="empty-state-text">你没有权限访问这个会话</div>
+    <a href="{% url 'chat:list' %}" class="btn btn-primary" style="margin-top:16px;">返回我的会话</a>
+</div>
+{% endblock %}

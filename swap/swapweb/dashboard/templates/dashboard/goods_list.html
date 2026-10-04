@@ -1,0 +1,82 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}商品管理 - SWAP管理系统{% endblock %}
+
+{% block content %}
+<div class="adm-page">
+    <div class="adm-header">
+        <div>
+            <h1>商品管理</h1>
+            <p class="adm-sub">共 {{ goods.paginator.count }} 件商品</p>
+        </div>
+    </div>
+
+    {% if goods %}
+    <div class="adm-table-wrap">
+        <table class="adm-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>商品图片</th>
+                    <th>商品名称</th>
+                    <th>卖家</th>
+                    <th>价格</th>
+                    <th>分类</th>
+                    <th>发布时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for good in goods %}
+                <tr>
+                    <td>{{ good.id }}</td>
+                    <td>
+                        {% if good.images.first %}
+                        <img src="{{ good.images.first.image.url }}" alt="{{ good.title }}" style="width:52px;height:52px;border-radius:8px;object-fit:cover;" onerror="this.onerror=null; this.outerHTML='<svg class=&quot;icon adm-avatar-fallback&quot; style=&quot;width:52px;height:52px;border-radius:8px;&quot;><use href=&quot;#icon-default-image&quot;></use></svg>';">
+                        {% else %}
+                        <div class="adm-avatar-fallback" style="width:52px;height:52px;border-radius:8px;">
+                            <svg class="icon"><use href="#icon-default-image"></use></svg>
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="adm-title-cell">{{ good.title }}</div>
+                        <div class="adm-sub-line">{{ good.description|truncatechars:40 }}</div>
+                    </td>
+                    <td>{{ good.seller.nickname|default:good.seller.email }}</td>
+                    <td>¥{{ good.price }}</td>
+                    <td>{{ good.category.name|default:'未分类' }}</td>
+                    <td>{{ good.created_at|date:'Y-m-d H:i' }}</td>
+                    <td>
+                        <a href="{% url 'dashboard:goods_detail' good.id %}" class="adm-btn outline sm">查看详情</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="adm-empty-block">暂无商品数据</div>
+    {% endif %}
+
+    <!-- 分页 -->
+    {% if goods.paginator.num_pages > 1 %}
+    <div class="adm-pagination">
+        {% if goods.has_previous %}
+        <a href="?page={{ goods.previous_page_number }}">上一页</a>
+        {% endif %}
+
+        {% for num in goods.paginator.page_range %}
+        {% if num == goods.number %}
+        <span class="active">{{ num }}</span>
+        {% else %}
+        <a href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+        {% endfor %}
+
+        {% if goods.has_next %}
+        <a href="?page={{ goods.next_page_number }}">下一页</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

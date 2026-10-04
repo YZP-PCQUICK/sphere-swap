@@ -1,0 +1,78 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}用户管理 - SWAP管理系统{% endblock %}
+
+{% block content %}
+<div class="adm-page">
+    <div class="adm-header">
+        <div>
+            <h1>用户管理</h1>
+            <p class="adm-sub">共 {{ users.paginator.count }} 位用户</p>
+        </div>
+    </div>
+
+    {% if users %}
+    <div class="adm-table-wrap">
+        <table class="adm-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>头像</th>
+                    <th>昵称/邮箱</th>
+                    <th>学校</th>
+                    <th>注册时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>
+                        {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="头像" class="adm-avatar" onerror="this.onerror=null; this.outerHTML='<svg class=&quot;icon adm-avatar-fallback&quot; style=&quot;width:38px;height:38px;&quot;><use href=&quot;#icon-default-avatar&quot;></use></svg>';">
+                        {% else %}
+                        <div class="adm-avatar-fallback">
+                            <svg class="icon"><use href="#icon-default-avatar"></use></svg>
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="adm-title-cell">{{ user.nickname|default:'未设置昵称' }}</div>
+                        <div class="adm-sub-line">{{ user.email }}</div>
+                    </td>
+                    <td>{{ user.school|default:'未填写' }}</td>
+                    <td>{{ user.date_joined|date:'Y-m-d H:i' }}</td>
+                    <td>
+                        <a href="{% url 'dashboard:user_detail' user.id %}" class="adm-btn outline sm">查看详情</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="adm-empty-block">暂无用户数据</div>
+    {% endif %}
+
+    <!-- 分页 -->
+    {% if users.paginator.num_pages > 1 %}
+    <div class="adm-pagination">
+        {% if users.has_previous %}
+        <a href="?page={{ users.previous_page_number }}">上一页</a>
+        {% endif %}
+
+        {% for num in users.paginator.page_range %}
+        {% if num == users.number %}
+        <span class="active">{{ num }}</span>
+        {% else %}
+        <a href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+        {% endfor %}
+
+        {% if users.has_next %}
+        <a href="?page={{ users.next_page_number }}">下一页</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

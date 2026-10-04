@@ -1,0 +1,138 @@
+<view class="page" wx:if="{{loaded}}">
+  <!-- 图片区 -->
+  <view class="detail-gallery">
+    <view class="main-image">
+      <swiper wx:if="{{goods.images.length > 0}}" class="main-swiper" circular="{{goods.images.length > 1}}"
+        current="{{currentImg}}" bindchange="onSwiperChange">
+        <swiper-item wx:for="{{goods.images}}" wx:key="*this">
+          <image class="main-img" src="{{item}}" mode="aspectFill"
+            bindtap="previewImage" data-index="{{index}}" />
+        </swiper-item>
+      </swiper>
+      <view wx:else class="main-img-empty">
+        <image class="main-img-empty-icon" src="/images/icon-image.png" mode="aspectFit" />
+        <text class="main-img-empty-text">{{t.no_image}}</text>
+      </view>
+      <!-- 遮罩：已售出/已下架 -->
+      <view wx:if="{{goods.status !== 'on_sale'}}" class="sold-overlay">
+        {{goods.status === 'sold' ? t.goods_sold_out : t.goods_off_shelf}}
+      </view>
+      <!-- 指示器 -->
+      <view wx:if="{{goods.images.length > 1}}" class="img-indicator">{{currentImg + 1}}/{{goods.images.length}}</view>
+    </view>
+    <!-- 缩略图 -->
+    <scroll-view wx:if="{{goods.images.length > 1}}" class="thumb-list" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="thumb-item {{currentImg === index ? 'active' : ''}}" wx:for="{{goods.images}}" wx:key="*this"
+        bindtap="selectImage" data-index="{{index}}">
+        <image class="thumb-img" src="{{item}}" mode="aspectFill" />
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 信息区 -->
+  <view class="detail-card">
+    <view class="status-tag status-{{goods.status}}">
+      {{goods.status === 'on_sale' ? t.trans_on_sale : (goods.status === 'sold' ? t.goods_sold_out : t.goods_off_shelf)}}
+    </view>
+
+    <view class="goods-title">{{goods.title}}</view>
+
+    <view class="goods-price-row">
+      <text class="goods-price">{{goods.price}}</text>
+      <text wx:if="{{goods.original_price}}" class="goods-original-price">{{t.detail_original_price}} ¥{{goods.original_price}}</text>
+    </view>
+
+    <view class="goods-meta">
+      <view class="meta-item">
+        <text class="meta-label">{{t.detail_label_cat}}</text>
+        <text class="meta-value">{{goods.category_name}}{{goods.sub_category ? ' · ' + goods.sub_category : ''}}</text>
+      </view>
+      <view class="meta-item">
+        <text class="meta-label">{{t.detail_label_trade}}</text>
+        <text class="meta-value">{{goods.trade_type_name}}</text>
+      </view>
+      <view class="meta-item">
+        <text class="meta-label">{{t.detail_label_school}}</text>
+        <text class="meta-value">{{goods.school}}</text>
+      </view>
+      <view class="meta-item">
+        <text class="meta-label">{{t.detail_label_views}}</text>
+        <text class="meta-value">{{goods.views}} {{t.detail_times}}</text>
+      </view>
+    </view>
+
+    <!-- 卖家信息 -->
+    <view class="seller-section">
+      <view class="seller-avatar">
+        <image wx:if="{{goods.seller.avatar}}" class="seller-avatar-img" src="{{goods.seller.avatar}}"
+          mode="aspectFill" />
+        <image wx:else class="seller-avatar-default" src="/images/icon-default-avatar.png" mode="aspectFit" />
+      </view>
+      <view class="seller-info">
+        <view class="seller-name">{{goods.seller.nickname}}</view>
+        <view class="seller-school">{{goods.seller.school}}</view>
+      </view>
+    </view>
+
+    <!-- 操作区 -->
+    <block wx:if="{{goods.status === 'sold'}}">
+      <view class="action-row">
+        <view class="btn btn-outline btn-block disabled">
+          <image class="action-icon" src="/images/icon-check.png" mode="aspectFit" />
+          {{t.goods_sold_tip}}
+        </view>
+      </view>
+    </block>
+    <block wx:elif="{{isMine}}">
+      <view class="action-row">
+        <view class="btn btn-outline btn-block" bindtap="goMyGoods">{{t.detail_view_my_goods}}</view>
+      </view>
+    </block>
+    <block wx:elif="{{!isLogin}}">
+      <view class="action-row">
+        <view class="btn btn-primary btn-block" bindtap="goLogin">{{t.detail_login_contact}}</view>
+      </view>
+    </block>
+    <block wx:elif="{{goods.status === 'on_sale'}}">
+      <view class="action-row">
+        <view class="btn btn-light action-flex" bindtap="toggleFavorite">
+          <image class="action-icon" src="{{isFavorited ? '/images/icon-heart-red.png' : '/images/icon-heart.png'}}"
+            mode="aspectFit" />
+          <text>{{isFavorited ? t.goods_favorited : t.goods_favorite}}</text>
+        </view>
+        <view class="btn btn-primary action-flex" bindtap="startChat">{{t.detail_contact_seller}}</view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 商品描述 -->
+  <view class="detail-card">
+    <view class="section-title">{{t.detail_desc_title}}</view>
+    <view class="goods-description">{{goods.description}}</view>
+  </view>
+
+  <!-- 卖家其他商品 -->
+  <view class="detail-card" wx:if="{{sellerOther.length > 0}}">
+    <view class="section-title">{{t.detail_seller_other}}</view>
+    <view class="seller-goods-grid">
+      <view class="seller-goods-card" wx:for="{{sellerOther}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+        <view class="seller-goods-img">
+          <image wx:if="{{item.image}}" class="seller-goods-img-el" src="{{item.image}}" mode="aspectFill" lazy-load />
+          <view wx:else class="seller-goods-img-empty">
+            <image class="seller-goods-img-empty-icon" src="/images/icon-image.png" mode="aspectFit" />
+          </view>
+        </view>
+        <view class="seller-goods-body">
+          <view class="seller-goods-title">{{item.title}}</view>
+          <view class="seller-goods-price">¥{{item.price}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 加载中 -->
+<view wx:else class="loading-page">
+  <view class="loading-spinner"></view>
+  <view class="loading-text">{{t.loading}}</view>
+</view>

@@ -1,0 +1,502 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}交易信息 - SWAP校园交易平台{% endblock %}
+
+{% block extra_css %}
+<style>
+    .mygoods-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .mygoods-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    /* 主Tab：我发布的 / 我的交易 */
+    .main-tabs {
+        display: flex;
+        gap: 0;
+        margin-bottom: 20px;
+        background: var(--bg-white);
+        padding: 6px;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .main-tab {
+        flex: 1;
+        text-align: center;
+        padding: 12px 16px;
+        border-radius: var(--radius-sm);
+        color: var(--text-secondary);
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all var(--transition-fast);
+        cursor: pointer;
+    }
+
+    .main-tab:hover {
+        color: var(--primary-color);
+    }
+
+    .main-tab.active {
+        background: var(--primary-color);
+        color: #fff;
+    }
+
+    /* 子Tab */
+    .sub-tabs {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 20px;
+        background: var(--bg-white);
+        padding: 6px;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .sub-tab {
+        flex: 1;
+        text-align: center;
+        padding: 10px 16px;
+        border-radius: var(--radius-sm);
+        color: var(--text-secondary);
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all var(--transition-fast);
+        cursor: pointer;
+    }
+
+    .sub-tab:hover {
+        color: var(--primary-color);
+    }
+
+    .sub-tab.active {
+        background: rgba(74,144,226,.1);
+        color: var(--primary-color);
+    }
+
+    /* 商品列表（我发布的） */
+    .goods-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .goods-item {
+        display: flex;
+        gap: 16px;
+        background: var(--bg-white);
+        padding: 16px;
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        transition: box-shadow var(--transition-fast);
+    }
+
+    .goods-item:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+    .goods-item-img {
+        width: 100px;
+        height: 100px;
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        background: var(--bg-page);
+        flex-shrink: 0;
+        display: block;
+    }
+
+    .goods-item-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .goods-item-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-width: 0;
+    }
+
+    .goods-item-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text-primary);
+        text-decoration: none;
+        display: block;
+        margin-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .goods-item-title:hover {
+        color: var(--primary-color);
+    }
+
+    .goods-item-meta {
+        font-size: 12px;
+        color: var(--text-light);
+        margin-bottom: 4px;
+    }
+
+    .goods-item-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .goods-item-price {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--error-color);
+    }
+
+    .goods-item-price::before {
+        content: '\00A5';
+        font-size: 14px;
+    }
+
+    .goods-item-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        padding: 6px 14px;
+        border: 1px solid var(--border-color);
+        background: var(--bg-white);
+        color: var(--text-secondary);
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .action-btn:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    .action-btn.primary {
+        background: var(--primary-color);
+        color: #fff;
+        border-color: var(--primary-color);
+    }
+
+    .action-btn.primary:hover {
+        opacity: 0.9;
+    }
+
+    .action-btn.danger {
+        color: var(--error-color);
+        border-color: var(--error-color);
+    }
+
+    .action-btn.danger:hover {
+        background: var(--error-color);
+        color: #fff;
+    }
+
+    /* 状态徽章 */
+    .status-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .status-on_sale { background: rgba(82,196,26,.1); color: var(--success-color); }
+    .status-sold { background: rgba(74,144,226,.1); color: var(--primary-color); }
+    .status-offline { background: rgba(154,154,154,.1); color: #999; }
+    .status-trading { background: rgba(74,144,226,.1); color: var(--primary-color); }
+    .status-confirmed { background: rgba(250,173,20,.1); color: #faad14; }
+    .status-completed { background: rgba(82,196,26,.1); color: var(--success-color); }
+    .status-cancelled { background: rgba(245,34,45,.1); color: var(--error-color); }
+
+    .role-tag {
+        font-size: 11px;
+        color: var(--text-light);
+        background: var(--bg-page);
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-light);
+    }
+
+    .empty-state-icon {
+        margin-bottom: 12px;
+        opacity: 0.5;
+    }
+
+    @media (max-width: 768px) {
+        .goods-item { flex-direction: column; }
+        .goods-item-img { width: 100%; height: 180px; }
+        .goods-item-bottom { flex-direction: column; align-items: stretch; }
+        .goods-item-actions { justify-content: flex-end; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mygoods-header">
+    <h2 class="mygoods-title">交易信息</h2>
+</div>
+
+{# 主Tab #}
+<div class="main-tabs">
+    <a href="?tab=goods&status=on_sale" class="main-tab {% if tab == 'goods' %}active{% endif %}">我发布的</a>
+    <a href="?tab=trade&status=trading" class="main-tab {% if tab == 'trade' %}active{% endif %}">我的交易</a>
+</div>
+
+{# 子Tab #}
+{% if tab == 'goods' %}
+<div class="sub-tabs">
+    <a href="?tab=goods&status=on_sale" class="sub-tab {% if status == 'on_sale' %}active{% endif %}">在售</a>
+    <a href="?tab=goods&status=sold" class="sub-tab {% if status == 'sold' %}active{% endif %}">已售出</a>
+    <a href="?tab=goods&status=offline" class="sub-tab {% if status == 'offline' %}active{% endif %}">已下架</a>
+</div>
+{% else %}
+<div class="sub-tabs">
+    <a href="?tab=trade&status=trading" class="sub-tab {% if status == 'trading' %}active{% endif %}">在购</a>
+    <a href="?tab=trade&status=completed" class="sub-tab {% if status == 'completed' %}active{% endif %}">已完成</a>
+    <a href="?tab=trade&status=cancelled" class="sub-tab {% if status == 'cancelled' %}active{% endif %}">已取消</a>
+</div>
+{% endif %}
+
+{# 我发布的商品列表 #}
+{% if tab == 'goods' %}
+{% if goods_list %}
+<div class="goods-list">
+    {% for goods in goods_list %}
+    <div class="goods-item">
+        <a href="{% url 'goods:detail' goods.id %}" class="goods-item-img">
+            {% with first_img=goods.images.first %}
+                {% if first_img %}
+                <img src="{{ first_img.image.url }}" alt="{{ goods.title }}" loading="lazy" width="220" height="200" decoding="async">
+                {% else %}
+                <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-light);">
+                    <svg class="icon" style="width:40px;height:40px;"><use href="#icon-box"></use></svg>
+                </div>
+                {% endif %}
+            {% endwith %}
+        </a>
+        <div class="goods-item-info">
+            <div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;">
+                    <span class="status-badge status-{{ goods.status }}">{{ goods.get_status_display }}</span>
+                    {% if goods.allow_repeat %}
+                    <span style="font-size:11px;color:var(--primary-color);background:rgba(74,144,226,.1);padding:2px 6px;border-radius:4px;">重复售卖</span>
+                    {% endif %}
+                </div>
+                <a href="{% url 'goods:detail' goods.id %}" class="goods-item-title">{{ goods.title }}</a>
+                <div class="goods-item-meta">
+                    {{ goods.get_category_display }} · 浏览 {{ goods.views }} · 收藏 {{ goods.favorites }}
+                </div>
+            </div>
+            <div class="goods-item-bottom">
+                <div class="goods-item-price">{{ goods.price }}</div>
+                <div class="goods-item-actions" style="flex-wrap:wrap;gap:6px;">
+                    <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-secondary);cursor:pointer;white-space:nowrap;">
+                        <input type="checkbox" style="width:14px;height:14px;accent-color:var(--primary-color);"
+                               {% if goods.allow_repeat %}checked{% endif %}
+                               onchange="toggleRepeat({{ goods.id }}, this.checked)">
+                        重复售卖
+                    </label>
+                    {% if goods.status == 'on_sale' %}
+                    <button class="action-btn" onclick="updateStatus({{ goods.id }}, 'offline')">下架</button>
+                    <button class="action-btn primary" onclick="updateStatus({{ goods.id }}, 'sold')">标记售出</button>
+                    {% elif goods.status == 'offline' %}
+                    <button class="action-btn primary" onclick="updateStatus({{ goods.id }}, 'on_sale')">重新上架</button>
+                    {% elif goods.status == 'sold' %}
+                    <button class="action-btn" onclick="updateStatus({{ goods.id }}, 'on_sale')">重新上架</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state" style="background:var(--bg-white);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+    <div class="empty-state-icon"><svg class="icon" style="width:36px;height:36px;"><use href="#icon-box"></use></svg></div>
+    <div class="empty-state-text">暂无商品</div>
+</div>
+{% endif %}
+
+{# 我的交易会话列表 #}
+{% else %}
+{% if conversations %}
+<div class="goods-list">
+    {% for conv in conversations %}
+    <div class="goods-item">
+        <a href="{% url 'goods:detail' conv.goods.id %}" class="goods-item-img">
+            {% with first_img=conv.goods.images.first %}
+                {% if first_img %}
+                <img src="{{ first_img.image.url }}" alt="{{ conv.goods.title }}" loading="lazy" width="220" height="200" decoding="async">
+                {% else %}
+                <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-light);">
+                    <svg class="icon" style="width:40px;height:40px;"><use href="#icon-box"></use></svg>
+                </div>
+                {% endif %}
+            {% endwith %}
+        </a>
+        <div class="goods-item-info">
+            <div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;">
+                    <span class="status-badge status-{{ conv.status }}">{{ conv.get_status_display }}</span>
+                </div>
+                <a href="{% url 'goods:detail' conv.goods.id %}" class="goods-item-title">{{ conv.goods.title }}</a>
+                <div class="goods-item-meta">
+                    卖家：{{ conv.seller.nickname|default:conv.seller.email }}
+                    &nbsp;|&nbsp;{{ conv.updated_at|date:"Y-m-d H:i" }}
+                </div>
+            </div>
+            <div class="goods-item-bottom">
+                <div class="goods-item-price">{{ conv.goods.price }}</div>
+                <div class="goods-item-actions">
+                    <a href="{% url 'chat:room' conv.id %}" class="action-btn primary">查看聊天</a>
+                    {% if conv.status in 'trading,confirmed' %}
+                    <button class="action-btn danger" onclick="cancelTrade({{ conv.id }})">取消交易</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state" style="background:var(--bg-white);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+    <div class="empty-state-icon"><svg class="icon" style="width:36px;height:36px;"><use href="#icon-box"></use></svg></div>
+    <div class="empty-state-text">暂无交易记录</div>
+</div>
+{% endif %}
+{% endif %}
+
+<script>
+function getCSRFToken() {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, 10) === 'csrftoken=') {
+                cookieValue = decodeURIComponent(cookie.substring(10));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function showConfirm(title, text, onOk) {
+    const mask = document.createElement('div');
+    mask.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:10000;display:flex;align-items:center;justify-content:center;';
+    mask.innerHTML = '<div style="background:#fff;border-radius:12px;padding:20px;min-width:280px;max-width:90%;box-shadow:0 10px 25px rgba(0,0,0,.15);">' +
+        '<div style="font-size:16px;font-weight:600;margin-bottom:8px;">' + title + '</div>' +
+        '<div style="font-size:14px;color:#666;line-height:1.6;margin-bottom:16px;">' + text + '</div>' +
+        '<div style="display:flex;gap:10px;justify-content:flex-end;">' +
+        '<button class="cancel-btn" style="padding:8px 18px;border:1px solid #d9d9d9;background:#fff;border-radius:6px;cursor:pointer;font-size:14px;">取消</button>' +
+        '<button class="ok-btn" style="padding:8px 18px;background:var(--primary-color);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px;">确定</button>' +
+        '</div></div>';
+    document.body.appendChild(mask);
+    mask.querySelector('.cancel-btn').onclick = () => mask.remove();
+    mask.querySelector('.ok-btn').onclick = () => { mask.remove(); onOk(); };
+    mask.onclick = (e) => { if (e.target === mask) mask.remove(); };
+}
+
+// 修改商品状态
+function updateStatus(goodsId, status) {
+    let text = '';
+    if (status === 'offline') text = '确定要下架这件商品吗？正在进行的交易将被取消。';
+    else if (status === 'sold') text = '确定标记为已售出吗？';
+    else if (status === 'on_sale') text = '确定重新上架吗？';
+
+    showConfirm('操作确认', text, function() {
+        fetch("{% url 'goods:update_status' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+            },
+            body: JSON.stringify({ goods_id: goodsId, status: status })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showToast('操作成功', 'success');
+                setTimeout(() => location.reload(), 500);
+            } else {
+                showToast(data.msg, 'error');
+            }
+        });
+    });
+}
+
+// 切换重复售卖
+function toggleRepeat(goodsId, checked) {
+    fetch("{% url 'goods:toggle_repeat' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken(),
+        },
+        body: JSON.stringify({ goods_id: goodsId, allow_repeat: checked })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            showToast(checked ? '已开启重复售卖' : '已关闭重复售卖', 'success');
+            setTimeout(() => location.reload(), 300);
+        } else {
+            showToast(data.msg || '操作失败', 'error');
+        }
+    });
+}
+
+// 取消交易
+function cancelTrade(convId) {
+    showConfirm('取消交易', '确定要取消这笔交易吗？取消后无法恢复。', function() {
+        fetch('/chat/api/cancel/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+            },
+            body: JSON.stringify({ conversation_id: convId })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showToast('交易已取消', 'success');
+                setTimeout(() => location.reload(), 500);
+            } else {
+                showToast(data.msg || '操作失败', 'error');
+            }
+        });
+    });
+}
+</script>
+{% endblock %}

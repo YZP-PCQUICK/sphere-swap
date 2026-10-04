@@ -1,0 +1,386 @@
+page {
+  height: 100%;
+}
+
+.chat-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--bg-white);
+}
+
+/* ===== 头部 ===== */
+.chat-header {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 24rpx;
+  border-bottom: 1rpx solid var(--border-light);
+  background: var(--bg-white);
+  flex-shrink: 0;
+}
+
+.chat-hd-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-hd-title {
+  font-weight: 700;
+  font-size: 28rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-hd-sold {
+  color: var(--error-color);
+  font-size: 22rpx;
+  font-weight: normal;
+}
+
+.chat-hd-sub {
+  font-size: 22rpx;
+  color: var(--text-secondary);
+  margin-top: 6rpx;
+}
+
+.chat-hd-thumb {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: var(--radius-sm);
+  background: var(--bg-page);
+  flex-shrink: 0;
+  margin-right: 16rpx;
+}
+
+.chat-hd-price {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--error-color);
+  flex-shrink: 0;
+}
+
+/* ===== 消息区 ===== */
+.chat-messages {
+  flex: 1;
+  padding: 24rpx;
+  background: var(--bg-page);
+  box-sizing: border-box;
+  min-height: 0;
+}
+
+.chat-date {
+  text-align: center;
+  font-size: 22rpx;
+  color: var(--text-light);
+  margin: 8rpx 0;
+}
+
+.chat-date-error {
+  color: #e05a5a;
+  font-size: 26rpx;
+}
+
+.msg {
+  display: flex;
+  max-width: 88%;
+  margin-bottom: 20rpx;
+}
+
+.msg.mine {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+  margin-left: auto;
+}
+
+.msg.other {
+  align-self: flex-start;
+  margin-right: auto;
+}
+
+.msg-avatar {
+  flex-shrink: 0;
+  margin-right: 18rpx;
+}
+
+.msg.mine .msg-avatar {
+  margin-right: 0;
+  margin-left: 18rpx;
+}
+
+.msg-avatar-img,
+.msg-avatar-default-wrap {
+  width: 68rpx;
+  height: 68rpx;
+  border-radius: 50%;
+}
+
+.msg-avatar-default {
+  width: 68rpx;
+  height: 68rpx;
+  border-radius: 50%;
+  background: var(--primary-color);
+  padding: 12rpx;
+  box-sizing: border-box;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.msg-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.msg.mine .msg-body {
+  align-items: flex-end;
+}
+
+.msg-bubble {
+  padding: 18rpx 24rpx;
+  border-radius: 22rpx;
+  font-size: 28rpx;
+  line-height: 1.5;
+  word-break: break-word;
+  max-width: 520rpx;
+}
+
+.msg.mine .msg-bubble {
+  background: var(--primary-color);
+  color: #fff;
+  border-bottom-right-radius: 6rpx;
+}
+
+.msg.other .msg-bubble {
+  background: var(--bg-white);
+  border: 1rpx solid var(--border-color);
+  border-bottom-left-radius: 6rpx;
+}
+
+.msg-time {
+  font-size: 20rpx;
+  color: var(--text-light);
+  margin-top: 8rpx;
+}
+
+.msg-media-img {
+  max-width: 360rpx;
+  max-height: 360rpx;
+  border-radius: 18rpx;
+  width: 360rpx;
+  height: 360rpx;
+}
+
+.msg-media-video {
+  width: 400rpx;
+  height: 300rpx;
+  border-radius: 18rpx;
+}
+
+.msg-sys {
+  align-self: center;
+  text-align: center;
+  background: rgba(74, 144, 226, 0.08);
+  color: var(--primary-color);
+  font-size: 22rpx;
+  padding: 12rpx 24rpx;
+  border-radius: 14rpx;
+  margin: 12rpx auto;
+  max-width: 90%;
+}
+
+.msg-bottom-pad {
+  height: 8rpx;
+}
+
+/* ===== 交易面板 ===== */
+.chat-trade-panel {
+  flex-shrink: 0;
+  border-top: 1rpx solid var(--border-light);
+  background: #fff;
+}
+
+.trade-box {
+  padding: 24rpx 28rpx;
+}
+
+.trade-btns {
+  display: flex;
+}
+
+.trade-btn {
+  flex: 1;
+  padding: 18rpx 0;
+  font-size: 27rpx;
+}
+
+.trade-btn + .trade-btn {
+  margin-left: 18rpx;
+}
+
+.trade-btn.disabled {
+  opacity: 0.6;
+}
+
+.trade-btn-icon {
+  width: 28rpx;
+  height: 28rpx;
+  margin-right: 6rpx;
+  vertical-align: middle;
+}
+
+.trade-tip {
+  font-size: 23rpx;
+  color: var(--text-secondary);
+  margin-top: 16rpx;
+  line-height: 1.6;
+}
+
+.trade-tip-success {
+  font-weight: 600;
+  font-size: 28rpx;
+  color: var(--success-color);
+  margin-top: 0;
+}
+
+.trade-tip-error {
+  font-weight: 600;
+  font-size: 28rpx;
+  color: var(--error-color);
+  margin-top: 0;
+}
+
+.trade-tip-highlight {
+  padding: 16rpx 28rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--primary-color);
+  background: var(--primary-bg);
+}
+
+.qrcode-img {
+  width: 320rpx;
+  height: 320rpx;
+  border-radius: 14rpx;
+  border: 1rpx solid var(--border-light);
+  margin: 20rpx 0;
+  display: block;
+  background: var(--bg-page);
+}
+
+.trade-disclaimer {
+  padding: 18rpx 28rpx;
+  padding-bottom: calc(18rpx + env(safe-area-inset-bottom) + 8rpx);
+  background: #FFF7E6;
+  border-top: 1rpx solid #FFE7BA;
+  font-size: 21rpx;
+  color: #AD6800;
+  line-height: 1.6;
+}
+
+.trade-disclaimer-title {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  margin-bottom: 6rpx;
+}
+
+.trade-disclaimer-icon {
+  width: 26rpx;
+  height: 26rpx;
+  margin-right: 8rpx;
+}
+
+/* ===== 输入区 ===== */
+.chat-input {
+  flex-shrink: 0;
+  border-top: 1rpx solid var(--border-light);
+  background: #fff;
+  padding: 16rpx 20rpx calc(16rpx + env(safe-area-inset-bottom));
+}
+
+.chat-toolbar {
+  display: flex;
+  margin-bottom: 14rpx;
+}
+
+.tool-item {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 14rpx;
+  background: var(--bg-page);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tool-item + .tool-item {
+  margin-left: 14rpx;
+}
+
+.tool-icon {
+  width: 34rpx;
+  height: 34rpx;
+}
+
+.chat-input-row {
+  display: flex;
+  align-items: center;
+}
+
+.chat-textarea {
+  flex: 1;
+  border: 1rpx solid var(--border-light);
+  border-radius: 18rpx;
+  padding: 16rpx 22rpx;
+  font-size: 28rpx;
+  min-height: 72rpx;
+  line-height: 1.4;
+  background: #fff;
+}
+
+.chat-send-btn {
+  height: 76rpx;
+  padding: 0 40rpx;
+  border-radius: 18rpx;
+  background: var(--primary-color);
+  color: #fff;
+  font-weight: 600;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 16rpx;
+  flex-shrink: 0;
+}
+
+.chat-send-btn.disabled {
+  opacity: 0.5;
+}
+
+/* ===== 加载页 ===== */
+.loading-page {
+  padding: 200rpx 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loading-spinner {
+  width: 56rpx;
+  height: 56rpx;
+  border: 5rpx solid var(--border-color);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  margin-top: 20rpx;
+  font-size: 26rpx;
+  color: var(--text-secondary);
+}

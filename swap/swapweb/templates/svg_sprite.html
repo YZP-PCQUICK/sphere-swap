@@ -1,0 +1,256 @@
+{% load static %}
+<!-- SVG 图标精灵 -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <!-- 搜索 -->
+    <symbol id="icon-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8" fill="none" stroke="currentColor" stroke-width="2"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2"></line>
+    </symbol>
+
+    <!-- 心 - 空 -->
+    <symbol id="icon-heart" viewBox="0 0 24 24">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="none" stroke="currentColor" stroke-width="2"></path>
+    </symbol>
+
+    <!-- 眼睛 -->
+    <symbol id="icon-eye" viewBox="0 0 24 24">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"></circle>
+    </symbol>
+
+    <!-- 相机 -->
+    <symbol id="icon-camera" viewBox="0 0 24 24">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <circle cx="12" cy="13" r="4" fill="none" stroke="currentColor" stroke-width="2"></circle>
+    </symbol>
+
+    <!-- 图像 -->
+    <symbol id="icon-image" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"></rect>
+        <circle cx="8.5" cy="8.5" r="1.5" fill="none" stroke="currentColor" stroke-width="2"></circle>
+        <polyline points="21 15 16 10 5 21" fill="none" stroke="currentColor" stroke-width="2"></polyline>
+    </symbol>
+
+    <!-- 警告 -->
+    <symbol id="icon-warning" viewBox="0 0 24 24">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <line x1="12" y1="9" x2="12" y2="13" fill="none" stroke="currentColor" stroke-width="2"></line>
+        <line x1="12" y1="17" x2="12.01" y2="17" fill="none" stroke="currentColor" stroke-width="2"></line>
+    </symbol>
+
+    <!-- 信息 -->
+    <symbol id="icon-info" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"></circle>
+        <line x1="12" y1="16" x2="12" y2="12" fill="none" stroke="currentColor" stroke-width="2"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8" fill="none" stroke="currentColor" stroke-width="2"></line>
+    </symbol>
+
+    <!-- 加号 -->
+    <symbol id="icon-plus" viewBox="0 0 24 24">
+        <line x1="12" y1="5" x2="12" y2="19" fill="none" stroke="currentColor" stroke-width="2"></line>
+        <line x1="5" y1="12" x2="19" y2="12" fill="none" stroke="currentColor" stroke-width="2"></line>
+    </symbol>
+
+    <!-- 关闭 -->
+    <symbol id="icon-close" viewBox="0 0 24 24">
+        <line x1="18" y1="6" x2="6" y2="18" fill="none" stroke="currentColor" stroke-width="2"></line>
+        <line x1="6" y1="6" x2="18" y2="18" fill="none" stroke="currentColor" stroke-width="2"></line>
+    </symbol>
+
+    <!-- 笔记本电脑 - 数码电子 -->
+    <symbol id="icon-laptop" viewBox="0 0 24 24">
+        <rect x="2" y="4" width="20" height="14" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"></rect>
+        <line x1="2" y1="20" x2="22" y2="20" fill="none" stroke="currentColor" stroke-width="2"></line>
+    </symbol>
+
+    <!-- 书本 - 书籍教材 -->
+    <symbol id="icon-book" viewBox="0 0 24 24">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" fill="none" stroke="currentColor" stroke-width="2"></path>
+    </symbol>
+
+    <!-- 房子 - 生活用品 -->
+    <symbol id="icon-home" viewBox="0 0 24 24">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="currentColor" stroke-width="2"></polyline>
+    </symbol>
+
+    <!-- T恤 - 服饰鞋包 -->
+    <symbol id="icon-shirt" viewBox="0 0 24 24">
+        <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z" fill="none" stroke="currentColor" stroke-width="2"></path>
+    </symbol>
+
+    <!-- 篮球 - 运动器材 -->
+    <symbol id="icon-ball" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"></circle>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <path d="M2 12h20" fill="none" stroke="currentColor" stroke-width="2"></path>
+    </symbol>
+
+    <!-- 毕业帽 - 校园服务 -->
+    <symbol id="icon-graduation" viewBox="0 0 24 24">
+        <path d="M22 10v6M2 10l10-5 10 5-10 5z" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <path d="M6 12v5c3 3 9 3 12 0v-5" fill="none" stroke="currentColor" stroke-width="2"></path>
+    </symbol>
+
+    <!-- 咖啡杯 - 零食餐饮 -->
+    <symbol id="icon-snack" viewBox="0 0 24 24">
+        <path d="M17 8h1a4 4 0 1 1 0 8h-1" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <line x1="6" y1="2" x2="6" y2="4" fill="none" stroke="currentColor" stroke-width="2"></line>
+        <line x1="10" y1="2" x2="10" y2="4" fill="none" stroke="currentColor" stroke-width="2"></line>
+        <line x1="14" y1="2" x2="14" y2="4" fill="none" stroke="currentColor" stroke-width="2"></line>
+    </symbol>
+
+    <!-- 口红 - 美妆个护 -->
+    <symbol id="icon-beauty" viewBox="0 0 24 24">
+        <path d="M9 11V4l5-2v9" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <rect x="7" y="11" width="10" height="3" rx="1" fill="none" stroke="currentColor" stroke-width="2"></rect>
+        <rect x="8" y="14" width="8" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="2"></rect>
+    </symbol>
+
+    <!-- 音符 - 乐器文创 -->
+    <symbol id="icon-art" viewBox="0 0 24 24">
+        <path d="M9 18V5l12-2v13" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <circle cx="6" cy="18" r="3" fill="none" stroke="currentColor" stroke-width="2"></circle>
+        <circle cx="18" cy="16" r="3" fill="none" stroke="currentColor" stroke-width="2"></circle>
+    </symbol>
+
+    <!-- 钥匙 - 出租借用 -->
+    <symbol id="icon-rental" viewBox="0 0 24 24">
+        <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3-3.5 3.5z" fill="none" stroke="currentColor" stroke-width="2"></path>
+    </symbol>
+
+    <!-- 礼物盒 - 免费赠送 -->
+    <symbol id="icon-free" viewBox="0 0 24 24">
+        <polyline points="20 12 20 22 4 22 4 12" fill="none" stroke="currentColor" stroke-width="2"></polyline>
+        <line x1="2" y1="12" x2="22" y2="12" fill="none" stroke="currentColor" stroke-width="2"></line>
+        <line x1="12" y1="13" x2="12" y2="22" fill="none" stroke="currentColor" stroke-width="2"></line>
+        <line x1="12" y1="9" x2="12" y2="12" fill="none" stroke="currentColor" stroke-width="2"></line>
+        <circle cx="9" cy="6.5" r="2.2" fill="none" stroke="currentColor" stroke-width="2"></circle>
+        <circle cx="15" cy="6.5" r="2.2" fill="none" stroke="currentColor" stroke-width="2"></circle>
+    </symbol>
+
+    <!-- 盒子 - 其他 -->
+    <symbol id="icon-box" viewBox="0 0 24 24">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96" fill="none" stroke="currentColor" stroke-width="2"></polyline>
+        <line x1="12" y1="22.08" x2="12" y2="12" fill="none" stroke="currentColor" stroke-width="2"></line>
+    </symbol>
+
+    <!-- 用户 -->
+    <symbol id="icon-user" viewBox="0 0 24 24">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <circle cx="12" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="2"></circle>
+    </symbol>
+
+    <!-- 设置 -->
+    <symbol id="icon-settings" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="currentColor" stroke-width="2"></path>
+    </symbol>
+
+    <!-- 购物袋 -->
+    <symbol id="icon-bag" viewBox="0 0 24 24">
+        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <line x1="3" y1="6" x2="21" y2="6" fill="none" stroke="currentColor" stroke-width="2"></line>
+        <path d="M16 10a4 4 0 0 1-8 0" fill="none" stroke="currentColor" stroke-width="2"></path>
+    </symbol>
+
+    <!-- 上传 -->
+    <symbol id="icon-upload" viewBox="0 0 24 24">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <polyline points="17 8 12 3 7 8" fill="none" stroke="currentColor" stroke-width="2"></polyline>
+        <line x1="12" y1="3" x2="12" y2="15" fill="none" stroke="currentColor" stroke-width="2"></line>
+    </symbol>
+
+    <!-- 筛选 -->
+    <symbol id="icon-filter" viewBox="0 0 24 24">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" fill="none" stroke="currentColor" stroke-width="2"></polygon>
+    </symbol>
+
+    <!-- 手机 -->
+    <symbol id="icon-phone" viewBox="0 0 24 24">
+        <rect x="5" y="2" width="14" height="20" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"></rect>
+        <line x1="12" y1="18" x2="12.01" y2="18" fill="none" stroke="currentColor" stroke-width="2"></line>
+    </symbol>
+
+    <!-- 二维码 -->
+    <symbol id="icon-qrcode" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="7" height="7" fill="none" stroke="currentColor" stroke-width="2"></rect>
+        <rect x="14" y="3" width="7" height="7" fill="none" stroke="currentColor" stroke-width="2"></rect>
+        <rect x="14" y="14" width="7" height="7" fill="none" stroke="currentColor" stroke-width="2"></rect>
+        <rect x="3" y="14" width="5" height="5" fill="none" stroke="currentColor" stroke-width="2"></rect>
+        <rect x="3" y="14" width="7" height="7" fill="none" stroke="currentColor" stroke-width="2"></rect>
+    </symbol>
+
+    <!-- 喇叭 - 广告投放 -->
+    <symbol id="icon-megaphone" viewBox="0 0 24 24">
+        <path d="M3 11l14-5v12L3 13v-2z" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <line x1="20" y1="9" x2="22" y2="9" fill="none" stroke="currentColor" stroke-width="2"></line>
+        <line x1="20" y1="15" x2="22" y2="15" fill="none" stroke="currentColor" stroke-width="2"></line>
+    </symbol>
+
+    <!-- 左箭头 -->
+    <symbol id="icon-arrow-left" viewBox="0 0 24 24">
+        <line x1="19" y1="12" x2="5" y2="12" fill="none" stroke="currentColor" stroke-width="2"></line>
+        <polyline points="12 19 5 12 12 5" fill="none" stroke="currentColor" stroke-width="2"></polyline>
+    </symbol>
+
+    <!-- 右箭头 -->
+    <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+        <line x1="5" y1="12" x2="19" y2="12" fill="none" stroke="currentColor" stroke-width="2"></line>
+        <polyline points="12 5 19 12 12 19" fill="none" stroke="currentColor" stroke-width="2"></polyline>
+    </symbol>
+
+    <!-- 定位 -->
+    <symbol id="icon-map-pin" viewBox="0 0 24 24">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <circle cx="12" cy="10" r="3" fill="none" stroke="currentColor" stroke-width="2"></circle>
+    </symbol>
+
+    <!-- 标签/价格 -->
+    <symbol id="icon-tag" viewBox="0 0 24 24">
+        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <line x1="7" y1="7" x2="7.01" y2="7" fill="none" stroke="currentColor" stroke-width="2"></line>
+    </symbol>
+
+    <!-- 消息 -->
+    <symbol id="icon-message" viewBox="0 0 24 24">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="none" stroke="currentColor" stroke-width="2"></path>
+    </symbol>
+
+    <!-- 对勾 -->
+    <symbol id="icon-check" viewBox="0 0 24 24">
+        <polyline points="20 6 9 17 4 12" fill="none" stroke="currentColor" stroke-width="2"></polyline>
+    </symbol>
+
+    <!-- 刷新 -->
+    <symbol id="icon-refresh" viewBox="0 0 24 24">
+        <polyline points="23 4 23 10 17 10" fill="none" stroke="currentColor" stroke-width="2"></polyline>
+        <polyline points="1 20 1 14 7 14" fill="none" stroke="currentColor" stroke-width="2"></polyline>
+        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" fill="none" stroke="currentColor" stroke-width="2"></path>
+    </symbol>
+
+    <!-- 门店/自提 -->
+    <symbol id="icon-store" viewBox="0 0 24 24">
+        <path d="M3 9l1-5h16l1 5a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <path d="M5 9v11h14V9" fill="none" stroke="currentColor" stroke-width="2"></path>
+        <path d="M9 20v-4a3 3 0 0 1 6 0v4" fill="none" stroke="currentColor" stroke-width="2"></path>
+    </symbol>
+
+    <!-- 配送/卡车 -->
+    <symbol id="icon-truck" viewBox="0 0 24 24">
+        <rect x="1" y="3" width="15" height="13" fill="none" stroke="currentColor" stroke-width="2"></rect>
+        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" fill="none" stroke="currentColor" stroke-width="2"></polygon>
+        <circle cx="5.5" cy="18.5" r="2.5" fill="none" stroke="currentColor" stroke-width="2"></circle>
+        <circle cx="18.5" cy="18.5" r="2.5" fill="none" stroke="currentColor" stroke-width="2"></circle>
+    </symbol>
+
+    <!-- 默认头像 - 半身小人 -->
+    <symbol id="icon-default-avatar" viewBox="0 0 24 24">
+        <circle cx="12" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="2"></circle>
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" fill="none" stroke="currentColor" stroke-width="2"></path>
+    </symbol>
+</svg>

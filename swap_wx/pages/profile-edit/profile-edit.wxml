@@ -1,0 +1,63 @@
+<view class="page">
+  <view class="edit-card">
+    <!-- 头像 -->
+    <view class="avatar-row">
+      <view class="avatar-wrap" bindtap="changeAvatar">
+        <image wx:if="{{form.avatar}}" class="avatar-img" src="{{form.avatar}}" mode="aspectFill" />
+        <image wx:else class="avatar-img" src="/images/icon-default-avatar.png" mode="aspectFill" />
+        <view class="avatar-edit-badge">
+          <image class="avatar-edit-icon" src="/images/icon-camera.png" mode="aspectFit" />
+        </view>
+      </view>
+      <view class="avatar-hint">{{t.pe_change_avatar}}</view>
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">{{t.pe_nickname}}</view>
+      <input class="form-input" placeholder="{{t.pe_nickname_ph}}" maxlength="20" value="{{form.nickname}}"
+        bindinput="onInput" data-field="nickname" />
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">{{t.pe_school}}</view>
+      <input class="form-input" placeholder="{{t.pe_school_ph2}}" maxlength="50" value="{{form.school}}"
+        bindinput="onInput" data-field="school" />
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">{{t.pe_phone}}</view>
+      <input class="form-input" type="number" placeholder="{{t.pe_phone_ph}}" maxlength="20" value="{{form.phone}}"
+        bindinput="onInput" data-field="phone" />
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">{{t.pe_bio}}</view>
+      <textarea class="form-textarea" placeholder="{{t.pe_bio_ph2}}" maxlength="5000" value="{{form.bio}}"
+        bindinput="onInput" data-field="bio" />
+    </view>
+
+    <button class="btn btn-primary btn-block btn-lg" loading="{{saving}}" disabled="{{saving}}"
+      bindtap="save">{{t.save}}</button>
+  </view>
+
+  <!-- 收款码 -->
+  <view class="qrcode-card">
+    <view class="section-title">{{t.pe_payment}}</view>
+    <view class="qrcode-body">
+      <block wx:if="{{form.payment_qrcode}}">
+        <image class="qrcode-preview" src="{{form.payment_qrcode}}" mode="aspectFit" bindtap="previewQrcode" />
+        <view class="qrcode-actions">
+          <view class="btn btn-outline qrcode-btn" bindtap="changeQrcode">{{t.pe_change_qrcode}}</view>
+        </view>
+      </block>
+      <block wx:else>
+        <view class="qrcode-empty" bindtap="changeQrcode">
+          <image class="qrcode-empty-icon" src="/images/icon-qrcode.png" mode="aspectFit" />
+          <view class="qrcode-empty-text">{{t.pe_upload_qrcode}}</view>
+          <view class="qrcode-empty-sub">{{t.pe_qrcode_hint}}</view>
+        </view>
+      </block>
+    </view>
+    <view class="form-hint">{{t.pe_img_hint}}</view>
+  </view>
+</view>

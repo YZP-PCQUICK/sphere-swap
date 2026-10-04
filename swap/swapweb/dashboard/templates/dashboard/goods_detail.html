@@ -1,0 +1,80 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}商品详情 - {{ good.title }}{% endblock %}
+
+{% block content %}
+<div class="adm-page">
+    <a href="{% url 'dashboard:goods_list' %}" class="adm-back">
+        <svg class="icon"><use href="#icon-filter"></use></svg>返回商品列表
+    </a>
+
+    <div class="adm-header">
+        <div>
+            <h1>商品详情</h1>
+            <p class="adm-sub">商品ID: {{ good.id }}</p>
+        </div>
+    </div>
+
+    <div class="adm-card adm-page adm-delay-1">
+        <div class="adm-goods-detail">
+            <!-- 商品图片 -->
+            <div>
+                {% if good.images.all %}
+                <img src="{{ good.images.first.image.url }}" alt="{{ good.title }}" class="adm-goods-main-img" id="admMainImage">
+                {% if good.images.all|length > 1 %}
+                <div class="adm-goods-gallery">
+                    {% for img in good.images.all %}
+                    <img src="{{ img.image.url }}" alt="{{ good.title }} {{ forloop.counter }}" class="adm-thumb {% if forloop.first %}active{% endif %}" onclick="admSwitchImage(this)">
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% else %}
+                <div class="adm-no-img">
+                    <svg class="icon"><use href="#icon-default-image"></use></svg>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- 商品信息 -->
+            <div>
+                <h2 style="margin:0 0 6px;font-size:19px;">{{ good.title }}</h2>
+                <div class="adm-price">¥{{ good.price }}</div>
+                <div class="adm-info-rows">
+                    <div class="adm-info-row">
+                        <span class="adm-info-label">分类</span>
+                        <span class="adm-info-value">{{ good.category.name|default:'未分类' }}</span>
+                    </div>
+                    <div class="adm-info-row">
+                        <span class="adm-info-label">卖家</span>
+                        <span class="adm-info-value">{{ good.seller.nickname|default:good.seller.email }}</span>
+                    </div>
+                    <div class="adm-info-row">
+                        <span class="adm-info-label">发布时间</span>
+                        <span class="adm-info-value">{{ good.created_at|date:'Y-m-d H:i' }}</span>
+                    </div>
+                    <div class="adm-info-row">
+                        <span class="adm-info-label">所在学校</span>
+                        <span class="adm-info-value">{{ good.school|default:good.seller.school|default:'未填写' }}</span>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="margin:18px 0 0;font-size:14px;">商品描述</h3>
+                    <div class="adm-desc">{{ good.description|linebreaksbr }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 缩略图切换主图
+function admSwitchImage(thumb) {
+    const main = document.getElementById('admMainImage');
+    if (!main) return;
+    main.src = thumb.src;
+    document.querySelectorAll('.adm-thumb').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+}
+</script>
+{% endblock %}

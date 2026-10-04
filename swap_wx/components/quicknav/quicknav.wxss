@@ -1,0 +1,75 @@
+.qn-wrap {
+  position: fixed;
+  right: 28rpx;
+  bottom: 180rpx;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.qn-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14rpx;
+  margin-bottom: 14rpx;
+  opacity: 0;
+  transform: translateY(20rpx) scale(0.9);
+  pointer-events: none;
+  transition: all 0.25s ease;
+}
+
+.qn-actions.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.qn-action {
+  padding: 14rpx 28rpx;
+  background: #fff;
+  border: 1rpx solid #E5E7EB;
+  border-radius: 32rpx;
+  font-size: 26rpx;
+  color: #374151;
+  box-shadow: 0 4rpx 16rpx rgba(31, 41, 55, 0.12);
+}
+
+.qn-action:active {
+  background: #E8F0FE;
+  color: #4A90D9;
+}
+
+.qn-ball {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: #4A90D9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(74, 144, 217, 0.4);
+  transition: transform 0.25s ease;
+}
+
+.qn-ball.open {
+  transform: rotate(90deg);
+}
+
+.qn-icon {
+  width: 48rpx;
+  height: 48rpx;
+}
+
+/* 图标是深色线条，反白处理 */
+.qn-icon {
+  filter: brightness(0) invert(1);
+}
+
+.qn-close {
+  color: #fff;
+  font-size: 56rpx;
+  line-height: 1;
+  font-weight: 300;
+}

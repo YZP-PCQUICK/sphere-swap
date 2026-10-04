@@ -1,0 +1,85 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}交易管理 - SWAP管理系统{% endblock %}
+
+{% block content %}
+<div class="adm-page">
+    <div class="adm-header">
+        <div>
+            <h1>交易管理</h1>
+            <p class="adm-sub">共 {{ conversations.paginator.count }} 个会话</p>
+        </div>
+    </div>
+
+    {% if conversations %}
+    <div class="adm-table-wrap">
+        <table class="adm-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>商品</th>
+                    <th>买卖双方</th>
+                    <th>状态</th>
+                    <th>最近消息</th>
+                    <th>更新时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for conv in conversations %}
+                <tr>
+                    <td>{{ conv.id }}</td>
+                    <td>
+                        <div class="adm-title-cell">{{ conv.goods.title }}</div>
+                        <div class="adm-sub-line">ID: {{ conv.goods.id }}</div>
+                    </td>
+                    <td>
+                        <div>买: {{ conv.buyer.nickname|default:conv.buyer.email }}</div>
+                        <div>卖: {{ conv.seller.nickname|default:conv.seller.email }}</div>
+                    </td>
+                    <td>
+                        <span class="adm-badge {% if conv.status == 'completed' %}success{% elif conv.status == 'confirmed' %}warning{% else %}info{% endif %}">
+                            {{ conv.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if conv.last_message %}
+                        <div style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ conv.last_message }}</div>
+                        {% else %}
+                        <span style="color:var(--adm-text-muted);">无消息</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ conv.updated_at|date:'Y-m-d H:i' }}</td>
+                    <td>
+                        <a href="{% url 'dashboard:conversation_detail' conv.id %}" class="adm-btn outline sm">查看详情</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="adm-empty-block">暂无交易会话数据</div>
+    {% endif %}
+
+    <!-- 分页 -->
+    {% if conversations.paginator.num_pages > 1 %}
+    <div class="adm-pagination">
+        {% if conversations.has_previous %}
+        <a href="?page={{ conversations.previous_page_number }}">上一页</a>
+        {% endif %}
+
+        {% for num in conversations.paginator.page_range %}
+        {% if num == conversations.number %}
+        <span class="active">{{ num }}</span>
+        {% else %}
+        <a href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+        {% endfor %}
+
+        {% if conversations.has_next %}
+        <a href="?page={{ conversations.next_page_number }}">下一页</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

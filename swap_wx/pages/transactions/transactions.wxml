@@ -1,0 +1,98 @@
+<view class="page">
+  <!-- 主Tab：我发布的 / 我的交易（与网站一致） -->
+  <view class="main-tabs">
+    <view class="main-tab {{tab === 'goods' ? 'active' : ''}}" bindtap="switchTab" data-tab="goods">{{t.trans_tab_goods}}</view>
+    <view class="main-tab {{tab === 'trade' ? 'active' : ''}}" bindtap="switchTab" data-tab="trade">{{t.trans_tab_trade}}</view>
+  </view>
+
+  <!-- 我发布的 -->
+  <block wx:if="{{tab === 'goods'}}">
+    <view class="sub-tabs">
+      <view class="sub-tab {{status === 'on_sale' ? 'active' : ''}}" bindtap="switchStatus" data-status="on_sale">{{t.trans_on_sale}}</view>
+      <view class="sub-tab {{status === 'sold' ? 'active' : ''}}" bindtap="switchStatus" data-status="sold">{{t.trans_sold}}</view>
+      <view class="sub-tab {{status === 'offline' ? 'active' : ''}}" bindtap="switchStatus" data-status="offline">{{t.trans_off}}</view>
+    </view>
+    <view wx:if="{{goodsList.length > 0}}" class="goods-list">
+      <view class="goods-row" wx:for="{{goodsList}}" wx:key="id">
+        <image wx:if="{{item.image}}" class="goods-row-thumb" src="{{item.image}}" mode="aspectFill"
+          bindtap="goDetail" data-id="{{item.id}}" />
+        <view wx:else class="goods-row-thumb goods-row-thumb-empty" bindtap="goDetail" data-id="{{item.id}}">
+          <image class="goods-row-thumb-empty-icon" src="/images/icon-image.png" mode="aspectFit" />
+        </view>
+        <view class="goods-row-body">
+          <view bindtap="goDetail" data-id="{{item.id}}">
+            <view class="goods-row-badges">
+              <text class="goods-status status-{{item.status}}">{{item.status_name}}</text>
+              <text wx:if="{{item.allow_repeat}}" class="goods-row-repeat">{{t.trans_repeat_tag}}</text>
+            </view>
+            <view class="goods-row-title">{{item.title}}</view>
+            <view class="goods-row-meta">{{item.meta}}</view>
+          </view>
+          <view class="goods-item-bottom">
+            <view class="goods-row-price">¥{{item.price}}</view>
+            <view class="goods-row-actions">
+              <!-- 重复售卖开关（网站为复选框） -->
+              <view class="repeat-toggle" catchtap="toggleRepeat" data-id="{{item.id}}" data-allow="{{!item.allow_repeat}}">
+                <view class="checkbox {{item.allow_repeat ? 'checked' : ''}}">
+                  <text wx:if="{{item.allow_repeat}}" class="checkbox-check">✓</text>
+                </view>
+                <text class="repeat-toggle-text">{{t.trans_toggle_repeat}}</text>
+              </view>
+              <view wx:if="{{item.status === 'on_sale'}}" class="action-btn" catchtap="updateStatus" data-id="{{item.id}}"
+                data-status="offline">{{t.trans_take_off}}</view>
+              <view wx:if="{{item.status === 'on_sale'}}" class="action-btn primary" catchtap="updateStatus"
+                data-id="{{item.id}}" data-status="sold">{{t.trans_mark_sold}}</view>
+              <view wx:if="{{item.status === 'offline' || item.status === 'sold'}}" class="action-btn primary"
+                catchtap="updateStatus" data-id="{{item.id}}" data-status="on_sale">{{t.trans_put_on}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view wx:else class="empty-state">
+      <image class="empty-state-icon" src="/images/icon-box.png" mode="aspectFit" />
+      <view class="empty-state-text">{{status === 'on_sale' ? t.trans_empty_on_sale : (status === 'sold' ? t.trans_empty_sold : t.trans_empty_offline)}}</view>
+    </view>
+  </block>
+
+  <!-- 我的交易（买家视角，与网站 tab=trade 一致） -->
+  <block wx:if="{{tab === 'trade'}}">
+    <view class="sub-tabs">
+      <view class="sub-tab {{tradeStatus === 'trading' ? 'active' : ''}}" bindtap="switchTradeStatus"
+        data-status="trading">{{t.trans_st_trading}}</view>
+      <view class="sub-tab {{tradeStatus === 'completed' ? 'active' : ''}}" bindtap="switchTradeStatus"
+        data-status="completed">{{t.trans_st_completed}}</view>
+      <view class="sub-tab {{tradeStatus === 'cancelled' ? 'active' : ''}}" bindtap="switchTradeStatus"
+        data-status="cancelled">{{t.trans_st_cancelled}}</view>
+    </view>
+    <view wx:if="{{trades.length > 0}}" class="goods-list">
+      <view class="goods-row" wx:for="{{trades}}" wx:key="id">
+        <image wx:if="{{item.goods.image}}" class="goods-row-thumb" src="{{item.goods.image}}" mode="aspectFill"
+          bindtap="goDetail" data-id="{{item.goods.id}}" />
+        <view wx:else class="goods-row-thumb goods-row-thumb-empty" bindtap="goDetail" data-id="{{item.goods.id}}">
+          <image class="goods-row-thumb-empty-icon" src="/images/icon-image.png" mode="aspectFit" />
+        </view>
+        <view class="goods-row-body">
+          <view class="goods-row-badges">
+            <text class="trade-status status-{{item.status}}">{{item.status_name}}</text>
+          </view>
+          <view class="goods-row-title">{{item.goods.title}}</view>
+          <view class="goods-row-meta">{{item.seller_meta}}</view>
+          <view class="goods-item-bottom">
+            <view class="goods-row-price">¥{{item.goods.price}}</view>
+            <view class="goods-row-actions">
+              <view class="action-btn primary" catchtap="goChat" data-id="{{item.id}}">{{t.trans_view_chat}}</view>
+              <!-- 与网站一致：trading/confirmed 状态可取消交易 -->
+              <view wx:if="{{item.status === 'trading' || item.status === 'confirmed'}}" class="action-btn danger"
+                catchtap="cancelTrade" data-id="{{item.id}}">{{t.trans_cancel_trade}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view wx:else class="empty-state">
+      <image class="empty-state-icon" src="/images/icon-box.png" mode="aspectFit" />
+      <view class="empty-state-text">{{tradeStatus === 'trading' ? t.trans_empty_trading : (tradeStatus === 'completed' ? t.trans_empty_completed : t.trans_empty_cancelled)}}</view>
+    </view>
+  </block>
+</view>

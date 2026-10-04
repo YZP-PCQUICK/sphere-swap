@@ -1,0 +1,40 @@
+<view class="page">
+  <block wx:if="{{conversations.length > 0}}">
+    <!-- 会话项：商品缩略图 + 商品标题 + 最后消息 + 价格/状态/未读角标（与网站 chat/list.html 一致） -->
+    <view class="conv-item" wx:for="{{conversations}}" wx:key="id" hover-class="conv-item-hover" bindtap="goRoom" data-id="{{item.id}}">
+      <image wx:if="{{item.goods.image}}" class="conv-thumb" src="{{item.goods.image}}" mode="aspectFill" />
+      <view wx:else class="conv-thumb conv-thumb-fallback">{{item.goods_initial}}</view>
+      <view class="conv-body">
+        <view class="conv-row">
+          <text class="conv-peername">{{item.goods.title}}</text>
+        </view>
+        <view class="conv-last">{{item.last_message}}</view>
+        <!-- 对方信息：头像 + 昵称 -->
+        <view class="conv-peer-row">
+          <image wx:if="{{item.peer.avatar}}" class="conv-peer-avatar" src="{{item.peer.avatar}}" mode="aspectFill" />
+          <view wx:else class="conv-peer-avatar conv-peer-avatar-fallback">{{item.peer_initial}}</view>
+          <text class="conv-peer-nick">{{item.peer.nickname}}</text>
+        </view>
+      </view>
+      <view class="conv-meta">
+        <text wx:if="{{item.last_message_at}}" class="conv-time">{{item.last_message_at}}</text>
+        <text class="conv-price">¥{{item.goods.price}}</text>
+        <text class="conv-status status-{{item.status}}">{{item.status_name}}</text>
+        <!-- 未读数角标（0 时隐藏，轮询实时更新显隐） -->
+        <view wx:if="{{item.unread > 0}}" class="conv-badge">{{item.unread > 99 ? '99+' : item.unread}}</view>
+      </view>
+    </view>
+  </block>
+  <!-- 空态（与网站 chat/list.html 空态文案一致） -->
+  <view wx:elif="{{loaded && isLogin}}" class="empty-state">
+    <image class="empty-state-icon" src="/images/icon-msg.png" mode="aspectFit" />
+    <view class="empty-state-title">{{t.chats_empty_title}}</view>
+    <view class="empty-state-desc">{{t.chats_empty_desc}}</view>
+    <view class="btn btn-primary empty-btn" bindtap="goBrowse">{{t.chats_go_browse}}</view>
+  </view>
+  <view wx:elif="{{loaded}}" class="empty-state">
+    <image class="empty-state-icon" src="/images/icon-msg.png" mode="aspectFit" />
+    <view class="empty-state-title">{{t.chats_login_hint}}</view>
+    <view class="btn btn-primary empty-btn" bindtap="goLogin">{{t.chats_go_login}}</view>
+  </view>
+</view>

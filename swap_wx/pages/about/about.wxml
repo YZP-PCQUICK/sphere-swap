@@ -1,0 +1,97 @@
+<view class="page">
+  <!-- 顶部Tab：关于 / 隐私政策 / 用户协议 / 支持我们 / 广告合作 -->
+  <scroll-view class="about-tabs" scroll-x enhanced show-scrollbar="{{false}}">
+    <view class="about-tabs-inner">
+      <view wx:for="{{tabs}}" wx:key="key"
+        class="about-tab {{tab === item.key ? 'active' : ''}}"
+        bindtap="switchTab" data-key="{{item.key}}">{{t[item.labelKey]}}</view>
+    </view>
+  </scroll-view>
+
+  <!-- ============ 关于我们（网站 about.html） ============ -->
+  <view wx:if="{{tab === 'about'}}" class="about-card">
+    <image class="about-logo" src="/images/logo.png" mode="aspectFit" />
+    <view class="about-title">{{t.about_app_title}}</view>
+    <view class="about-text">{{t.about_desc1}}</view>
+    <view class="about-text">{{t.about_desc2}}</view>
+
+    <view class="official-link" bindtap="copyOfficialSite">
+      <view class="official-label">{{t.about_official_site}}</view>
+      <view class="official-url">{{officialSiteText}}</view>
+    </view>
+
+    <view class="feedback">{{t.about_feedback}}</view>
+  </view>
+
+  <!-- ============ 隐私政策（网站 privacy.html，文案逐字一致） ============ -->
+  <view wx:elif="{{tab === 'privacy'}}" class="about-card doc">
+    <view class="doc-title">{{t.about_tab_privacy}}</view>
+    <view class="doc-updated">{{t.about_last_updated}}</view>
+    <view class="doc-intro">{{privacy.intro}}</view>
+    <view class="doc-section" wx:for="{{privacy.sections}}" wx:key="h" wx:for-item="sec">
+      <view class="doc-h">{{sec.h}}</view>
+      <view class="doc-p" wx:for="{{sec.ps}}" wx:key="*this" wx:for-item="p">{{p}}</view>
+      <view class="doc-ul">
+        <view class="doc-li" wx:for="{{sec.ul}}" wx:key="*this" wx:for-item="li">{{li}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ============ 用户协议（网站 terms.html，文案逐字一致） ============ -->
+  <view wx:elif="{{tab === 'terms'}}" class="about-card doc">
+    <view class="doc-title">{{t.about_tab_terms}}</view>
+    <view class="doc-updated">{{t.about_last_updated}}</view>
+    <view class="doc-intro">{{terms.intro}}</view>
+    <view class="doc-section" wx:for="{{terms.sections}}" wx:key="h" wx:for-item="sec">
+      <view class="doc-h">{{sec.h}}</view>
+      <view class="doc-p" wx:for="{{sec.ps}}" wx:key="*this" wx:for-item="p">{{p}}</view>
+      <view class="doc-ul">
+        <view class="doc-li" wx:for="{{sec.ul}}" wx:key="*this" wx:for-item="li">{{li}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ============ 支持我们（网站 support.html） ============ -->
+  <view wx:elif="{{tab === 'support'}}" class="about-card doc">
+    <view class="doc-title">{{t.about_support_title}}</view>
+    <view class="doc-updated">{{t.about_support_sub}}</view>
+
+    <!-- 平台承诺 -->
+    <view class="promise-box">
+      <view class="promise-title">{{t.about_support_promise_title}}</view>
+      <view class="promise-line" wx:for="{{supportPromise}}" wx:key="pre">
+        {{item.pre}}<text class="promise-strong">{{item.strong}}</text>{{item.post}}
+      </view>
+    </view>
+
+    <!-- 赞赏码 -->
+    <view class="reward-box">
+      <view class="reward-title">{{t.about_reward_title}}</view>
+      <view class="reward-sub">{{t.about_reward_sub}}</view>
+      <image wx:if="{{!rewardImgError}}" class="reward-img" src="{{rewardImg}}" mode="aspectFit"
+        binderror="onRewardImgError" />
+      <view wx:else class="reward-failed">{{t.about_reward_failed}}</view>
+      <view class="reward-scan">{{t.about_reward_scan}}</view>
+    </view>
+
+    <view class="doc-footer">感谢每一位支持 SWAP 的同学，是你们让校园闲置流转得更远。</view>
+  </view>
+
+  <!-- ============ 广告合作（网站 advertise.html） ============ -->
+  <view wx:elif="{{tab === 'ad'}}" class="about-card doc ad-card">
+    <image class="ad-icon" src="/images/icon-msg.png" mode="aspectFit" />
+    <view class="doc-title">{{t.about_ad_title}}</view>
+    <view class="doc-p ad-desc">{{t.about_ad_desc}}</view>
+    <view class="doc-p ad-desc ad-contact">{{t.about_ad_contact}}</view>
+    <view class="qr-box">
+      <image wx:if="{{!adQrImgError}}" class="qr-img" src="{{adQrImg}}" mode="aspectFit"
+        binderror="onAdQrImgError" />
+      <view wx:else class="reward-failed">{{t.about_qr_failed}}</view>
+    </view>
+    <view class="qr-tip">{{t.about_ad_qr_tip}}</view>
+    <view class="qr-tip qr-note">{{t.about_ad_qr_note}}</view>
+  </view>
+
+  <view class="about-footer">{{t.about_footer}}</view>
+  <view class="about-icp">{{t.icp_number}}</view>
+</view>

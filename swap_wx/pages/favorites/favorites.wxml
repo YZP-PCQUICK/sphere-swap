@@ -1,0 +1,42 @@
+<view class="page">
+  <block wx:if="{{goods.length > 0}}">
+    <view class="goods-grid">
+      <view class="goods-card" wx:for="{{goods}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+        <view class="goods-card-img">
+          <image wx:if="{{item.image}}" class="goods-card-img-el" src="{{item.image}}" mode="aspectFill" lazy-load />
+          <view wx:else class="goods-card-img-empty">
+            <image class="goods-card-img-empty-icon" src="/images/icon-image.png" mode="aspectFit" />
+            <text class="goods-card-img-empty-text">{{t.no_image}}</text>
+          </view>
+          <view wx:if="{{item.status !== 'on_sale'}}" class="sold-overlay">
+            {{item.status === 'sold' ? t.goods_sold_out : t.goods_off_shelf}}
+          </view>
+        </view>
+        <view class="goods-card-body">
+          <view class="goods-card-title">{{item.title}}</view>
+          <view class="goods-card-price">
+            <text wx:if="{{item.price == '0'}}" class="goods-card-free">{{t.goods_free}}</text>
+            <text wx:else class="goods-card-price-num">{{item.price}}</text>
+          </view>
+          <view class="goods-card-meta">
+            <text class="goods-card-school">{{item.school}}</text>
+            <view class="goods-card-views">
+              <image class="goods-card-views-icon" src="/images/icon-eye.png" mode="aspectFit" />
+              <text>{{item.views}}</text>
+            </view>
+          </view>
+          <view class="unfav-btn" catchtap="unfavorite" data-id="{{item.id}}">
+            <image class="unfav-btn-icon" src="/images/icon-heart-red.png" mode="aspectFit" />
+            <text>{{t.fav_unfavorite}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+  <view wx:else class="empty-state">
+    <image class="empty-state-icon" src="/images/icon-heart.png" mode="aspectFit" />
+    <view class="empty-state-text">{{isLogin ? t.fav_empty_go : t.fav_login_hint}}</view>
+    <view wx:if="{{!isLogin}}" class="btn btn-primary empty-btn" bindtap="goLogin">{{t.chats_go_login}}</view>
+    <view wx:else class="btn btn-primary empty-btn" bindtap="goList">{{t.fav_go_browse}}</view>
+  </view>
+</view>

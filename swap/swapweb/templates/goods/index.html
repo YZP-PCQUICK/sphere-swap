@@ -1,0 +1,578 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+
+<meta name="baidu_union_verify" content="909e36899e340c901e811a1021840366">
+
+<style>
+    .hero {
+        background: linear-gradient(135deg, #E8F4FD 0%, #D0E8F8 50%, #B8DBF3 100%);
+        border-radius: 20px;
+        padding: 48px 40px;
+        margin-bottom: 32px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        right: -50px;
+        top: -50px;
+        width: 200px;
+        height: 200px;
+        background: rgba(74, 144, 226, 0.1);
+        border-radius: 50%;
+    }
+
+    .hero::after {
+        content: '';
+        position: absolute;
+        right: 80px;
+        bottom: -80px;
+        width: 160px;
+        height: 160px;
+        background: rgba(95, 195, 228, 0.15);
+        border-radius: 50%;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+        max-width: 500px;
+    }
+
+    .hero-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 12px;
+        line-height: 1.3;
+    }
+
+    .hero-title span {
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .hero-desc {
+        font-size: 16px;
+        color: var(--text-secondary);
+        margin-bottom: 24px;
+        line-height: 1.6;
+    }
+
+    .hero-search {
+        display: flex;
+        margin-bottom: 16px;
+    }
+
+    .hero-search > * + * {
+        margin-left: 12px;
+    }
+
+    .hero-search input {
+        flex: 1;
+        padding: 14px 20px;
+        border: none;
+        border-radius: var(--radius-full);
+        font-size: 15px;
+        box-shadow: var(--shadow-sm);
+        background: var(--bg-white);
+    }
+
+    .hero-search input:focus {
+        box-shadow: var(--shadow-primary);
+        background: var(--bg-white);
+        outline: none;
+    }
+
+    /* 覆盖浏览器自动填充背景色 */
+    .hero-search input:-webkit-autofill,
+    .hero-search input:-webkit-autofill:hover,
+    .hero-search input:-webkit-autofill:focus {
+        -webkit-text-fill-color: var(--text-primary);
+        -webkit-box-shadow: 0 0 0px 1000px var(--bg-white) inset;
+        transition: background-color 5000s ease-in-out 0s;
+        background-color: var(--bg-white) !important;
+    }
+
+    .hero-search button {
+        padding: 14px 28px;
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        border-radius: var(--radius-full);
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        box-shadow: var(--shadow-primary);
+        transition: all var(--transition-fast);
+    }
+
+    .hero-search button:hover {
+        transform: translateY(-1px);
+    }
+
+    .category-section {
+        margin-bottom: 32px;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text-primary);
+        position: relative;
+        padding-left: 12px;
+    }
+
+    .section-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 20px;
+        background: var(--primary-gradient);
+        border-radius: 2px;
+    }
+
+    .section-more {
+        font-size: 14px;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+    }
+
+    .section-more > * + * {
+        margin-left: 4px;
+    }
+
+    .section-more:hover {
+        color: var(--primary-color);
+    }
+
+    .category-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        grid-gap: 16px;
+        gap: 16px;
+    }
+
+    .category-item {
+        background: var(--bg-white);
+        border-radius: var(--radius-lg);
+        padding: 20px 12px;
+        text-align: center;
+        cursor: pointer;
+        transition: all var(--transition-normal);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .category-item:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .category-icon {
+        width: 48px;
+        height: 48px;
+        margin: 0 auto 10px;
+        background: var(--primary-bg);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+
+    .category-name {
+        font-size: 13px;
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+
+    .goods-section {
+        margin-bottom: 32px;
+    }
+
+    @media (max-width: 1024px) {
+        .category-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero {
+            padding: 28px 20px;
+            margin-bottom: 24px;
+            border-radius: 16px;
+        }
+
+        .hero-title {
+            font-size: 22px;
+        }
+
+        .hero-desc {
+            font-size: 14px;
+        }
+
+        .hero-search {
+            flex-direction: column;
+        }
+
+        .hero-search > * + * {
+            margin-left: 0;
+            margin-top: 10px;
+        }
+
+        .hero-search input,
+        .hero-search button {
+            width: 100%;
+        }
+
+        .section-title {
+            font-size: 17px;
+        }
+
+        .category-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .category-item {
+            padding: 14px 8px;
+            border-radius: 12px;
+        }
+
+        .category-icon {
+            width: 38px;
+            height: 38px;
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+
+        .category-name {
+            font-size: 12px;
+        }
+
+        .goods-section,
+        .category-section {
+            margin-bottom: 24px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .category-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    /* ============ 广告展示栏（16:9） ============ */
+    .ad-banner {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        max-height: 420px;
+        margin-bottom: 32px;
+        border-radius: 16px;
+        overflow: hidden;
+        background: var(--bg-page);
+        box-shadow: var(--shadow-md);
+    }
+
+    /* 老浏览器不支持 aspect-ratio 时的 16:9 兜底 */
+    @supports not (aspect-ratio: 16 / 9) {
+        .ad-banner { height: 0; padding-top: 56.25%; }
+        .ad-banner-track { position: absolute; top: 0; left: 0; }
+    }
+
+    .ad-banner-track {
+        display: flex;
+        height: 100%;
+        transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+
+    .ad-banner-item {
+        flex: 0 0 100%;
+        height: 100%;
+    }
+
+    .ad-banner-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .ad-banner-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.85);
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: var(--shadow-sm);
+        transition: all var(--transition-fast);
+        border: none;
+        z-index: 2;
+    }
+
+    .ad-banner-arrow:hover { background: #fff; box-shadow: var(--shadow-md); }
+
+    .ad-prev { left: 12px; }
+    .ad-next { right: 12px; }
+
+    .ad-banner-dots {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 6px;
+        z-index: 2;
+    }
+
+    .ad-banner-dots span {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.6);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+    }
+
+    .ad-banner-dots span.active {
+        background: #fff;
+        width: 18px;
+        border-radius: 4px;
+    }
+
+    @media (max-width: 768px) {
+        .ad-banner {
+            border-radius: 12px;
+            margin-bottom: 24px;
+            max-height: none;
+        }
+        .ad-banner-arrow {
+            width: 30px;
+            height: 30px;
+        }
+        .ad-prev { left: 8px; }
+        .ad-next { right: 8px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero 区域 -->
+<div class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">让闲置<span>流转</span>起来<br>校园二手交易平台</h1>
+        <p class="hero-desc">SWAP 是专为校园打造的二手交易平台，安全、便捷、高效，帮你把闲置变成价值</p>
+        <form class="hero-search" action="{% url 'goods:list' %}" method="get">
+            <input type="text" name="keyword" placeholder="搜索你想要的商品...">
+            <button type="submit">搜索</button>
+        </form>
+    </div>
+</div>
+
+<!-- 广告展示栏（16:9，当日无广告时整体隐藏） -->
+<div class="ad-banner" id="adBanner" style="display:none;">
+    <div class="ad-banner-track" id="adTrack"></div>
+    <button type="button" class="ad-banner-arrow ad-prev" id="adPrev" aria-label="上一张">
+        <svg class="icon" style="width:18px;height:18px;"><use href="#icon-arrow-left"></use></svg>
+    </button>
+    <button type="button" class="ad-banner-arrow ad-next" id="adNext" aria-label="下一张">
+        <svg class="icon" style="width:18px;height:18px;"><use href="#icon-arrow-right"></use></svg>
+    </button>
+    <div class="ad-banner-dots" id="adDots"></div>
+</div>
+
+<!-- 分类导航 -->
+<div class="category-section">
+    <div class="section-header">
+        <h2 class="section-title">热门分类</h2>
+        <a href="{% url 'goods:list' %}" class="section-more">查看全部 →</a>
+    </div>
+    <div class="category-grid">
+        {% for cat_key, cat_name in categories %}
+        <a href="{% url 'goods:list' %}?category={{ cat_key }}" class="category-item">
+            <div class="category-icon">
+                <svg class="icon" style="width:24px;height:24px;color:var(--primary-color);">
+                    {% if cat_key == 'digital' %}<use href="#icon-laptop"></use>
+                    {% elif cat_key == 'books' %}<use href="#icon-book"></use>
+                    {% elif cat_key == 'daily' %}<use href="#icon-home"></use>
+                    {% elif cat_key == 'clothing' %}<use href="#icon-shirt"></use>
+                    {% elif cat_key == 'sports' %}<use href="#icon-ball"></use>
+                    {% elif cat_key == 'service' %}<use href="#icon-graduation"></use>
+                    {% elif cat_key == 'snack' %}<use href="#icon-snack"></use>
+                    {% elif cat_key == 'beauty' %}<use href="#icon-beauty"></use>
+                    {% elif cat_key == 'art' %}<use href="#icon-art"></use>
+                    {% elif cat_key == 'rental' %}<use href="#icon-rental"></use>
+                    {% elif cat_key == 'free' %}<use href="#icon-free"></use>
+                    {% else %}<use href="#icon-box"></use>{% endif %}
+                </svg>
+            </div>
+            <div class="category-name">{{ cat_name }}</div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- 最新商品 -->
+<div class="goods-section">
+    <div class="section-header">
+        <h2 class="section-title">最新发布</h2>
+        <a href="{% url 'goods:list' %}" class="section-more">更多商品 →</a>
+    </div>
+    
+    {% if goods_list %}
+    <div class="goods-grid">
+        {% for goods in goods_list %}
+        <a href="{% url 'goods:detail' goods.id %}" class="goods-card">
+            <div class="goods-card-img">
+                {% with first_img=goods.images.first %}
+                    {% if first_img %}
+                    <img src="{{ first_img.image.url }}" alt="{{ goods.title }}" loading="lazy" width="220" height="200" decoding="async">
+                    {% else %}
+                    <div style="width:100%;height:100%;background:var(--bg-page);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-light);gap:6px;">
+                        <svg class="icon" style="width:36px;height:36px;"><use href="#icon-image"></use></svg>
+                        <span style="font-size:13px;">暂无图片</span>
+                    </div>
+                    {% endif %}
+                {% endwith %}
+            </div>
+            <div class="goods-card-body">
+                <div class="goods-card-title">{{ goods.title }}</div>
+                <div class="goods-card-price">
+                    {{ goods.price }}
+                    {% if goods.original_price %}
+                    <span class="goods-card-original-price">¥{{ goods.original_price }}</span>
+                    {% endif %}
+                </div>
+                <div class="goods-card-meta">
+                    <span class="goods-card-school">{{ goods.school }}</span>
+                    <span class="goods-card-views">
+                        <svg class="icon" style="width:14px;height:14px;vertical-align:-2px;"><use href="#icon-eye"></use></svg>
+                        {{ goods.views }}
+                    </span>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon"><svg class="icon" style="width:36px;height:36px;"><use href="#icon-box"></use></svg></div>
+        <div class="empty-state-text">暂无商品，快来发布第一个吧~</div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // ============ 首页广告轮播（当日无广告自动隐藏） ============
+    (function () {
+        var banner = document.getElementById('adBanner');
+        if (!banner) return;
+
+        fetch("{% url 'goods:ads_today' %}")
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                var ads = (data && data.ads) || [];
+                if (!ads.length) return; // 当日无广告：保持隐藏，不占页面空间
+
+                var track = document.getElementById('adTrack');
+                var dots = document.getElementById('adDots');
+
+                ads.forEach(function (ad, i) {
+                    var item = document.createElement('div');
+                    item.className = 'ad-banner-item';
+                    var img = document.createElement('img');
+                    img.src = ad.image;
+                    img.alt = '广告' + (i + 1);
+                    img.loading = 'eager';
+                    img.decoding = 'async';
+                    // 点击跳转（未配置链接则不跳转）
+                    if (ad.link) {
+                        img.style.cursor = 'pointer';
+                        img.addEventListener('click', function () {
+                            window.open(ad.link, '_blank', 'noopener');
+                        });
+                    }
+                    item.appendChild(img);
+                    track.appendChild(item);
+
+                    var dot = document.createElement('span');
+                    dot.addEventListener('click', function () { go(i); });
+                    dots.appendChild(dot);
+                });
+
+                // 预加载全部广告图，避免切换时出现空白
+                var total = ads.length, current = 0;
+
+                function go(i) {
+                    current = (i + total) % total;
+                    track.style.transform = 'translateX(-' + (current * 100) + '%)';
+                    dots.querySelectorAll('span').forEach(function (d, k) {
+                        d.classList.toggle('active', k === current);
+                    });
+                }
+
+                // 全部图片加载完成（或失败）后再显示，防止布局跳动
+                var loaded = 0;
+                function onOne() {
+                    loaded++;
+                    if (loaded >= total) {
+                        banner.style.display = 'block';
+                        go(0);
+                    }
+                }
+                track.querySelectorAll('img').forEach(function (img) {
+                    if (img.complete) { onOne(); }
+                    else {
+                        img.addEventListener('load', onOne);
+                        img.addEventListener('error', onOne);
+                    }
+                });
+
+                // 自动轮播：每 5 秒切换（悬停暂停）
+                var timer = null;
+                function start() {
+                    if (total > 1) timer = setInterval(function () { go(current + 1); }, 5000);
+                }
+                function stop() { clearInterval(timer); }
+                banner.addEventListener('mouseenter', stop);
+                banner.addEventListener('mouseleave', start);
+                start();
+
+                // 手动切换：上一张 / 下一张（重置自动计时）
+                function manual(delta) {
+                    stop(); go(current + delta); start();
+                }
+                document.getElementById('adPrev').addEventListener('click', function () { manual(-1); });
+                document.getElementById('adNext').addEventListener('click', function () { manual(1); });
+            })
+            .catch(function () { /* 获取失败：广告栏保持隐藏 */ });
+    })();
+</script>
+{% endblock %}

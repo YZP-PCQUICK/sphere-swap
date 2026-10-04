@@ -1,0 +1,62 @@
+<view class="auth-page">
+  <view class="auth-card">
+    <view class="auth-header">
+      <image class="auth-logo" src="/images/logo.png" mode="aspectFit" />
+      <view class="auth-title">{{t.register_create_account}}</view>
+      <view class="auth-subtitle">{{t.register_join}}</view>
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">{{t.login_email}}</view>
+      <input class="form-input" type="text" value="{{form.email}}" placeholder="{{t.login_email_ph}}" bindinput="onEmail"
+        bindblur="checkEmail" bindconfirm="checkEmail" />
+      <view wx:if="{{emailHint.text}}" class="{{emailHint.cls}}">{{emailHint.text}}</view>
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">{{t.register_set_password}}</view>
+      <input class="form-input" password value="{{form.password}}" placeholder="{{t.register_password_ph}}"
+        bindinput="onPassword" />
+      <view class="password-strength">
+        <view class="password-strength-bar {{strengthClass}}"></view>
+      </view>
+      <view wx:if="{{passwordHint.text}}" class="{{passwordHint.cls}}">{{passwordHint.text}}</view>
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">{{t.register_confirm_label}}</view>
+      <input class="form-input" password value="{{form.confirmPassword}}" placeholder="{{t.register_confirm_ph}}"
+        bindinput="onConfirm" />
+      <view wx:if="{{confirmHint.text}}" class="{{confirmHint.cls}}">{{confirmHint.text}}</view>
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">{{t.register_email_code}}</view>
+      <view class="verify-group">
+        <input class="form-input verify-input" type="number" maxlength="6" value="{{form.code}}"
+          placeholder="{{t.reset_code_ph}}" bindinput="onCode" />
+        <button class="btn btn-outline verify-btn" size="mini" disabled="{{countdown > 0}}"
+          bindtap="sendCode">{{countdown > 0 ? countdown + t.reset_resend_suffix : t.reset_get_code}}</button>
+      </view>
+      <view wx:if="{{codeError}}" class="form-error">{{codeError}}</view>
+    </view>
+
+    <button class="btn btn-primary btn-block btn-lg" loading="{{loading}}" disabled="{{loading}}"
+      bindtap="handleRegister">{{t.register_btn}}</button>
+
+    <!-- 平台免责声明 -->
+    <view class="disclaimer-box">
+      <view class="disclaimer-title">
+        <image class="disclaimer-icon" src="/images/icon-warning.png" />
+        <text>{{t.register_tip_title}}</text>
+      </view>
+      <view class="disclaimer-item">{{t.register_tip_1}}</view>
+      <view class="disclaimer-item">{{t.register_tip_2_pre}}<text class="disclaimer-strong">{{t.register_tip_2_strong}}</text>{{t.register_tip_2_post}}</view>
+      <view class="disclaimer-item">{{t.register_tip_3_pre}}<text class="disclaimer-strong">{{t.register_tip_3_strong}}</text>{{t.register_tip_3_post}}</view>
+    </view>
+
+    <view class="auth-footer">
+      {{t.register_have_account}}<text class="footer-link" bindtap="goLogin">{{t.register_go_login_now}}</text>
+    </view>
+  </view>
+</view>

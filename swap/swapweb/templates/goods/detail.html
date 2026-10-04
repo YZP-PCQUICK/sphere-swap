@@ -1,0 +1,568 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ goods.title }} - SWAP校园交易平台{% endblock %}
+
+
+
+{% block extra_css %}
+<style>
+    .detail-container {
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .detail-info {
+        margin-left: 24px;
+    }
+
+    .detail-gallery {
+        width: 480px;
+        flex-shrink: 0;
+    }
+
+    .main-image {
+        width: 100%;
+        height: 480px;
+        background: var(--bg-page);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        margin-bottom: 12px;
+        position: relative;
+    }
+
+    .main-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .thumb-list {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .thumb-item + .thumb-item {
+        margin-left: 10px;
+    }
+
+    .thumb-item {
+        width: 72px;
+        height: 72px;
+        flex-shrink: 0;
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all var(--transition-fast);
+    }
+
+    .thumb-item.active {
+        border-color: var(--primary-color);
+    }
+
+    .thumb-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .detail-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .detail-card {
+        background: var(--bg-white);
+        border-radius: var(--radius-lg);
+        padding: 28px;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 20px;
+    }
+
+    .goods-title {
+        font-size: 22px;
+        font-weight: 600;
+        line-height: 1.4;
+        margin-bottom: 12px;
+        color: var(--text-primary);
+    }
+
+    .goods-price-row {
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        row-gap: 4px;
+        margin-bottom: 20px;
+        padding: 16px 20px;
+        background: var(--primary-bg);
+        border-radius: var(--radius-md);
+    }
+
+    .goods-price-row > * + * {
+        margin-left: 12px;
+    }
+
+    .goods-price {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--error-color);
+    }
+
+    .goods-price::before {
+        content: '¥';
+        font-size: 18px;
+        font-weight: 500;
+        margin-right: 2px;
+    }
+
+    .goods-original-price {
+        font-size: 16px;
+        color: var(--text-light);
+        text-decoration: line-through;
+    }
+
+    .goods-meta {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 14px;
+        gap: 14px;
+        margin-bottom: 24px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+
+    .meta-item > * + * {
+        margin-left: 8px;
+    }
+
+    .meta-label {
+        color: var(--text-light);
+    }
+
+    .meta-value {
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+
+    .action-row {
+        display: flex;
+        margin-bottom: 16px;
+    }
+
+    .action-row .btn + .btn {
+        margin-left: 12px;
+    }
+
+    .action-row .btn {
+        flex: 1;
+        padding: 14px;
+        font-size: 16px;
+    }
+
+    .seller-section {
+        display: flex;
+        align-items: center;
+        padding: 16px;
+        background: var(--bg-page);
+        border-radius: var(--radius-md);
+        margin-bottom: 20px;
+    }
+
+    .seller-info {
+        margin-left: 14px;
+    }
+
+    .seller-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--primary-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 18px;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .seller-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .seller-info {
+        margin-left: 14px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .seller-name {
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .seller-school {
+        font-size: 13px;
+        color: var(--text-secondary);
+    }
+
+    .section-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+    }
+
+    .section-title::before {
+        content: '';
+        width: 3px;
+        height: 16px;
+        background: var(--primary-gradient);
+        border-radius: 2px;
+        margin-right: 8px;
+    }
+
+    .goods-description {
+        line-height: 1.8;
+        color: var(--text-secondary);
+        font-size: 15px;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .status-tag {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: var(--radius-full);
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 12px;
+    }
+
+    .status-on_sale {
+        background: #E6F7E6;
+        color: #52C41A;
+    }
+
+    .status-sold {
+        background: #FFF1F0;
+        color: #F5222D;
+    }
+
+    .status-offline {
+        background: #F5F5F5;
+        color: #8C8C8C;
+    }
+
+    .sold-overlay {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+        font-weight: 700;
+        z-index: 2;
+    }
+
+    @media (max-width: 768px) {
+        .detail-container {
+            flex-direction: column;
+        }
+
+        .detail-info {
+            margin-left: 0;
+            margin-top: 16px;
+            width: 100%;
+        }
+
+        .detail-gallery {
+            width: 100%;
+        }
+
+        .main-image {
+            height: calc(100vw - 32px);
+        }
+
+        .detail-card {
+            padding: 20px;
+            border-radius: 14px;
+        }
+
+        .goods-title {
+            font-size: 18px;
+        }
+
+        .goods-price {
+            font-size: 26px;
+        }
+
+        .goods-meta {
+            grid-template-columns: 1fr;
+            grid-gap: 10px;
+            gap: 10px;
+        }
+
+        .thumb-item {
+            width: 56px;
+            height: 56px;
+        }
+
+        .goods-original-price {
+            font-size: 14px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="detail-container">
+    <!-- 图片区 -->
+    <div class="detail-gallery">
+        <div class="main-image" id="mainImage">
+            {% with images=goods.images.all %}
+                {% if images %}
+                    <img id="mainImg" src="{{ images.0.image.url }}" alt="{{ goods.title }} - 商品主图" decoding="async" fetchpriority="high">
+                {% else %}
+                    <div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-light);gap:8px;">
+                        <svg class="icon" style="width:48px;height:48px;"><use href="#icon-image"></use></svg>
+                        <span style="font-size:14px;">暂无图片</span>
+                    </div>
+                {% endif %}
+            {% endwith %}
+            {% if goods.status != 'on_sale' %}
+            <div class="sold-overlay">
+                {% if goods.status == 'sold' %}已售出{% else %}已下架{% endif %}
+            </div>
+            {% endif %}
+        </div>
+        {% with images=goods.images.all %}
+        {% if images|length > 1 %}
+        <div class="thumb-list">
+            {% for img in images %}
+            <div class="thumb-item {% if forloop.first %}active{% endif %}" onclick="switchImage(this, '{{ img.image.url }}')">
+                <img src="{{ img.image.url }}" alt="{{ goods.title }} - 商品缩略图 {{ forloop.counter }}" loading="lazy" decoding="async">
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- 信息区 -->
+    <div class="detail-info">
+        <div class="detail-card">
+            {% if goods.status == 'on_sale' %}
+            <span class="status-tag status-on_sale">在售</span>
+            {% elif goods.status == 'sold' %}
+            <span class="status-tag status-sold">已售出</span>
+            {% else %}
+            <span class="status-tag status-offline">已下架</span>
+            {% endif %}
+
+            <h1 class="goods-title">{{ goods.title }}</h1>
+
+            <div class="goods-price-row">
+                <span class="goods-price">{{ goods.price }}</span>
+                {% if goods.original_price %}
+                <span class="goods-original-price">原价 ¥{{ goods.original_price }}</span>
+                {% endif %}
+            </div>
+
+            <div class="goods-meta">
+                <div class="meta-item">
+                    <span class="meta-label">分类：</span>
+                    <span class="meta-value">{{ goods.get_category_display }}{% if goods.sub_category %} · {{ goods.sub_category }}{% endif %}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">交易方式：</span>
+                    <span class="meta-value">{{ goods.get_trade_type_display }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">学校：</span>
+                    <span class="meta-value">{{ goods.school }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">浏览：</span>
+                    <span class="meta-value">{{ goods.views }} 次</span>
+                </div>
+            </div>
+
+            <!-- 卖家信息 -->
+            <div class="seller-section">
+                <div class="seller-avatar" aria-label="卖家头像">
+                    {% if goods.seller.avatar %}
+                    <img src="{{ goods.seller.avatar.url }}" alt="卖家头像" onerror="this.onerror=null; this.outerHTML='<svg class=&quot;icon&quot; style=&quot;width:40px;height:40px;&quot;><use href=&quot;#icon-default-avatar&quot;></use></svg>';">
+                    {% else %}
+                    <svg class="icon" style="width:40px;height:40px;" aria-label="默认卖家头像"><use href="#icon-default-avatar"></use></svg>
+                    {% endif %}
+                </div>
+                <div class="seller-info">
+                    <div class="seller-name">{{ goods.seller.nickname|default:goods.seller.email }}</div>
+                    <div class="seller-school">{{ goods.seller.school|default:"未填写学校" }}</div>
+                </div>
+            </div>
+
+            {% if user.is_authenticated and user.id != goods.seller.id and goods.status == 'on_sale' %}
+            <div class="action-row">
+                <button class="btn btn-light" onclick="toggleFavorite({{ goods.id }})">
+                    <svg id="favIcon" class="icon {% if is_favorited %}filled{% endif %}" 
+                         style="width:16px;height:16px;{% if is_favorited %}color:var(--error-color);{% endif %}">
+                        <use href="#icon-heart"></use>
+                    </svg>
+                    <span id="favText">{% if is_favorited %}已收藏{% else %}收藏{% endif %}</span>
+                </button>
+                <button class="btn btn-primary" onclick="startChat()">联系卖家</button>
+            </div>
+            {% elif goods.status == 'sold' %}
+            <div class="action-row">
+                <button class="btn btn-outline btn-block" disabled style="cursor:not-allowed;">
+                    <svg class="icon" style="width:16px;height:16px;vertical-align:-3px;"><use href="#icon-check"></use></svg>
+                    商品已售出
+                </button>
+            </div>
+            {% elif user.is_authenticated and user.id == goods.seller.id %}
+            <div class="action-row">
+                <a href="{% url 'goods:transactions' %}?tab=goods" class="btn btn-outline">查看我的发布</a>
+            </div>
+            {% elif not user.is_authenticated and goods.status == 'on_sale' %}
+            <div class="action-row">
+                <a href="{% url 'users:login' %}" class="btn btn-primary btn-block">登录后联系卖家</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- 商品描述 -->
+        <div class="detail-card">
+            <div class="section-title" style="display: flex; justify-content: flex-start; align-items: center;">
+                <span>商品描述</span>
+            </div>
+            <div class="goods-description" id="goodsDesc" style="max-height: 200px; overflow-y: auto; transition: max-height 0.3s ease;">
+                {{ goods.description|linebreaksbr }}
+            </div>
+        </div>
+
+        <!-- 卖家其他商品 -->
+        {% if seller_other %}
+        <div class="detail-card">
+            <div class="section-title">卖家其他商品</div>
+            <div class="goods-grid" style="grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                {% for g in seller_other %}
+                <a href="{% url 'goods:detail' g.id %}" class="goods-card">
+                    <div class="goods-card-img" style="height: 120px;">
+                        {% with first_img=g.images.first %}
+                            {% if first_img %}
+                            <img src="{{ first_img.image.url }}" alt="{{ g.title }}" loading="lazy">
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                    <div class="goods-card-body" style="padding: 8px;">
+                        <div class="goods-card-title" style="font-size: 12px; height: 32px;">{{ g.title }}</div>
+                        <div class="goods-card-price" style="font-size: 14px;">{{ g.price }}</div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // 切换主图
+    function switchImage(el, src) {
+        document.getElementById('mainImg').src = src;
+        document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    // 收藏/取消收藏
+    function toggleFavorite(goodsId) {
+        fetch("{% url 'goods:toggle_favorite' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+            },
+            body: JSON.stringify({ goods_id: goodsId })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                const icon = document.getElementById('favIcon');
+                const text = document.getElementById('favText');
+                if (data.is_favorited) {
+                    icon.classList.add('filled');
+                    icon.style.color = 'var(--error-color)';
+                    text.textContent = '已收藏';
+                    showToast('收藏成功', 'success');
+                } else {
+                    icon.classList.remove('filled');
+                    icon.style.color = '';
+                    text.textContent = '收藏';
+                    showToast('已取消收藏', 'info');
+                }
+            } else {
+                showToast('操作失败', 'error');
+            }
+        });
+    }
+
+    // 联系卖家：创建/复用会话并进入聊天
+    function startChat() {
+        fetch('/chat/api/start/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() },
+            body: JSON.stringify({ goods_id: {{ goods.id }} })
+        })
+        .then(function(r){ return r.json(); })
+        .then(function(data) {
+            if (data.success) {
+                window.location.href = '/chat/' + data.conv_id + '/';
+            } else {
+                showToast(data.msg || '无法发起会话', 'error');
+            }
+        })
+        .catch(function(){ showToast('网络错误，请重试', 'error'); });
+    }
+
+    
+
+    function getCSRFToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, 'csrftoken'.length + 1) === 'csrftoken=') {
+                    cookieValue = decodeURIComponent(cookie.substring('csrftoken'.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}

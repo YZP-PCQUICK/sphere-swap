@@ -1,0 +1,11 @@
+<view wx:if="{{enabled}}" class="qn-wrap">
+  <view class="qn-actions {{expanded ? 'open' : ''}}">
+    <view class="qn-action" bindtap="goHome">{{t.qn_home}}</view>
+    <view class="qn-action" bindtap="goList">{{t.qn_list}}</view>
+    <view class="qn-action" bindtap="goPublish">{{t.qn_publish}}</view>
+  </view>
+  <view class="qn-ball {{expanded ? 'open' : ''}}" bindtap="toggle">
+    <image wx:if="{{!expanded}}" class="qn-icon" src="/images/icon-sliders.png" mode="aspectFit" />
+    <text wx:else class="qn-close">×</text>
+  </view>
+</view>

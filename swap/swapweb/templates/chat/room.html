@@ -1,0 +1,536 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}与卖家沟通 - SWAP校园交易平台{% endblock %}
+
+{% block extra_css %}
+<style>
+    .chat-layout { display: flex; flex-direction: column; height: calc(100vh - 130px); max-width: 760px; margin: 0 auto; background: var(--bg-white); border: 1px solid var(--border-light); border-radius: var(--radius-lg); overflow: hidden; }
+    @supports (height: 100dvh) { .chat-layout { height: calc(100dvh - 130px); } }
+    .chat-header { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border-light); background: var(--bg-white); flex-shrink: 0; }
+    .chat-hd-back { display: none; align-items: center; justify-content: center; width: 40px; height: 40px; margin: -8px 0 -8px -10px; color: var(--text-secondary); cursor: pointer; border-radius: 50%; flex-shrink: 0; }
+    .chat-hd-back:hover { color: var(--primary-color); }
+    .chat-hd-back:active { background: var(--bg-page); }
+    .chat-hd-thumb { width: 48px; height: 48px; border-radius: var(--radius-sm); object-fit: cover; background: var(--bg-page); }
+    .chat-hd-info { flex: 1; min-width: 0; }
+    .chat-hd-title { font-weight: 700; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .chat-hd-sub { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+    .chat-hd-price { font-size: 15px; font-weight: 700; color: var(--error-color); }
+
+    .chat-messages { flex: 1; overflow-y: auto; padding: 16px; background: var(--bg-page); display: flex; flex-direction: column; gap: 12px; }
+    .chat-date { text-align: center; font-size: 11px; color: var(--text-light); margin: 4px 0; }
+    .msg { display: flex; gap: 10px; max-width: 78%; }
+    .msg.mine { align-self: flex-end; flex-direction: row-reverse; }
+    .msg.other { align-self: flex-start; }
+    .msg-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary-color); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; flex-shrink: 0; overflow: hidden; }
+    .msg-avatar-img { width: 36px; height: 36px; object-fit: cover; border-radius: 50%; display: block; image-rendering: -webkit-optimize-contrast; image-rendering: high-quality; }
+    .msg-body { display: flex; flex-direction: column; gap: 4px; }
+    .msg-bubble { padding: 9px 13px; border-radius: 12px; font-size: 14px; line-height: 1.5; word-break: break-word; white-space: pre-wrap; }
+    .msg.mine .msg-bubble { background: var(--primary-color); color: #fff; border-bottom-right-radius: 3px; }
+    .msg.other .msg-bubble { background: var(--bg-card); border: 1px solid var(--border-color); border-bottom-left-radius: 3px; }
+    .msg-time { font-size: 10px; color: var(--text-light); }
+    .msg.mine .msg-time { text-align: right; }
+    /* 已读/未读回执（仅自己发的消息显示） */
+    .msg-read { font-size: 10px; color: var(--text-light); }
+    .msg-read.read { color: var(--primary-color); }
+    .msg.mine .msg-read { display: block; text-align: right; margin-top: 1px; }
+    .msg-media img { max-width: 200px; max-height: 200px; border-radius: 10px; display: block; cursor: zoom-in; }
+    .msg-media video { max-width: 240px; max-height: 240px; border-radius: 10px; display: block; }
+    .msg-sys { align-self: center; text-align: center; background: rgba(74,144,226,.08); color: var(--primary-color); font-size: 12px; padding: 6px 12px; border-radius: 8px; }
+
+    .chat-input { flex-shrink: 0; border-top: 1px solid var(--border-light); background: #fff; padding: 10px 12px; }
+    .chat-toolbar { display: flex; }
+    .chat-toolbar .tool-item + .tool-item { margin-left: 8px; }
+    .tool-item { width: 34px; height: 34px; border-radius: 8px; background: var(--bg-page); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); cursor: pointer; transition: all .2s; position: relative; }
+    .tool-item:hover { color: var(--primary-color); background: rgba(74,144,226,.1); }
+    .tool-item input[type=file] { position: absolute; top: 0; right: 0; bottom: 0; left: 0; opacity: 0; cursor: pointer; }
+    .chat-input-row { display: flex; align-items: flex-end; }
+    .chat-input-row > * + * { margin-left: 8px; }
+    .chat-textarea { flex: 1; border: 1px solid var(--border-light); border-radius: 10px; padding: 9px 12px; font-size: 14px; resize: none; outline: none; min-height: 42px; max-height: 120px; font-family: inherit; }
+    .chat-textarea:focus { border-color: var(--primary-color); }
+    .chat-send-btn { height: 42px; padding: 0 22px; border-radius: 10px; border: none; background: var(--primary-color); color: #fff; font-weight: 600; cursor: pointer; transition: all .2s; }
+    .chat-send-btn:hover { background: #3a7ed9; }
+    .chat-send-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* 交易面板 */
+    .chat-trade-panel { flex-shrink: 0; border-top: 1px solid var(--border-light); background: #fff; display: none; }
+    .chat-trade-panel.show { display: block; }
+    .trade-box { padding: 14px 16px; }
+    .trade-btns { display: flex; }
+    .trade-btns .btn + .btn { margin-left: 10px; }
+    .trade-btns .btn { flex: 1; }
+    .trade-tip { font-size: 12px; color: var(--text-secondary); margin-top: 10px; line-height: 1.6; }
+    .qrcode-img { max-width: 180px; border-radius: 8px; border: 1px solid var(--border-light); }
+
+    .img-zoom-mask { position: fixed; top: 0; right: 0; bottom: 0; left: 0; background: rgba(0,0,0,.8); z-index: 1000; display: none; align-items: center; justify-content: center; }
+    .img-zoom-mask img { max-width: 90vw; max-height: 90vh; border-radius: 8px; }
+    .img-zoom-mask.show { display: flex; }
+
+    /* 移动端适配 */
+    @media (max-width: 768px) {
+        .chat-hd-back { display: flex; }
+        .chat-layout { height: calc(100vh - 150px); border-radius: 12px; }
+        @supports (height: 100dvh) { .chat-layout { height: calc(100dvh - 150px); } }
+        .chat-messages { -webkit-overflow-scrolling: touch; padding: 12px; }
+        .msg { max-width: 88%; }
+        .chat-header { padding: 10px 12px; }
+        .chat-hd-thumb { width: 40px; height: 40px; }
+        .tool-item { width: 40px; height: 40px; }
+        .chat-input { padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); }
+    }
+
+    /* 自定义确认弹窗 */
+    .confirm-mask { position: fixed; top: 0; right: 0; bottom: 0; left: 0; background: rgba(0,0,0,.5); z-index: 1100; display: none; align-items: center; justify-content: center; }
+    .confirm-mask.show { display: flex; }
+    .confirm-box { background: #fff; border-radius: 12px; width: 320px; max-width: 90vw; padding: 24px 20px 16px; box-shadow: 0 8px 30px rgba(0,0,0,.15); }
+    .confirm-title { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+    .confirm-text { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
+    .confirm-btns { display: flex; }
+    .confirm-btns .btn + .btn { margin-left: 10px; }
+    .confirm-btns .btn { flex: 1; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="chat-layout">
+    <!-- 头部 -->
+    <div class="chat-header">
+        <a class="chat-hd-back" href="{% url 'chat:list' %}" aria-label="返回消息列表">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        </a>
+
+        <img class="chat-hd-thumb" id="convImg" src="{{ conv.goods.get_first_image }}" alt="" onerror="this.hidden=true;">
+        <div class="chat-hd-info">
+            <div class="chat-hd-title" id="convTitle">{{ conv.goods.title }}{% if conv.goods.status == 'sold' and not conv.goods.allow_repeat %} <span style="color:var(--error-color);font-size:12px;font-weight:normal;">（商品已售出）</span>{% endif %}</div>
+            <div class="chat-hd-sub" id="convPeername">{{ peer_name }}</div>
+        </div>
+        <div class="chat-hd-price" id="convPrice">¥{{ conv.goods.price }}</div>
+    </div>
+
+    <!-- 消息区 -->
+    <div class="chat-messages" id="msgList"></div>
+
+    <!-- 交易面板 -->
+    <div class="chat-trade-panel" id="tradePanel"></div>
+
+    <!-- 输入区 -->
+    <div class="chat-input" id="inputArea">
+        <div class="chat-toolbar">
+            <label class="tool-item" title="发送图片">
+                <svg class="icon" style="width:18px;height:18px;"><use href="#icon-image"></use></svg>
+                <input type="file" accept="image/*" onchange="sendFile('image', this)">
+            </label>
+            <label class="tool-item" title="发送视频">
+                <svg class="icon" style="width:18px;height:18px;"><use href="#icon-camera"></use></svg>
+                <input type="file" accept="video/*" onchange="sendFile('video', this)">
+            </label>
+        </div>
+        <div class="chat-input-row">
+            <textarea id="msgInput" class="chat-textarea" rows="1" placeholder="输入消息，回车发送"></textarea>
+            <button class="chat-send-btn" id="sendBtn" onclick="sendText()">发送</button>
+        </div>
+    </div>
+</div>
+
+<!-- 图片放大 -->
+<div class="img-zoom-mask" id="imgZoom" onclick="this.classList.remove('show')"><img id="imgZoomSrc" src="" alt=""></div>
+
+<!-- 自定义确认弹窗 -->
+<div class="confirm-mask" id="confirmMask">
+    <div class="confirm-box">
+        <div class="confirm-title" id="confirmTitle">提示</div>
+        <div class="confirm-text" id="confirmText"></div>
+        <div class="confirm-btns">
+            <button class="btn btn-light" id="confirmCancel">取消</button>
+            <button class="btn btn-primary" id="confirmOk">确定</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    var convId = {{ conv.id }};
+    var myId = {{ user.id }};
+    var isBuyer = {{ is_buyer|yesno:'true,false' }};
+    var convStatus = '{{ conv.status }}';
+    var goodsSold = {{ goods_sold|yesno:'true,false' }};
+    var goodsDetailUrl = "{% url 'goods:detail' conv.goods.id %}";
+    var myAvatarUrl = "{{ my_avatar }}";
+    var peerAvatarUrl = "{{ peer_avatar }}";
+    var STORAGE_KEY = 'swap_chat_' + convId;
+    var messages = [];   // 本地合并后的消息（含本地未上发之前的历史）
+    var lastServerId = 0;
+    var pollTimer = null;
+    var receiving = false;
+    var readMaxId = 0; // 我发出的消息中已被对方读取的最大ID
+
+    // 从localStorage恢复历史
+    function loadLocal() {
+        try {
+            var raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                var arr = JSON.parse(raw);
+                messages = Array.isArray(arr) ? arr : [];
+                var maxId = 0;
+                for (var i = 0; i < messages.length; i++) {
+                    if (messages[i].id && messages[i].id > maxId) maxId = messages[i].id;
+                }
+                lastServerId = maxId;
+            } else {
+                messages = [];
+            }
+        } catch(e) { messages = []; }
+    }
+    function saveLocal() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-200))); } catch(e) {}
+    }
+    function upsertMessages(newMsgs) {
+        if (!newMsgs || !newMsgs.length) return;
+        var ids = {};
+        messages.forEach(function(m){ ids[m.id] = true; });
+        newMsgs.forEach(function(m){ if (m.id && !ids[m.id]) { messages.push(m); ids[m.id]=true; } });
+        saveLocal();
+        render();
+    }
+
+    // 渲染消息列表
+    function esc(s) {
+        var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML;
+    }
+    function avatarHtml(m) {
+        var url = '';
+        if (m.avatar) url = m.avatar;
+        else if (m.is_me) url = myAvatarUrl;
+        else url = peerAvatarUrl;
+        if (url) {
+            return '<img class="msg-avatar-img" src="' + esc(url) + '" alt="" onerror="this.onerror=null; this.outerHTML=\'<svg class=&quot;icon&quot; style=&quot;width:36px;height:36px;&quot;><use href=&quot;#icon-default-avatar&quot;></use></svg>\';">';
+        }
+        return '<svg class="icon" style="width:36px;height:36px;"><use href="#icon-default-avatar"></use></svg>';
+    }
+    function render() {
+        var box = document.getElementById('msgList');
+        box.innerHTML = '';
+        if (!messages.length) {
+            box.innerHTML = '<div class="chat-date">双方还没开始交流</div>';
+            return;
+        }
+        var html = '';
+        for (var i = 0; i < messages.length; i++) {
+            var m = messages[i];
+            if (m.is_sys) {
+                html += '<div class="msg-sys">' + esc(m.content) + '</div>';
+                continue;
+            }
+            var cls = m.is_me ? 'mine' : 'other';
+            var bubble = '';
+            if (m.type === 'image') {
+                bubble = '<div class="msg-media"><img src="' + esc(m.file) + '" onclick="zoomImg(this)"></div>';
+            } else if (m.type === 'video') {
+                bubble = '<div class="msg-media"><video src="' + esc(m.file) + '" controls></video></div>';
+            } else {
+                bubble = '<div class="msg-bubble">' + esc(m.content) + '</div>';
+            }
+            html += '<div class="msg ' + cls + '">' +
+                    '<div class="msg-avatar">' + avatarHtml(m) + '</div>' +
+                    '<div class="msg-body">' + bubble + '<span class="msg-time">' + esc(m.created) + '</span>' +
+                    (m.is_me && m.id ? '<span class="msg-read' + (m.id <= readMaxId ? ' read' : '') + '">' + (m.id <= readMaxId ? '已读' : '未读') + '</span>' : '') +
+                    '</div>' +
+                    '</div>';
+        }
+        box.innerHTML = html;
+        box.scrollTop = box.scrollHeight;
+    }
+
+    function zoomImg(img) {
+        document.getElementById('imgZoomSrc').src = img.src;
+        document.getElementById('imgZoom').classList.add('show');
+    }
+
+    // 轮询拉取
+    function poll() {
+        if (receiving) return;
+        receiving = true;
+        fetch('/chat/api/messages/?conversation_id=' + convId + '&after_id=' + lastServerId, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(function(r){ return r.json(); })
+        .then(function(data) {
+            if (data.success) {
+                convStatus = data.status;
+                if (data.goods) {
+                    goodsSold = (data.goods.status === 'sold') && !data.goods.allow_repeat;
+                }
+                lastServerId = Math.max(lastServerId, data.conversation_id ? lastServerId : lastServerId);
+                var hasNew = data.messages && data.messages.length;
+                if (hasNew) {
+                    var maxId = lastServerId;
+                    data.messages.forEach(function(m){ if (m.id && m.id > maxId) maxId = m.id; });
+                    // 合并并以最后的连续id更新
+                    var prev = lastServerId;
+                    upsertMessages(data.messages);
+                    // 重新计算服务器最新id
+                    data.messages.forEach(function(m){ if (m.id > lastServerId) lastServerId = m.id; });
+                }
+                // 已读回执更新：对方读了我发的消息后，下一次轮询立即刷新标识
+                if (data.my_read_max_id && data.my_read_max_id > readMaxId) {
+                    readMaxId = data.my_read_max_id;
+                    render();
+                }
+                renderTrade(data);
+            }
+        })
+        .catch(function(){})
+        .then(function(){ receiving = false; });
+    }
+
+    // 交易面板渲染
+    function renderTrade(data) {
+        var panel = document.getElementById('tradePanel');
+        var input = document.getElementById('inputArea');
+        var canChat = convStatus === 'trading';
+        var disclaimerHtml = '<div style="padding: 10px 16px; background: #FFF7E6; border-top: 1px solid #FFE7BA; font-size: 11px; color: #AD6800; line-height: 1.6;"><div style="display:flex;align-items:center;gap:6px;font-weight:600;margin-bottom:4px;"><svg class="icon" style="width:14px;height:14px;"><use href="#icon-warning"></use></svg>平台免责声明</div>本平台仅提供商品信息服务，不提供支付监管，交易款项不经过平台，平台不收取任何费用。请务必<strong>线下当面验货</strong>后再付款，谨防诈骗。</div>';
+
+        if (convStatus === 'completed') {
+            input.style.display = 'none';
+            panel.className = 'chat-trade-panel show';
+            panel.innerHTML = '<div class="trade-box"><div class="trade-tip" style="font-weight:600;font-size:14px;color:var(--success-color);">✓ 交易已完成</div><div class="trade-tip">感谢使用SWAP交易平台，服务器聊天记录已清除，历史记录保存在你的本地浏览器中。</div></div>' + disclaimerHtml;
+            return;
+        }
+
+        if (convStatus === 'cancelled') {
+            input.style.display = 'none';
+            panel.className = 'chat-trade-panel show';
+            panel.innerHTML = '<div class="trade-box"><div class="trade-tip" style="font-weight:600;color:var(--error-color);">交易已取消</div><div class="trade-tip">该交易已被取消，历史聊天记录仅供参考。</div></div>' + disclaimerHtml;
+            return;
+        }
+
+        // 商品已售出（非重复售卖）
+        if (goodsSold && convStatus !== 'confirmed') {
+            input.style.display = 'none';
+            panel.className = 'chat-trade-panel show';
+            panel.innerHTML = '<div class="trade-box"><div class="trade-tip" style="font-weight:600;color:var(--error-color);">该商品已售出</div><div class="trade-tip">商品已被其他买家购买，不可再进行交易。历史聊天记录仅供参考。</div></div>' + disclaimerHtml;
+            return;
+        }
+
+        var myConf = data.my_confirmed;
+        var otherConf = data.other_confirmed;
+
+        // 已确认状态：禁用输入
+        if (convStatus === 'confirmed') {
+            canChat = false;
+            input.style.display = 'none';
+            panel.className = 'chat-trade-panel show';
+            if (isBuyer && data.seller_has_qrcode) {
+                panel.innerHTML = '<div class="trade-box">' +
+                    '<div class="trade-tip" style="font-weight:600;color:var(--success-color);">双方已确认交易</div>' +
+                    '<img class="qrcode-img" src="' + esc(data.qrcode_url) + '" style="margin:12px 0;display:block;">' +
+                    '<div class="trade-tip">请扫码后向卖家支付 ¥' + esc(data.goods.price) + '。付款确认后点击下方按钮完成交易。</div>' +
+                    '<div style="margin-top:12px;display:flex;gap:8px;">' +
+                    '<button class="btn btn-outline" style="flex:1;" onclick="cancelTrade()">取消交易</button>' +
+                    '<button class="btn btn-primary" style="flex:1;" onclick="completeTrade()">确认收货</button>' +
+                    '</div></div>' + disclaimerHtml;
+            } else if (isBuyer) {
+                panel.innerHTML = '<div class="trade-box">' +
+                    '<div class="trade-tip" style="font-weight:600;color:var(--success-color);">双方已确认交易</div>' +
+                    '<div class="trade-tip">卖家暂未上传收款码，请联系卖家获取收款方式。</div>' +
+                    '<div style="margin-top:12px;"><button class="btn btn-outline" style="width:100%;" onclick="cancelTrade()">取消交易</button></div>' +
+                    '</div>' + disclaimerHtml;
+            } else {
+                panel.innerHTML = '<div class="trade-box">' +
+                    '<div class="trade-tip" style="font-weight:600;color:var(--success-color);">双方已确认交易</div>' +
+                    '<div class="trade-tip">买家已可以看到你的收款码。待买家确认收货后，本次交易即完成。</div></div>' + disclaimerHtml;
+            }
+            return;
+        }
+
+        // 洽谈中：显示输入，按条件显示确认按钮
+        input.style.display = '';
+        var confirmBtn = '';
+        if (myConf) {
+            confirmBtn = '<button class="btn btn-outline" style="flex:1;" disabled'+(otherConf?'':'')+'><svg class="icon" style="width:15px;height:15px;vertical-align:-2px;"><use href="#icon-check"></use></svg> 待对方确认</button>';
+        } else {
+            confirmBtn = '<button class="btn btn-primary" style="flex:1;" onclick="confirmTrade()">确认交易</button>';
+        }
+        var cancelBtn = isBuyer ? '<button class="btn btn-outline" style="flex:1;" onclick="cancelTrade()">取消交易</button>' : '';
+        panel.className = 'chat-trade-panel show';
+        panel.innerHTML = '<div class="trade-box">' +
+            '<div class="trade-btns">' + confirmBtn + cancelBtn + '<a class="btn btn-light" style="flex:1;" href="' + goodsDetailUrl + '">查看商品</a></div>' +
+            '<div class="trade-tip">双方确认交易后，买家即可查看卖家收款码付款。确认前请充分沟通好价格与交付方式。</div>' +
+            '</div>' + disclaimerHtml;
+
+        // 对方已确认的提示
+        if (otherConf && !myConf) {
+            panel.innerHTML = '<div class="trade-box"><div class="trade-tip" style="font-weight:600;color:var(--primary-color);">对方已确认交易，等待你的确认</div></div>' + panel.innerHTML;
+        }
+    }
+
+    function confirmTrade() {
+        fetch('/chat/api/confirm/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRF() },
+            body: JSON.stringify({ conversation_id: convId })
+        })
+        .then(function(r){ return r.json(); })
+        .then(function(data) {
+            if (data.success) { showToast('已确认交易', 'success'); poll(); }
+            else { showToast(data.msg || '操作失败', 'error'); }
+        });
+    }
+
+    function completeTrade() {
+        showConfirm('确认收货', '确认已经收到商品并付款给卖家？确认后本次交易完成，服务器聊天记录将被清除。', function() {
+            fetch('/chat/api/complete/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRF() },
+                body: JSON.stringify({ conversation_id: convId })
+            })
+            .then(function(r){ return r.json(); })
+            .then(function(data) {
+                if (data.success) { showToast('交易完成', 'success'); poll(); }
+                else { showToast(data.msg || '操作失败', 'error'); }
+            });
+        });
+    }
+
+    function cancelTrade() {
+        showConfirm('取消交易', '确定要取消这笔交易吗？取消后无法恢复。', function() {
+            fetch('/chat/api/cancel/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRF() },
+                body: JSON.stringify({ conversation_id: convId })
+            })
+            .then(function(r){ return r.json(); })
+            .then(function(data) {
+                if (data.success) { showToast('交易已取消', 'success'); poll(); }
+                else { showToast(data.msg || '操作失败', 'error'); }
+            });
+        });
+    }
+
+    // 自定义确认弹窗
+    function showConfirm(title, text, onOk) {
+        document.getElementById('confirmTitle').textContent = title || '提示';
+        document.getElementById('confirmText').textContent = text || '';
+        var mask = document.getElementById('confirmMask');
+        mask.classList.add('show');
+        var okBtn = document.getElementById('confirmOk');
+        var cancelBtn = document.getElementById('confirmCancel');
+        function close() {
+            mask.classList.remove('show');
+            okBtn.onclick = null;
+            cancelBtn.onclick = null;
+        }
+        okBtn.onclick = function() { close(); if (onOk) onOk(); };
+        cancelBtn.onclick = close;
+    }
+
+    function getCSRF() {
+        var csrf = '';
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var c = cookies[i].trim();
+            if (c.indexOf('csrftoken=') === 0) csrf = c.substring('csrftoken='.length);
+        }
+        return csrf;
+    }
+
+    // 发送文字
+    function sendText() {
+        var input = document.getElementById('msgInput');
+        var text = input.value.trim();
+        if (!text) return;
+        var fd = new FormData();
+        fd.append('conversation_id', convId);
+        fd.append('type', 'text');
+        fd.append('content', text);
+        fetch('/chat/api/send/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCSRF() },
+            body: fd
+        })
+        .then(function(r){ return r.json(); })
+        .then(function(data) {
+            if (data.success) {
+                input.value = '';
+                upsertMessages([data.msg]);
+            } else {
+                if (data.blocked) {
+                    showToast(data.msg, 'error');
+                } else {
+                    showToast(data.msg || '发送失败', 'error');
+                }
+            }
+        });
+    }
+
+    // 发送图片/视频
+    function sendFile(type, input) {
+        var file = input.files[0];
+        if (!file) return;
+        input.value = '';
+        var fd = new FormData();
+        fd.append('conversation_id', convId);
+        fd.append('type', type);
+        fd.append('file', file);
+        fetch('/chat/api/send/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCSRF() },
+            body: fd
+        })
+        .then(function(r){ return r.json(); })
+        .then(function(data) {
+            if (data.success) { upsertMessages([data.msg]); }
+            else { showToast(data.msg || '发送失败', 'error'); }
+        });
+    }
+
+    // 初始化
+    loadLocal();
+    render();   // 立即显示本地缓存的消息
+    // 首次从服务器拉种子（localStorage为空时）
+    fetch('/chat/api/messages/?conversation_id=' + convId, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+        if (data.success) {
+            if (localStorage.getItem(STORAGE_KEY)) {
+                // 有本地历史，只增量合并（服务器消息可能已被删除，不影响本地）
+                if (data.messages && data.messages.length) {
+                    upsertMessages(data.messages);
+                }
+            } else {
+                // 本地无历史，用服务器消息作为种子
+                messages = data.messages || [];
+                var maxId = 0;
+                messages.forEach(function(m){ if (m.id > maxId) maxId = m.id; });
+                lastServerId = maxId;
+                saveLocal();
+                render();
+            }
+            convStatus = data.status;
+            if (data.goods) {
+                goodsSold = (data.goods.status === 'sold') && !data.goods.allow_repeat;
+            }
+            renderTrade(data);
+        }
+    })
+    .then(function() {
+        // 启动轮询
+        pollTimer = setInterval(poll, 2000);
+    });
+
+    // 回车发送（触屏设备回车换行，点击发送按钮发送）
+    var isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    var msgInputEl = document.getElementById('msgInput');
+    if (isTouchDevice) {
+        msgInputEl.placeholder = '输入消息...';
+    } else {
+        msgInputEl.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendText(); }
+        });
+    }
+</script>
+{% endblock %}

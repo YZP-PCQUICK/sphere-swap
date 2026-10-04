@@ -1,0 +1,209 @@
+.page {
+  padding: 24rpx 28rpx 60rpx;
+}
+
+.group {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+}
+
+.group-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1F2937;
+  padding-bottom: 20rpx;
+  margin-bottom: 24rpx;
+  border-bottom: 1rpx solid #F3F4F6;
+}
+
+/* 语言切换 */
+.lang-row {
+  display: flex;
+  gap: 20rpx;
+}
+
+.lang-option {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  border-radius: 14rpx;
+  border: 1rpx solid #E5E7EB;
+  font-size: 28rpx;
+  color: #374151;
+  background: #fff;
+  transition: all 0.2s;
+}
+
+.lang-option.active {
+  background: #E8F0FE;
+  border-color: #4A90D9;
+  color: #4A90D9;
+  font-weight: 600;
+}
+
+/* 表单 */
+.form-field {
+  margin-bottom: 22rpx;
+}
+
+.field-label {
+  display: block;
+  font-size: 26rpx;
+  color: #6B7280;
+  margin-bottom: 10rpx;
+}
+
+.field-input {
+  width: 100%;
+  height: 84rpx;
+  box-sizing: border-box;
+  padding: 0 24rpx;
+  border: 1rpx solid #E5E7EB;
+  border-radius: 14rpx;
+  font-size: 28rpx;
+  color: #1F2937;
+  background: #FAFBFC;
+}
+
+.field-input:focus {
+  border-color: #4A90D9;
+}
+
+.ph {
+  color: #C0C4CC;
+}
+
+.pwd-error {
+  color: #F5222D;
+  font-size: 24rpx;
+  margin: 4rpx 0 12rpx;
+}
+
+/* button 前缀提升优先级，覆盖原生默认 width: 184px；flex 保证文字水平垂直居中 */
+button.pwd-submit,
+.pwd-submit {
+  width: 100%;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  background: #4A90D9;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+  border-radius: 14rpx;
+  margin-top: 8rpx;
+  margin-left: 0;
+  margin-right: 0;
+  border: none;
+}
+
+.pwd-forgot {
+  margin-top: 24rpx;
+  text-align: center;
+  font-size: 24rpx;
+  color: #4A90D9;
+}
+
+button.pwd-submit[disabled] {
+  opacity: 0.6;
+  color: #fff;
+  background: #4A90D9;
+}
+
+/* 开关行 */
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24rpx;
+  padding: 8rpx 0;
+}
+
+.switch-row + .switch-row {
+  margin-top: 16rpx;
+}
+
+.switch-label {
+  font-size: 28rpx;
+  color: #1F2937;
+  font-weight: 500;
+}
+
+.switch-desc {
+  font-size: 23rpx;
+  color: #9CA3AF;
+  margin-top: 6rpx;
+  line-height: 1.5;
+}
+
+/* 清除缓存 */
+.cache-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24rpx;
+}
+
+.cache-label {
+  font-size: 28rpx;
+  color: #1F2937;
+  font-weight: 500;
+}
+
+.cache-desc {
+  font-size: 23rpx;
+  color: #9CA3AF;
+  margin-top: 6rpx;
+  line-height: 1.5;
+}
+
+.cache-btn {
+  flex-shrink: 0;
+  padding: 14rpx 30rpx;
+  border: 1rpx solid #E5E7EB;
+  border-radius: 12rpx;
+  font-size: 26rpx;
+  color: #374151;
+  background: #fff;
+}
+
+/* 关于/退出登录 */
+.more-group {
+  padding: 8rpx 28rpx;
+}
+
+.menu-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 0;
+}
+
+.menu-row + .menu-row {
+  border-top: 1rpx solid #F3F4F6;
+}
+
+.menu-row:active {
+  background: #FAFBFC;
+}
+
+.menu-row-label {
+  font-size: 29rpx;
+  color: #1F2937;
+}
+
+.menu-row-danger .menu-row-label {
+  color: #F5222D;
+}
+
+.menu-arrow {
+  font-size: 40rpx;
+  color: #C0C4CC;
+  line-height: 1;
+}

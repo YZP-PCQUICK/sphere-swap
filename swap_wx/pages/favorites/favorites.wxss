@@ -1,0 +1,200 @@
+.page {
+  padding: 24rpx;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.goods-grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -12rpx;
+}
+
+.goods-card {
+  width: 50%;
+  box-sizing: border-box;
+  padding: 12rpx;
+  background: var(--bg-white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.goods-card:active {
+  transform: scale(0.98);
+}
+
+.goods-card-img {
+  width: 100%;
+  height: 0;
+  padding-top: 100%;
+  position: relative;
+  background: var(--bg-page);
+}
+
+.goods-card-img-el {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.goods-card-img-empty {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.goods-card-img-empty-icon {
+  width: 64rpx;
+  height: 64rpx;
+  margin-bottom: 8rpx;
+  opacity: 0.6;
+}
+
+.goods-card-img-empty-text {
+  font-size: 24rpx;
+  color: var(--text-light);
+}
+
+.sold-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 34rpx;
+  font-weight: 700;
+  z-index: 2;
+}
+
+.goods-card-body {
+  padding: 20rpx 20rpx 22rpx;
+}
+
+.goods-card-title {
+  font-size: 28rpx;
+  color: var(--text-primary);
+  font-weight: 500;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  line-height: 1.4;
+  min-height: 78rpx;
+}
+
+.goods-card-price {
+  margin-top: 12rpx;
+}
+
+.goods-card-price-num {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--error-color);
+}
+
+.goods-card-price-num::before {
+  content: '¥';
+  font-size: 24rpx;
+  margin-right: 2rpx;
+}
+
+.goods-card-free {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--success-color);
+}
+
+.goods-card-meta {
+  margin-top: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.goods-card-school {
+  font-size: 22rpx;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 70%;
+}
+
+.goods-card-views {
+  font-size: 22rpx;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.goods-card-views-icon {
+  width: 26rpx;
+  height: 26rpx;
+  margin-right: 4rpx;
+}
+
+/* ===== 取消收藏 ===== */
+.unfav-btn {
+  margin-top: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12rpx 0;
+  border-radius: var(--radius-md);
+  background: var(--bg-page);
+  color: var(--text-secondary);
+  font-size: 24rpx;
+}
+
+.unfav-btn:active {
+  background: #FFF1F0;
+  color: var(--error-color);
+}
+
+.unfav-btn-icon {
+  width: 26rpx;
+  height: 26rpx;
+  margin-right: 6rpx;
+}
+
+/* ===== 空状态 ===== */
+.empty-state {
+  background: var(--bg-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 120rpx 40rpx;
+  text-align: center;
+}
+
+.empty-state-icon {
+  width: 88rpx;
+  height: 88rpx;
+  margin-bottom: 20rpx;
+  opacity: 0.5;
+}
+
+.empty-state-text {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+}
+
+.empty-btn {
+  margin: 40rpx auto 0;
+  width: 240rpx;
+}

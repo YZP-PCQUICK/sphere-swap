@@ -1,0 +1,347 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}广告管理 - SWAP管理系统{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ads-layout { display: grid; grid-template-columns: 1fr 380px; gap: 20px; align-items: start; }
+    @media (max-width: 1100px) { .ads-layout { grid-template-columns: 1fr; } }
+
+    .ad-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; }
+    .ad-card h2 { font-size: 16px; margin-bottom: 16px; color: #1f2937; }
+    .ad-form-group { margin-bottom: 14px; }
+    .ad-form-group label { display: block; font-size: 13px; color: #374151; margin-bottom: 6px; font-weight: 500; }
+    .ad-form-group input[type="text"], .ad-form-group input[type="number"] {
+        width: 100%; padding: 9px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; outline: none;
+    }
+    .ad-form-group input:focus { border-color: #4A90E2; }
+    .ad-form-hint { font-size: 12px; color: #9ca3af; margin-top: 4px; }
+
+    .ad-upload-box {
+        border: 2px dashed #d1d5db; border-radius: 10px; padding: 18px; text-align: center;
+        cursor: pointer; color: #6b7280; font-size: 13px; transition: all .2s;
+    }
+    .ad-upload-box:hover { border-color: #4A90E2; color: #4A90E2; }
+    .ad-upload-preview { max-width: 100%; max-height: 140px; border-radius: 8px; margin-top: 10px; display: none; }
+
+    /* 日历组件 */
+    .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .cal-title { font-size: 14px; font-weight: 600; color: #1f2937; }
+    .cal-nav-btn {
+        width: 28px; height: 28px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fff;
+        cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; color: #374151;
+    }
+    .cal-nav-btn:disabled { opacity: .35; cursor: not-allowed; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .cal-week { font-size: 11px; color: #9ca3af; text-align: center; padding: 4px 0; }
+    .cal-day {
+        position: relative; aspect-ratio: 1; border-radius: 6px; border: 1px solid transparent;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        font-size: 12px; color: #374151; cursor: pointer; background: #f9fafb; user-select: none;
+    }
+    .cal-day:hover:not(.cal-disabled):not(.cal-full) { border-color: #4A90E2; }
+    .cal-day .cal-n { line-height: 1.2; }
+    .cal-day .cal-cnt {
+        font-size: 10px; line-height: 1; margin-top: 2px; color: #4A90E2; font-weight: 600;
+    }
+    .cal-disabled { color: #d1d5db; background: #f3f4f6; cursor: not-allowed; }
+    .cal-full { color: #c0c4cc; background: #f3f4f6; cursor: not-allowed; text-decoration: line-through; }
+    .cal-full .cal-cnt { color: #f5222d; }
+    .cal-in-range { background: #E8F4FD; border-color: #4A90E2; }
+    .cal-selected { background: #4A90E2; color: #fff; }
+    .cal-selected .cal-cnt { color: #fff; }
+    .cal-legend { display: flex; gap: 14px; margin-top: 10px; font-size: 11px; color: #9ca3af; flex-wrap: wrap; }
+    .cal-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
+    .cal-range-text { font-size: 13px; color: #1f2937; margin: 10px 0; min-height: 18px; }
+    .cal-range-text b { color: #4A90E2; }
+
+    .ad-thumb { width: 72px; height: 40px; object-fit: cover; border-radius: 6px; border: 1px solid #f0f2f5; }
+    .ad-status-tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; }
+    .ad-status-active { background: #e7f7e8; color: #52c41a; }
+    .ad-status-pending { background: #fff7e6; color: #faad14; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="adm-page">
+    <div class="adm-header">
+        <div>
+            <h1>广告管理</h1>
+            <p class="adm-sub">首页广告栏（16:9）· 单日最多投放 {{ ad_daily_limit }} 个 · 投放结束后自动删除</p>
+        </div>
+    </div>
+
+    <div class="ads-layout">
+        <!-- 广告列表 -->
+        <div>
+            {% if ads %}
+            <div class="adm-table-wrap">
+                <table class="adm-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>图片</th>
+                            <th>跳转链接</th>
+                            <th>投放日期</th>
+                            <th>优先级</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ad in ads %}
+                        <tr>
+                            <td>{{ ad.id }}</td>
+                            <td><img class="ad-thumb" src="{{ ad.image.url }}" alt="广告{{ ad.id }}" loading="lazy"></td>
+                            <td>
+                                {% if ad.link %}
+                                <a href="{{ ad.link }}" target="_blank" rel="noopener" style="font-size:12px;">{{ ad.link|truncatechars:30 }}</a>
+                                {% else %}<span style="color:#9ca3af;font-size:12px;">不跳转</span>{% endif %}
+                            </td>
+                            <td>
+                                {% with ad_dates=ad.dates.all %}
+                                {% if ad_dates %}
+                                {% for s in ad_dates|slice:':3' %}{{ s.date|date:'m-d' }}{% if not forloop.last %}、{% endif %}{% endfor %}{% if ad_dates.count > 3 %} 等{{ ad_dates.count }}天{% endif %}
+                                {% else %}-{% endif %}
+                                {% endwith %}
+                            </td>
+                            <td>{{ ad.priority }}</td>
+                            <td>
+                                <span class="ad-status-tag {% if ad.is_active_today %}ad-status-active{% else %}ad-status-pending{% endif %}">
+                                    {% if ad.is_active_today %}投放中{% else %}未开始{% endif %}
+                                </span>
+                            </td>
+                            <td><button type="button" class="adm-btn outline sm" onclick="deleteAd({{ ad.id }})">删除</button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="adm-empty-block">暂无广告</div>
+            {% endif %}
+        </div>
+
+        <!-- 新建广告 -->
+        <div class="ad-card">
+            <h2>新建广告</h2>
+            <div class="ad-form-group">
+                <label>广告图片（16:9 效果最佳，JPG/PNG/GIF/WEBP）</label>
+                <div class="ad-upload-box" id="uploadBox">点击选择图片上传</div>
+                <input type="file" id="imageInput" accept=".jpg,.jpeg,.png,.gif,.webp" hidden>
+                <img class="ad-upload-preview" id="previewImg" alt="预览">
+                <div class="ad-form-hint">上传后自动压缩至最长边 1600px（JPEG 85%）</div>
+            </div>
+            <div class="ad-form-group">
+                <label>跳转链接（选填，未填则点击广告不跳转）</label>
+                <input type="text" id="linkInput" placeholder="https://swap.pcquick.cn/list/" maxlength="500">
+            </div>
+            <div class="ad-form-group">
+                <label>优先级（数字越大越先展示，默认 0）</label>
+                <input type="number" id="priorityInput" value="0">
+            </div>
+            <div class="ad-form-group">
+                <label>投放日期（点击日期多选，再次点击取消）</label>
+                <div class="ad-card" style="padding:12px;box-shadow:none;">
+                    <div class="cal-header">
+                        <button type="button" class="cal-nav-btn" id="calPrev">‹</button>
+                        <span class="cal-title" id="calTitle"></span>
+                        <button type="button" class="cal-nav-btn" id="calNext">›</button>
+                    </div>
+                    <div class="cal-grid" id="calGrid"></div>
+                    <div class="cal-legend">
+                        <span><i style="background:#4A90E2;"></i>已选日期</span>
+                        <span><i style="background:#f3f4f6;"></i>已满/不可选</span>
+                        <span style="color:#4A90E2;font-weight:600;">N</span>=当日已投放数量
+                    </div>
+                    <div class="cal-range-text" id="rangeText">未选择日期</div>
+                    <button type="button" class="adm-btn outline sm" id="resetRange">重置日期</button>
+                </div>
+            </div>
+            <button type="button" class="adm-btn" style="background:#4A90E2;color:#fff;width:100%;" id="submitBtn">创建广告</button>
+        </div>
+    </div>
+</div>
+
+<!-- 自定义确认弹窗 -->
+<div id="adConfirmMask" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:12px;padding:24px;width:320px;text-align:center;">
+        <div id="adConfirmText" style="font-size:14px;color:#1f2937;margin-bottom:18px;"></div>
+        <div style="display:flex;gap:10px;justify-content:center;">
+            <button class="adm-btn outline sm" id="adConfirmCancel">取消</button>
+            <button class="adm-btn sm" style="background:#f5222d;color:#fff;" id="adConfirmOk">删除</button>
+        </div>
+    </div>
+</div>
+
+{{ ad_counts|json_script:"adCountsData" }}
+{{ today|json_script:"todayData" }}
+{{ ad_daily_limit|json_script:"limitData" }}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    var adCounts = JSON.parse(document.getElementById('adCountsData').textContent);
+    var TODAY = JSON.parse(document.getElementById('todayData').textContent);          // YYYY-MM-DD
+    var DAILY_LIMIT = JSON.parse(document.getElementById('limitData').textContent);
+    var todayDate = new Date(TODAY + 'T00:00:00');
+    var maxDate = new Date(todayDate.getTime()); maxDate.setFullYear(maxDate.getFullYear() + 1);
+
+    // ============ 日历组件（多选日期） ============
+    var viewYear = todayDate.getFullYear(), viewMonth = todayDate.getMonth(); // 0-based
+    var selected = new Set(); // 已选日期 'YYYY-MM-DD'
+
+    function fmt(d) {
+        var m = d.getMonth() + 1, day = d.getDate();
+        return d.getFullYear() + '-' + (m < 10 ? '0' + m : m) + '-' + (day < 10 ? '0' + day : day);
+    }
+    function parse(s) { return new Date(s + 'T00:00:00'); }
+
+    function renderCalendar() {
+        var title = document.getElementById('calTitle');
+        title.textContent = viewYear + ' 年 ' + (viewMonth + 1) + ' 月';
+        document.getElementById('calPrev').disabled =
+            (viewYear === todayDate.getFullYear() && viewMonth === todayDate.getMonth());
+        document.getElementById('calNext').disabled =
+            (viewYear === maxDate.getFullYear() && viewMonth === maxDate.getMonth());
+
+        var grid = document.getElementById('calGrid');
+        grid.innerHTML = '';
+        ['一', '二', '三', '四', '五', '六', '日'].forEach(function (w) {
+            var el = document.createElement('div');
+            el.className = 'cal-week'; el.textContent = w; grid.appendChild(el);
+        });
+
+        var first = new Date(viewYear, viewMonth, 1);
+        var offset = (first.getDay() + 6) % 7; // 周一开头
+        var daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+        for (var i = 0; i < offset; i++) grid.appendChild(document.createElement('div'));
+
+        for (var d = 1; d <= daysInMonth; d++) {
+            (function () {
+                var date = new Date(viewYear, viewMonth, d);
+                var s = fmt(date);
+                var cell = document.createElement('div');
+                cell.className = 'cal-day';
+                var n = (adCounts[s] !== undefined) ? adCounts[s] : 0;
+                var cnt = document.createElement('span');
+                cnt.className = 'cal-cnt'; cnt.textContent = n > 0 ? n : '';
+                var num = document.createElement('span'); num.className = 'cal-n'; num.textContent = d;
+                cell.appendChild(num); cell.appendChild(cnt);
+
+                var isPast = date < todayDate;
+                var isBeyond = date > maxDate;
+                var isFull = n >= DAILY_LIMIT;
+
+                if (isPast || isBeyond) {
+                    cell.classList.add('cal-disabled');
+                } else if (isFull) {
+                    cell.classList.add('cal-full');
+                } else {
+                    if (selected.has(s)) cell.classList.add('cal-selected');
+                    cell.addEventListener('click', function () { toggleDate(s); });
+                }
+                grid.appendChild(cell);
+            })();
+        }
+        updateRangeText();
+    }
+
+    function toggleDate(s) {
+        if (selected.has(s)) { selected.delete(s); } else { selected.add(s); }
+        renderCalendar();
+    }
+
+    function updateRangeText() {
+        var el = document.getElementById('rangeText');
+        if (selected.size === 0) { el.innerHTML = '未选择日期'; return; }
+        var list = Array.from(selected).sort();
+        var show = list.slice(0, 4).map(function (s) { return s.slice(5); }); // MM-DD
+        el.innerHTML = '已选 <b>' + selected.size + '</b> 天：' + show.join('、') + (list.length > 4 ? ' ...' : '');
+    }
+
+    document.getElementById('calPrev').addEventListener('click', function () {
+        viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; } renderCalendar();
+    });
+    document.getElementById('calNext').addEventListener('click', function () {
+        viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; } renderCalendar();
+    });
+    document.getElementById('resetRange').addEventListener('click', function () {
+        selected.clear(); renderCalendar();
+    });
+
+    // ============ 图片上传预览 ============
+    var imageFile = null;
+    document.getElementById('uploadBox').addEventListener('click', function () {
+        document.getElementById('imageInput').click();
+    });
+    document.getElementById('imageInput').addEventListener('change', function (e) {
+        var f = e.target.files[0];
+        if (!f) return;
+        if (!/\.(jpe?g|png|gif|webp)$/i.test(f.name)) { showToastSafe('仅支持 JPG/PNG/GIF/WEBP 图片'); e.target.value = ''; return; }
+        imageFile = f;
+        var box = document.getElementById('uploadBox');
+        box.textContent = '已选择：' + f.name + '（' + (f.size / 1024 / 1024).toFixed(2) + ' MB）';
+        var pv = document.getElementById('previewImg');
+        pv.src = URL.createObjectURL(f); pv.style.display = 'block';
+    });
+
+    function showToastSafe(msg) {
+        var t = document.createElement('div');
+        t.textContent = msg;
+        t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#f5222d;color:#fff;padding:10px 18px;border-radius:8px;z-index:1000;font-size:13px;';
+        document.body.appendChild(t);
+        setTimeout(function () { t.remove(); }, 2500);
+    }
+
+    // ============ 创建广告 ============
+    document.getElementById('submitBtn').addEventListener('click', function () {
+        if (!imageFile) { showToastSafe('请上传广告图片'); return; }
+        if (selected.size === 0) { showToastSafe('请在日历上选择投放日期'); return; }
+
+        var fd = new FormData();
+        fd.append('image', imageFile);
+        fd.append('link', document.getElementById('linkInput').value.trim());
+        fd.append('priority', document.getElementById('priorityInput').value || '0');
+        fd.append('dates', Array.from(selected).sort().join(','));
+
+        var btn = this; btn.disabled = true; btn.textContent = '上传中...';
+        fetch("{% url 'dashboard:ad_create' %}", {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCSRFToken() },
+            body: fd
+        }).then(function (r) { return r.json(); }).then(function (data) {
+            btn.disabled = false; btn.textContent = '创建广告';
+            if (data.success) { location.reload(); }
+            else { showToastSafe(data.msg || '创建失败'); }
+        }).catch(function () {
+            btn.disabled = false; btn.textContent = '创建广告';
+            showToastSafe('网络错误，请重试');
+        });
+    });
+
+    // ============ 删除广告（自定义弹窗确认） ============
+    var pendingDeleteId = null;
+    function deleteAd(id) {
+        pendingDeleteId = id;
+        document.getElementById('adConfirmText').textContent = '确定删除该广告吗？图片文件将一并删除，不可恢复。';
+        document.getElementById('adConfirmMask').style.display = 'flex';
+    }
+    document.getElementById('adConfirmCancel').addEventListener('click', function () {
+        document.getElementById('adConfirmMask').style.display = 'none'; pendingDeleteId = null;
+    });
+    document.getElementById('adConfirmOk').addEventListener('click', function () {
+        if (pendingDeleteId == null) return;
+        fetch("{% url 'dashboard:ad_delete' 0 %}".replace('/0/', '/' + pendingDeleteId + '/'), {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCSRFToken() }
+        }).then(function (r) { return r.json(); }).then(function (data) {
+            document.getElementById('adConfirmMask').style.display = 'none';
+            if (data.success) { location.reload(); }
+            else { showToastSafe(data.msg || '删除失败'); }
+        }).catch(function () { showToastSafe('网络错误，请重试'); });
+    });
+
+    renderCalendar();
+</script>
+{% endblock %}

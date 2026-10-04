@@ -1,0 +1,660 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}发布商品 - SWAP校园交易平台{% endblock %}
+
+{% block extra_css %}
+<style>
+    .publish-container {
+        max-width: 720px;
+        margin: 0 auto;
+    }
+
+    .publish-card {
+        background: var(--bg-white);
+        border-radius: var(--radius-lg);
+        padding: 32px;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .publish-title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .form-section {
+        margin-bottom: 28px;
+    }
+
+    .form-section-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .form-section-title::before {
+        content: '';
+        width: 3px;
+        height: 16px;
+        background: var(--primary-gradient);
+        border-radius: 2px;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 8px;
+        display: block;
+        font-size: 14px;
+    }
+
+    .form-label .required {
+        color: var(--error-color);
+        margin-left: 2px;
+    }
+
+    .form-input, .form-textarea, .form-select {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        font-size: 14px;
+        transition: all var(--transition-fast);
+        font-family: inherit;
+    }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        outline: none;
+    }
+
+    .form-textarea {
+        resize: vertical;
+        min-height: 120px;
+        line-height: 1.6;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 16px;
+        gap: 16px;
+    }
+
+    .form-hint {
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-top: 6px;
+    }
+
+    /* 图片上传 */
+    .image-upload-area {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        grid-gap: 10px;
+        gap: 10px;
+    }
+
+    /* 微信X5老内核不支持aspect-ratio，用padding-top撑出正方形 */
+    .image-upload-item {
+        height: 0;
+        padding-top: 100%;
+        border: 2px dashed var(--border-color);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: all var(--transition-fast);
+        background: var(--bg-page);
+    }
+
+    .image-upload-item:hover {
+        border-color: var(--primary-color);
+        background: var(--primary-bg);
+    }
+
+    .image-upload-item.uploaded {
+        border-style: solid;
+        border-color: transparent;
+    }
+
+    .image-upload-item.uploaded img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .image-upload-item .upload-icon {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        transform: translateY(-50%);
+        margin-top: -9px;
+        text-align: center;
+        font-size: 24px;
+        color: var(--text-light);
+    }
+
+    .image-upload-item .upload-text {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        transform: translateY(-50%);
+        margin-top: 11px;
+        text-align: center;
+        font-size: 11px;
+        color: var(--text-light);
+    }
+
+    .image-delete-btn {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 22px;
+        height: 22px;
+        background: rgba(0,0,0,0.5);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity var(--transition-fast);
+    }
+
+    .image-upload-item:hover .image-delete-btn {
+        opacity: 1;
+    }
+
+    /* 触屏设备没有 hover，删除按钮常显 */
+    @media (hover: none) and (pointer: coarse) {
+        .image-upload-item .image-delete-btn {
+            opacity: 1;
+            width: 26px;
+            height: 26px;
+        }
+    }
+
+    /* 分类选择 */
+    .category-options {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-gap: 10px;
+        gap: 10px;
+    }
+
+    .category-option {
+        padding: 12px;
+        text-align: center;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        font-size: 14px;
+    }
+
+    .category-option:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        background: var(--primary-bg);
+    }
+
+    .category-option.active {
+        background: var(--primary-gradient);
+        color: white;
+        border-color: transparent;
+    }
+
+    .category-icon {
+        width: 36px;
+        height: 36px;
+        margin: 0 auto 8px;
+        background: var(--primary-bg);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .category-icon svg {
+        width: 20px;
+        height: 20px;
+        color: var(--primary-color);
+    }
+
+    /* 交易方式 */
+    .trade-options {
+        display: flex;
+        gap: 12px;
+    }
+
+    .trade-icon {
+        width: 32px;
+        height: 32px;
+        margin: 0 auto 6px;
+        background: var(--primary-bg);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .trade-icon svg {
+        width: 18px;
+        height: 18px;
+        color: var(--primary-color);
+    }
+
+    .trade-option {
+        flex: 1;
+        padding: 14px;
+        text-align: center;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+    }
+
+    .trade-option.active {
+        border-color: var(--primary-color);
+        background: var(--primary-bg);
+        color: var(--primary-color);
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 16px;
+        font-size: 16px;
+        font-weight: 600;
+        margin-top: 12px;
+    }
+
+    @media (max-width: 768px) {
+        .publish-card {
+            padding: 20px;
+            border-radius: 14px;
+        }
+
+        .publish-title {
+            font-size: 18px;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+            grid-gap: 14px;
+            gap: 14px;
+        }
+
+        .image-upload-area {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .category-options {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .category-option {
+            padding: 10px;
+            font-size: 13px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="publish-container">
+    <div class="publish-card">
+        <h2 class="publish-title">发布商品</h2>
+
+        <form id="publishForm" onsubmit="return handlePublish(event)" enctype="multipart/form-data">
+            <!-- 商品图片 -->
+            <div class="form-section">
+                <div class="form-section-title">商品图片<span style="color:var(--error-color);font-size:13px;margin-left:8px;">（最多6张，单张不超过20MB）</span></div>
+                <div class="image-upload-area" id="imageUploadArea">
+                    <div class="image-upload-item" id="addImageBtn" onclick="document.getElementById('imageInput').click()">
+                        <div class="upload-icon">+</div>
+                        <div class="upload-text">添加图片</div>
+                    </div>
+                </div>
+                <input type="file" id="imageInput" accept="image/*" multiple style="display:none;" onchange="handleImageSelect(event)">
+            </div>
+
+            <!-- 基本信息 -->
+            <div class="form-section">
+                <div class="form-section-title">基本信息</div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        商品名称<span class="required">*</span>
+                    </label>
+                    <input type="text" id="title" class="form-input" placeholder="请输入商品名称（最多100字）" maxlength="100">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">
+                            售价（元）<span class="required">*</span>
+                        </label>
+                        <input type="number" id="price" class="form-input" placeholder="请输入价格" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">原价（选填）</label>
+                        <input type="number" id="originalPrice" class="form-input" placeholder="原价或入手价" step="0.01" min="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        商品描述<span class="required">*</span>
+                    </label>
+                    <textarea id="description" class="form-textarea" placeholder="请详细描述商品的成色、使用情况、购买时间等信息（最多2000字）" maxlength="2000"></textarea>
+                </div>
+            </div>
+
+            <!-- 分类信息 -->
+            <div class="form-section">
+                <div class="form-section-title">分类与交易方式</div>
+
+                <div class="form-group">
+                    <label class="form-label">大分类<span class="required">*</span></label>
+                    <div class="category-options" id="categoryOptions">
+                        {% for cat_key, cat_name in categories %}
+                        <div class="category-option" data-value="{{ cat_key }}" onclick="selectCategory(this)">
+                            <div class="category-icon">
+                                <svg class="icon">
+                                    {% if cat_key == 'digital' %}<use href="#icon-laptop"></use>
+                                    {% elif cat_key == 'books' %}<use href="#icon-book"></use>
+                                    {% elif cat_key == 'daily' %}<use href="#icon-home"></use>
+                                    {% elif cat_key == 'clothing' %}<use href="#icon-shirt"></use>
+                                    {% elif cat_key == 'sports' %}<use href="#icon-ball"></use>
+                                    {% elif cat_key == 'service' %}<use href="#icon-graduation"></use>
+                                    {% elif cat_key == 'snack' %}<use href="#icon-snack"></use>
+                                    {% elif cat_key == 'beauty' %}<use href="#icon-beauty"></use>
+                                    {% elif cat_key == 'art' %}<use href="#icon-art"></use>
+                                    {% elif cat_key == 'rental' %}<use href="#icon-rental"></use>
+                                    {% elif cat_key == 'free' %}<use href="#icon-free"></use>
+                                    {% else %}<use href="#icon-box"></use>{% endif %}
+                                </svg>
+                            </div>
+                            {{ cat_name }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        小分类
+                        <span style="color:var(--text-light);font-weight:normal;font-size:12px;margin-left:8px;">请用简洁的词语概括小分类</span>
+                    </label>
+                    <input type="text" id="subCategory" class="form-input" placeholder="例如：教材、手机配件、篮球鞋 等（最多20字）" maxlength="20">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">交易方式<span class="required">*</span></label>
+                    <div class="trade-options">
+                        <div class="trade-option active" data-value="pickup" onclick="selectTrade(this)">
+                            <div class="trade-icon">
+                                <svg class="icon"><use href="#icon-store"></use></svg>
+                            </div>
+                            自提
+                        </div>
+                        <div class="trade-option" data-value="delivery" onclick="selectTrade(this)">
+                            <div class="trade-icon">
+                                <svg class="icon"><use href="#icon-truck"></use></svg>
+                            </div>
+                            配送
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        学校<span class="required">*</span>
+                        <span style="color:var(--text-light);font-weight:normal;font-size:12px;margin-left:8px;">
+                            {% if user.school %}（默认：{{ user.school }}）{% endif %}
+                        </span>
+                    </label>
+                    <input type="text" id="school" class="form-input" placeholder="请输入学校名称" value="{{ user.school }}" maxlength="100">
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                        <input type="checkbox" id="allowRepeat" style="width:16px;height:16px;accent-color:var(--primary-color);">
+                        <span>允许重复售卖（勾选后交易完成商品仍在架，可被多次购买）</span>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn btn-primary submit-btn">
+                发布商品
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let selectedImages = []; // 存储选中的文件
+    let selectedCategory = '';
+    let selectedTrade = 'pickup';
+    const MAX_IMAGES = 6;
+
+    function getCSRFToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, 'csrftoken'.length + 1) === 'csrftoken=') {
+                    cookieValue = decodeURIComponent(cookie.substring('csrftoken'.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // 选择图片
+    function handleImageSelect(event) {
+        const files = event.target.files;
+        const area = document.getElementById('imageUploadArea');
+        const addBtn = document.getElementById('addImageBtn');
+
+        for (let file of files) {
+            if (selectedImages.length >= MAX_IMAGES) {
+                showToast(`最多只能上传${MAX_IMAGES}张图片`, 'warning');
+                break;
+            }
+
+            // 检查大小
+            if (file.size > 20 * 1024 * 1024) {
+                showToast(`第${selectedImages.length + 1}张图片过大，请压缩后重新上传`, 'error');
+                continue;
+            }
+
+            selectedImages.push(file);
+
+            // 创建预览
+            const reader = new FileReader();
+            const idx = selectedImages.length - 1;
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.className = 'image-upload-item uploaded';
+                div.innerHTML = `
+                    <img src="${e.target.result}" alt="">
+                    <div class="image-delete-btn" onclick="deleteImage(event, ${idx})">×</div>
+                `;
+                area.insertBefore(div, addBtn);
+                
+                // 更新所有删除按钮的索引
+                updateDeleteButtons();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // 更新添加按钮可见性
+        if (selectedImages.length >= MAX_IMAGES) {
+            addBtn.style.display = 'none';
+        }
+
+        // 重置input
+        event.target.value = '';
+    }
+
+    // 删除图片
+    function deleteImage(event, index) {
+        event.stopPropagation();
+        selectedImages.splice(index, 1);
+        
+        const area = document.getElementById('imageUploadArea');
+        const items = area.querySelectorAll('.image-upload-item.uploaded');
+        items[index].remove();
+        
+        updateDeleteButtons();
+        
+        const addBtn = document.getElementById('addImageBtn');
+        if (selectedImages.length < MAX_IMAGES) {
+            addBtn.style.display = 'flex';
+        }
+    }
+
+    function updateDeleteButtons() {
+        const area = document.getElementById('imageUploadArea');
+        const items = area.querySelectorAll('.image-upload-item.uploaded');
+        items.forEach((item, idx) => {
+            const btn = item.querySelector('.image-delete-btn');
+            if (btn) {
+                btn.onclick = (e) => deleteImage(e, idx);
+            }
+        });
+    }
+
+    // 选择分类
+    function selectCategory(el) {
+        document.querySelectorAll('#categoryOptions .category-option').forEach(c => {
+            c.classList.remove('active');
+        });
+        el.classList.add('active');
+        selectedCategory = el.dataset.value;
+    }
+
+    // 选择交易方式
+    function selectTrade(el) {
+        document.querySelectorAll('.trade-option').forEach(t => {
+            t.classList.remove('active');
+        });
+        el.classList.add('active');
+        selectedTrade = el.dataset.value;
+    }
+
+    // 发布商品
+    function handlePublish(event) {
+        event.preventDefault();
+
+        const title = document.getElementById('title').value.trim();
+        const price = document.getElementById('price').value;
+        const originalPrice = document.getElementById('originalPrice').value;
+        const description = document.getElementById('description').value.trim();
+        const subCategory = document.getElementById('subCategory').value.trim();
+        const school = document.getElementById('school').value.trim();
+        const btn = document.getElementById('submitBtn');
+
+        if (selectedImages.length === 0) {
+            showToast('请至少上传一张商品图片', 'error');
+            return false;
+        }
+
+        if (!title) {
+            showToast('请输入商品名称', 'error');
+            return false;
+        }
+
+        if (!price || parseFloat(price) < 0) {
+            showToast('请输入正确的价格', 'error');
+            return false;
+        }
+
+        if (!description) {
+            showToast('请输入商品描述', 'error');
+            return false;
+        }
+
+        if (!selectedCategory) {
+            showToast('请选择商品分类', 'error');
+            return false;
+        }
+
+        if (!school) {
+            showToast('请输入学校名称', 'error');
+            return false;
+        }
+
+        // 使用FormData提交
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('price', price);
+        if (originalPrice) formData.append('original_price', originalPrice);
+        formData.append('category', selectedCategory);
+        formData.append('sub_category', subCategory);
+        formData.append('trade_type', selectedTrade);
+        formData.append('school', school);
+        formData.append('allow_repeat', document.getElementById('allowRepeat').checked ? '1' : '0');
+
+        // 添加图片
+        selectedImages.forEach((img, idx) => {
+            formData.append('images', img);
+        });
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading"></span> 发布中...';
+
+        fetch("{% url 'goods:publish_api' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken(),
+            },
+            body: formData
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showToast('发布成功', 'success');
+                setTimeout(() => {
+                    window.location.href = `/detail/${data.goods_id}/`;
+                }, 1000);
+            } else {
+                showToast(data.msg, 'error');
+                btn.disabled = false;
+                btn.textContent = '发布商品';
+            }
+        })
+        .catch(() => {
+            showToast('发布失败，请重试', 'error');
+            btn.disabled = false;
+            btn.textContent = '发布商品';
+        });
+
+        return false;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,117 @@
+<view class="page">
+  <view class="publish-card">
+    <!-- 商品图片（网站：最多6张，单张不超过20MB） -->
+    <view class="form-section">
+      <view class="form-section-title">
+        {{t.publish_images}}
+        <text class="section-tip">{{t.publish_images_tip}}</text>
+      </view>
+      <view class="image-upload-area">
+        <view class="image-upload-item" wx:for="{{images}}" wx:key="index">
+          <image class="upload-preview" src="{{item}}" mode="aspectFill" bindtap="previewImage"
+            data-index="{{index}}" />
+          <view class="upload-delete" catchtap="removeImage" data-index="{{index}}">×</view>
+        </view>
+        <view wx:if="{{images.length < 6}}" class="image-upload-item add" bindtap="chooseImage">
+          <view class="upload-icon">+</view>
+          <view class="upload-text">{{images.length}}/6</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 基本信息 -->
+    <view class="form-section">
+      <view class="form-section-title">{{t.publish_basic_info}}</view>
+
+      <view class="form-group">
+        <view class="form-label">{{t.publish_name}}<text class="required">*</text></view>
+        <input class="form-input" placeholder="{{t.publish_name_ph}}" maxlength="100" value="{{form.title}}"
+          bindinput="onInput" data-field="title" />
+      </view>
+
+      <view class="form-row">
+        <view class="form-group form-col">
+          <view class="form-label">{{t.publish_price_label}}<text class="required">*</text></view>
+          <input class="form-input" type="digit" placeholder="{{t.publish_price_ph}}" value="{{form.price}}"
+            bindinput="onInput" data-field="price" />
+        </view>
+        <view class="form-group form-col">
+          <view class="form-label">{{t.publish_original_label}}</view>
+          <input class="form-input" type="digit" placeholder="{{t.publish_original_ph}}" value="{{form.original_price}}"
+            bindinput="onInput" data-field="original_price" />
+        </view>
+      </view>
+
+      <view class="form-group">
+        <view class="form-label">{{t.publish_desc}}<text class="required">*</text></view>
+        <textarea class="form-textarea" placeholder="{{t.publish_desc_ph}}" maxlength="2000"
+          value="{{form.description}}" bindinput="onInput" data-field="description" />
+        <view class="form-hint">{{form.description.length}}/2000</view>
+      </view>
+    </view>
+
+    <!-- 分类与交易方式 -->
+    <view class="form-section">
+      <view class="form-section-title">{{t.publish_cat_trade}}</view>
+
+      <!-- 大分类（与网站一致：图标 + 名称，12类） -->
+      <view class="form-group">
+        <view class="form-label">{{t.publish_cat}}<text class="required">*</text></view>
+        <view class="category-options">
+          <view class="category-option {{form.category === item.key ? 'active' : ''}}"
+            wx:for="{{categories}}" wx:key="key" data-key="{{item.key}}" bindtap="pickCategory">
+            <image class="category-icon" src="{{item.icon}}" mode="aspectFit" />
+            <view class="category-name">{{t[item.labelKey] || item.name}}</view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 小分类 -->
+      <view class="form-group">
+        <view class="form-label">
+          {{t.publish_sub_cat}}
+          <text class="label-hint">{{t.publish_sub_cat_hint}}</text>
+        </view>
+        <input class="form-input" placeholder="{{t.publish_sub_cat_ph2}}" maxlength="20" value="{{form.sub_category}}"
+          bindinput="onInput" data-field="sub_category" />
+      </view>
+
+      <!-- 交易方式 -->
+      <view class="form-group">
+        <view class="form-label">{{t.publish_delivery}}<text class="required">*</text></view>
+        <view class="trade-type-row">
+          <view class="trade-type-item {{form.trade_type === 'pickup' ? 'active' : ''}}" data-value="pickup"
+            bindtap="pickTradeType">{{t.goods_delivery_pickup}}</view>
+          <view class="trade-type-item {{form.trade_type === 'delivery' ? 'active' : ''}}" data-value="delivery"
+            bindtap="pickTradeType">{{t.goods_delivery_shipping}}</view>
+        </view>
+      </view>
+
+      <!-- 学校（默认取用户资料学校） -->
+      <view class="form-group">
+        <view class="form-label">
+          {{t.publish_school}}<text class="required">*</text>
+          <text wx:if="{{schoolHint}}" class="label-hint">{{schoolHint}}</text>
+        </view>
+        <input class="form-input" placeholder="{{t.publish_school_ph}}" maxlength="50" value="{{form.school}}"
+          bindinput="onInput" data-field="school" />
+      </view>
+
+      <!-- 允许重复售卖（网站为复选框） -->
+      <view class="form-group">
+        <view class="repeat-row" bindtap="toggleRepeat">
+          <view class="checkbox {{form.allow_repeat ? 'checked' : ''}}">
+            <text wx:if="{{form.allow_repeat}}" class="checkbox-check">✓</text>
+          </view>
+          <view class="repeat-info">
+            <view class="repeat-title">{{t.publish_allow_repeat}}</view>
+            <view class="repeat-desc">{{t.publish_allow_repeat_tip}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <button class="btn btn-primary btn-block btn-lg" loading="{{submitting}}" disabled="{{submitting}}"
+      bindtap="submit">{{t.publish_submit}}</button>
+  </view>
+</view>

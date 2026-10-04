@@ -1,0 +1,90 @@
+<view class="page">
+  <!-- 语言设置 -->
+  <view class="group">
+    <view class="group-title">{{t.st_language}}</view>
+    <view class="lang-row">
+      <view class="lang-option {{_lang === 'zh' ? 'active' : ''}}" bindtap="setZh">{{t.st_lang_zh}}</view>
+      <view class="lang-option {{_lang === 'en' ? 'active' : ''}}" bindtap="setEn">{{t.st_lang_en}}</view>
+    </view>
+  </view>
+
+  <!-- 消息通知 -->
+  <view class="group">
+    <view class="group-title">{{t.st_notify}}</view>
+    <view class="switch-row">
+      <view class="switch-info">
+        <view class="switch-label">{{t.st_notify_local}}</view>
+        <view class="switch-desc">{{t.st_notify_local_desc}}</view>
+      </view>
+      <switch checked="{{notifyLocal}}" color="#4A90D9" bindchange="onNotifyLocalChange" />
+    </view>
+    <view class="switch-row">
+      <view class="switch-info">
+        <view class="switch-label">{{t.st_notify_push}}</view>
+        <view class="switch-desc">{{t.st_notify_push_desc}}</view>
+      </view>
+      <switch checked="{{notifyPush}}" color="#4A90D9" bindchange="onNotifyPushChange" />
+    </view>
+  </view>
+
+  <!-- 快捷跳转 -->
+  <view class="group">
+    <view class="group-title">{{t.st_quicknav}}</view>
+    <view class="switch-row">
+      <view class="switch-info">
+        <view class="switch-label">{{t.st_quicknav}}</view>
+        <view class="switch-desc">{{t.st_quicknav_desc}}</view>
+      </view>
+      <switch checked="{{quickNav}}" color="#4A90D9" bindchange="onQuickNavChange" />
+    </view>
+  </view>
+
+  <!-- 修改密码 -->
+  <view class="group">
+    <view class="group-title">{{t.st_password}}</view>
+    <view class="form-field">
+      <text class="field-label">{{t.st_old_password}}</text>
+      <input class="field-input" password type="text" value="{{oldPassword}}"
+        placeholder="{{t.st_old_password_ph}}" placeholder-class="ph" bindinput="onOldInput" />
+    </view>
+    <view class="form-field">
+      <text class="field-label">{{t.st_new_password}}</text>
+      <input class="field-input" password type="text" value="{{newPassword}}"
+        placeholder="{{t.st_new_password_ph}}" placeholder-class="ph" bindinput="onNewInput" />
+    </view>
+    <view class="form-field">
+      <text class="field-label">{{t.st_confirm_password}}</text>
+      <input class="field-input" password type="text" value="{{confirmPassword}}"
+        placeholder="{{t.st_confirm_password_ph}}" placeholder-class="ph" bindinput="onConfirmInput" />
+    </view>
+    <view wx:if="{{pwdError}}" class="pwd-error">{{pwdError}}</view>
+    <button class="pwd-submit" bindtap="submitPassword" disabled="{{pwdSubmitting}}">
+      {{pwdSubmitting ? t.st_saving : t.st_save_password}}
+    </button>
+    <view class="pwd-forgot" bindtap="goForgotPassword">{{t.st_forgot_password}}</view>
+  </view>
+
+  <!-- 清除本地缓存 -->
+  <view class="group">
+    <view class="group-title">{{t.st_cache}}</view>
+    <view class="cache-row">
+      <view class="cache-info">
+        <view class="cache-label">{{t.st_cache_clear}}</view>
+        <view class="cache-desc">{{t.st_cache_desc}}</view>
+      </view>
+      <view class="cache-btn" bindtap="clearCache">{{t.st_cache_btn}}</view>
+    </view>
+  </view>
+
+  <!-- 其他：关于 / 退出登录 -->
+  <view class="group more-group">
+    <view class="menu-row" bindtap="goAbout">
+      <view class="menu-row-label">{{t.profile_about}}</view>
+      <view class="menu-arrow">›</view>
+    </view>
+    <view wx:if="{{isLogin}}" class="menu-row menu-row-danger" bindtap="logout">
+      <view class="menu-row-label">{{t.profile_logout}}</view>
+      <view class="menu-arrow">›</view>
+    </view>
+  </view>
+</view>

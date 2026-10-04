@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SWAP 后台管理{% endblock %}</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}?v=20260911b">
+    <link rel="stylesheet" href="{% static 'css/icons.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% include 'svg_sprite.html' %}
+
+    <!-- 顶部导航栏 -->
+    <header class="adm-topbar">
+        <a href="{% url 'dashboard:index' %}" class="adm-logo">
+            <svg class="icon"><use href="#icon-logo"></use></svg>
+            <span>SWAP</span>
+            <span class="adm-logo-badge">后台管理</span>
+        </a>
+        <div class="adm-topbar-right">
+            <a href="/" class="adm-back-site">
+                <svg class="icon" style="width:15px;height:15px;"><use href="#icon-home"></use></svg>
+                <span>返回主站</span>
+            </a>
+            <span class="adm-admin-name">
+                <svg class="icon"><use href="#icon-user"></use></svg>
+                管理员
+            </span>
+            <a href="{% url 'dashboard:logout' %}" class="adm-logout">退出登录</a>
+        </div>
+    </header>
+
+    <!-- 侧边栏菜单 -->
+    <aside class="adm-sidebar">
+        <div class="adm-sidebar-label">管理导航</div>
+        <ul class="adm-nav">
+            <li><a href="{% url 'dashboard:index' %}" {% if request.resolver_match.url_name == 'index' %}class="active"{% endif %}>
+                <svg class="icon"><use href="#icon-home"></use></svg>首页概览</a></li>
+            <li><a href="{% url 'dashboard:user_list' %}" {% if request.resolver_match.url_name == 'user_list' or request.resolver_match.url_name == 'user_detail' %}class="active"{% endif %}>
+                <svg class="icon"><use href="#icon-user"></use></svg>用户管理</a></li>
+            <li><a href="{% url 'dashboard:goods_list' %}" {% if request.resolver_match.url_name == 'goods_list' or request.resolver_match.url_name == 'goods_detail' %}class="active"{% endif %}>
+                <svg class="icon"><use href="#icon-box"></use></svg>商品管理</a></li>
+            <li><a href="{% url 'dashboard:conversation_list' %}" {% if request.resolver_match.url_name == 'conversation_list' or request.resolver_match.url_name == 'conversation_detail' %}class="active"{% endif %}>
+                <svg class="icon"><use href="#icon-message"></use></svg>交易管理</a></li>
+            <li><a href="{% url 'dashboard:ad_list' %}" {% if request.resolver_match.url_name == 'ad_list' %}class="active"{% endif %}>
+                <svg class="icon"><use href="#icon-image"></use></svg>广告管理</a></li>
+        </ul>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="adm-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        // 全局 CSRF Token 获取函数
+        function getCSRFToken() {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, 'csrftoken'.length + 1) === 'csrftoken=') {
+                        cookieValue = decodeURIComponent(cookie.substring('csrftoken'.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

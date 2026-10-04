@@ -1,0 +1,134 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}用户详情 - {{ user.nickname|default:user.email }}{% endblock %}
+
+{% block content %}
+<div class="adm-page">
+    <a href="{% url 'dashboard:user_list' %}" class="adm-back">
+        <svg class="icon"><use href="#icon-filter"></use></svg>返回用户列表
+    </a>
+
+    <div class="adm-header">
+        <div>
+            <h1>用户详情</h1>
+            <p class="adm-sub">用户ID: {{ user.id }}</p>
+        </div>
+    </div>
+
+    <!-- 用户信息卡片 -->
+    <div class="adm-card adm-detail-card adm-page adm-delay-1">
+        {% if user.avatar %}
+        <img src="{{ user.avatar.url }}" alt="头像" class="adm-avatar-lg" onerror="this.onerror=null; this.outerHTML='<div class=&quot;adm-avatar-fallback adm-lg&quot;><svg class=&quot;icon&quot;><use href=&quot;#icon-default-avatar&quot;></use></svg></div>';">
+        {% else %}
+        <div class="adm-avatar-fallback adm-lg">
+            <svg class="icon"><use href="#icon-default-avatar"></use></svg>
+        </div>
+        {% endif %}
+        <div>
+            <h2 style="margin:0 0 4px;font-size:18px;">{{ user.nickname|default:'未设置昵称' }}</h2>
+            <p style="margin:0;color:var(--adm-text-muted);font-size:13px;">{{ user.email }}</p>
+            <div class="adm-info-rows">
+                <div class="adm-info-row">
+                    <span class="adm-info-label">学校</span>
+                    <span class="adm-info-value">{{ user.school|default:'未填写' }}</span>
+                </div>
+                <div class="adm-info-row">
+                    <span class="adm-info-label">注册时间</span>
+                    <span class="adm-info-value">{{ user.date_joined|date:'Y-m-d H:i' }}</span>
+                </div>
+                <div class="adm-info-row">
+                    <span class="adm-info-label">最后登录</span>
+                    <span class="adm-info-value">{{ user.last_login|date:'Y-m-d H:i'|default:'未登录' }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 发布的商品 -->
+    <div class="adm-sections adm-page adm-delay-2">
+        <div class="adm-card">
+            <h3 class="adm-card-title">
+                <svg class="icon"><use href="#icon-box"></use></svg>发布的商品 ({{ user_goods|length }})
+            </h3>
+            {% if user_goods %}
+            <div class="adm-table-wrap" style="box-shadow:none;border:none;padding:0;">
+                <table class="adm-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>商品名称</th>
+                            <th>价格</th>
+                            <th>发布时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for good in user_goods %}
+                        <tr>
+                            <td>{{ good.id }}</td>
+                            <td class="adm-title-cell">{{ good.title }}</td>
+                            <td>¥{{ good.price }}</td>
+                            <td>{{ good.created_at|date:'Y-m-d H:i' }}</td>
+                            <td>
+                                <a href="{% url 'dashboard:goods_detail' good.id %}" class="adm-btn outline sm">查看详情</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="adm-empty-block" style="box-shadow:none; border:none; padding:32px 16px;">该用户暂无发布的商品</div>
+            {% endif %}
+        </div>
+
+        <!-- 参与的交易 -->
+        <div class="adm-card">
+            <h3 class="adm-card-title">
+                <svg class="icon"><use href="#icon-message"></use></svg>参与的交易 ({{ user_conversations|length }})
+            </h3>
+            {% if user_conversations %}
+            <div class="adm-table-wrap" style="box-shadow:none;border:none;padding:0;">
+                <table class="adm-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>商品</th>
+                            <th>对方</th>
+                            <th>状态</th>
+                            <th>更新时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for conv in user_conversations %}
+                        <tr>
+                            <td>{{ conv.id }}</td>
+                            <td class="adm-title-cell">{{ conv.goods.title }}</td>
+                            <td>
+                                {% if user == conv.buyer %}
+                                卖家: {{ conv.seller.nickname|default:conv.seller.email }}
+                                {% else %}
+                                买家: {{ conv.buyer.nickname|default:conv.buyer.email }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="adm-badge {% if conv.status == 'completed' %}success{% elif conv.status == 'confirmed' %}warning{% else %}info{% endif %}">
+                                    {{ conv.get_status_display }}
+                                </span>
+                            </td>
+                            <td>{{ conv.updated_at|date:'Y-m-d H:i' }}</td>
+                            <td>
+                                <a href="{% url 'dashboard:conversation_detail' conv.id %}" class="adm-btn outline sm">查看详情</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="adm-empty-block" style="box-shadow:none; border:none; padding:32px 16px;">该用户暂无参与的交易</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

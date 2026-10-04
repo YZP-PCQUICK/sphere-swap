@@ -1,0 +1,663 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}设置 - SWAP校园二手交易平台{% endblock %}
+
+{% block extra_css %}
+<style>
+    .settings-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+    
+    .settings-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    
+    .settings-group {
+        background: var(--bg-white);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .settings-group-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .setting-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 0;
+        border-bottom: 1px solid var(--border-color-light);
+    }
+    
+    .setting-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    
+    .setting-label {
+        font-size: 15px;
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+    
+    .setting-desc {
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-top: 4px;
+    }
+    
+    .toggle-switch {
+        position: relative;
+        width: 48px;
+        height: 24px;
+    }
+    
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--border-color);
+        transition: .4s;
+        border-radius: 34px;
+    }
+    
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    
+    input:checked + .toggle-slider {
+        background-color: var(--primary-color);
+    }
+    
+    input:checked + .toggle-slider:before {
+        transform: translateX(24px);
+    }
+    
+    .shortcut-key {
+        display: inline-block;
+        background: var(--bg-page);
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin: 0 2px;
+    }
+    
+    /* 自定义语言下拉框 */
+    .language-dropdown {
+        position: relative;
+        min-width: 140px;
+    }
+
+    .language-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        width: 100%;
+        padding: 8px 12px;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-color);
+        background: var(--bg-white);
+        color: var(--text-primary);
+        font-size: 14px;
+        cursor: pointer;
+        box-shadow: var(--shadow-md);
+        transition: all var(--transition-fast);
+    }
+
+    .language-trigger:hover {
+        border-color: var(--primary-color);
+    }
+
+    .language-trigger .icon-arrow {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        transition: transform 0.2s ease;
+    }
+
+    .language-dropdown.open .icon-arrow {
+        transform: rotate(180deg);
+    }
+
+    .language-menu {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        right: 0;
+        background: var(--bg-white);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-lg);
+        padding: 6px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-6px);
+        transition: all var(--transition-fast);
+        z-index: 10;
+    }
+
+    .language-dropdown.open .language-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .language-option {
+        padding: 8px 12px;
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        color: var(--text-primary);
+        cursor: pointer;
+        transition: background var(--transition-fast), color var(--transition-fast);
+    }
+
+    .language-option:hover {
+        background: var(--primary-bg);
+        color: var(--primary-color);
+    }
+
+    .language-option.active {
+        background: var(--primary-bg);
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+    /* 修改密码 */
+    .pwd-form {
+        max-width: 360px;
+    }
+    .pwd-form .form-field {
+        margin-bottom: 14px;
+    }
+    .pwd-form label {
+        display: block;
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+    }
+    .pwd-form input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        font-size: 14px;
+        color: var(--text-primary);
+        background: var(--bg-white);
+        transition: border-color var(--transition-fast);
+    }
+    .pwd-form input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+    .pwd-error {
+        color: var(--danger-color, #e74c3c);
+        font-size: 13px;
+        margin-top: 8px;
+        min-height: 18px;
+    }
+    .pwd-submit {
+        margin-top: 4px;
+        padding: 10px 28px;
+        border: none;
+        border-radius: var(--radius-md);
+        background: var(--primary-color);
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: filter var(--transition-fast);
+    }
+    .pwd-submit:hover { filter: brightness(1.08); }
+    .pwd-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    /* 清除缓存 */
+    .cache-clear-btn {
+        padding: 8px 20px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        background: var(--bg-white);
+        color: var(--text-primary);
+        font-size: 14px;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+    }
+    .cache-clear-btn:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    /* 确认弹窗 */
+    .confirm-mask {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 999;
+        align-items: center;
+        justify-content: center;
+    }
+    .confirm-mask.show { display: flex; }
+    .confirm-box {
+        background: var(--bg-white);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        width: 320px;
+        max-width: 90vw;
+        box-shadow: var(--shadow-lg);
+    }
+    .confirm-box h3 {
+        margin: 0 0 10px;
+        font-size: 16px;
+        color: var(--text-primary);
+    }
+    .confirm-box p {
+        margin: 0 0 20px;
+        font-size: 14px;
+        color: var(--text-secondary);
+        line-height: 1.6;
+    }
+    .confirm-btns {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+    }
+    .confirm-btns button {
+        padding: 8px 18px;
+        border-radius: var(--radius-md);
+        font-size: 14px;
+        cursor: pointer;
+        border: 1px solid var(--border-color);
+        background: var(--bg-white);
+        color: var(--text-primary);
+    }
+    .confirm-btns .btn-ok {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: #fff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <h1 class="settings-title" data-i18n="settings.title">设置</h1>
+    
+    <!-- 键盘快捷键 -->
+    <div class="settings-group">
+        <div class="settings-group-title" data-i18n="settings.shortcuts">快捷键设置</div>
+        
+        <div class="setting-item">
+            <div>
+                <div class="setting-label" data-i18n="settings.shortcuts">键盘快捷键</div>
+                <div class="setting-desc" data-i18n="settings.shortcuts.desc">启用后可使用快捷键快速跳转
+                    <span class="shortcut-key">g+i</span> <span data-i18n="settings.shortcuts.home">首页</span>
+                    <span class="shortcut-key">g+l</span> <span data-i18n="settings.shortcuts.list">商品列表</span>
+                    <span class="shortcut-key">g+p</span> <span data-i18n="settings.shortcuts.publish">发布商品</span>
+                </div>
+            </div>
+            <label class="toggle-switch">
+                <input type="checkbox" id="shortcutToggle">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+    </div>
+    
+    <!-- 浏览器通知 -->
+    <div class="settings-group">
+        <div class="settings-group-title" data-i18n="settings.notifications">消息通知</div>
+        
+        <div class="setting-item">
+            <div>
+                <div class="setting-label" data-i18n="settings.notifications">浏览器通知</div>
+                <div class="setting-desc" data-i18n="settings.notifications.desc">接收新消息和交易提醒</div>
+            </div>
+            <label class="toggle-switch">
+                <input type="checkbox" id="notificationToggle">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+    </div>
+    
+    <!-- 修改密码 -->
+    <div class="settings-group">
+        <div class="settings-group-title" data-i18n="settings.password">修改密码</div>
+
+        <form class="pwd-form" id="pwdForm">
+            <div class="form-field">
+                <label data-i18n="settings.password.old">当前密码</label>
+                <input type="password" id="oldPassword" autocomplete="current-password">
+            </div>
+            <div class="form-field">
+                <label data-i18n="settings.password.new">新密码</label>
+                <input type="password" id="newPassword" autocomplete="new-password">
+            </div>
+            <div class="form-field">
+                <label data-i18n="settings.password.confirm">确认新密码</label>
+                <input type="password" id="confirmPassword" autocomplete="new-password">
+            </div>
+            <div class="pwd-error" id="pwdError"></div>
+            <button type="submit" class="pwd-submit" id="pwdSubmit" data-i18n="settings.password.submit">保存新密码</button>
+        </form>
+    </div>
+
+    <!-- 清除本地缓存 -->
+    <div class="settings-group">
+        <div class="settings-group-title" data-i18n="settings.cache">本地缓存</div>
+
+        <div class="setting-item">
+            <div>
+                <div class="setting-label" data-i18n="settings.cache.clear">清除本地缓存</div>
+                <div class="setting-desc" data-i18n="settings.cache.desc">清除聊天记录等本地缓存数据，不影响登录状态</div>
+            </div>
+            <button type="button" class="cache-clear-btn" id="cacheClearBtn" data-i18n="settings.cache.button">清除缓存</button>
+        </div>
+    </div>
+
+    <!-- 多语言支持 -->
+    <div class="settings-group">
+        <div class="settings-group-title" data-i18n="settings.language">语言设置</div>
+        
+        <div class="setting-item">
+            <div>
+                <div class="setting-label" data-i18n="settings.language">语言</div>
+                <div class="setting-desc" data-i18n="settings.language.desc">选择网站显示语言</div>
+            </div>
+            <div class="language-dropdown" id="languageDropdown">
+                <button type="button" class="language-trigger" id="languageTrigger">
+                    <span id="languageCurrent">简体中文</span>
+                    <svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div class="language-menu" id="languageMenu">
+                    <div class="language-option" data-value="zh-CN">简体中文</div>
+                    <div class="language-option" data-value="en-US">English</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 确认弹窗 -->
+<div class="confirm-mask" id="confirmMask">
+    <div class="confirm-box">
+        <h3 id="confirmTitle">提示</h3>
+        <p id="confirmText"></p>
+        <div class="confirm-btns">
+            <button type="button" id="confirmCancel" data-i18n="settings.cache.cancel">取消</button>
+            <button type="button" class="btn-ok" id="confirmOk" data-i18n="settings.cache.ok">确定</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 按当前语言获取翻译文案
+function t(key) {
+    const lang = localStorage.getItem('language') || 'zh-CN';
+    if (typeof translations !== 'undefined' && translations[lang] && translations[lang][key]) {
+        return translations[lang][key];
+    }
+    return key;
+}
+
+// 从 Cookie 读取 CSRF token
+function getCSRF() {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        const c = cookies[i].trim();
+        if (c.startsWith('csrftoken=')) return c.substring('csrftoken='.length);
+    }
+    return '';
+}
+
+// 修改密码
+document.getElementById('pwdForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const errEl = document.getElementById('pwdError');
+    const btn = document.getElementById('pwdSubmit');
+    errEl.textContent = '';
+
+    const oldPassword = document.getElementById('oldPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    if (!oldPassword) { errEl.textContent = t('settings.password.err.old'); return; }
+    if (newPassword.length < 6) { errEl.textContent = t('settings.password.err.short'); return; }
+    if (newPassword !== confirmPassword) { errEl.textContent = t('settings.password.err.mismatch'); return; }
+    if (newPassword === oldPassword) { errEl.textContent = t('settings.password.err.same'); return; }
+
+    btn.disabled = true;
+    try {
+        const resp = await fetch('{% url "users:change_password" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRF()
+            },
+            body: JSON.stringify({ old_password: oldPassword, new_password: newPassword, confirm_password: confirmPassword })
+        });
+        const data = await resp.json();
+        if (data.success) {
+            showToast(data.msg || t('settings.password.ok'), 'success');
+            document.getElementById('pwdForm').reset();
+        } else {
+            errEl.textContent = data.msg || t('settings.password.err.fail');
+        }
+    } catch (err) {
+        errEl.textContent = t('settings.password.err.network');
+    } finally {
+        btn.disabled = false;
+    }
+});
+
+// 清除本地缓存（自定义确认弹窗，不用原生 confirm）
+function showConfirm(title, text, onOk) {
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmText').textContent = text;
+    const mask = document.getElementById('confirmMask');
+    mask.classList.add('show');
+    const okBtn = document.getElementById('confirmOk');
+    const cancelBtn = document.getElementById('confirmCancel');
+    function close() {
+        mask.classList.remove('show');
+        okBtn.onclick = null;
+        cancelBtn.onclick = null;
+    }
+    okBtn.onclick = function() { close(); if (onOk) onOk(); };
+    cancelBtn.onclick = close;
+}
+
+document.getElementById('cacheClearBtn').addEventListener('click', function() {
+    showConfirm(t('settings.cache.confirm.title'), t('settings.cache.confirm.text'), function() {
+        let removed = 0;
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+            const k = localStorage.key(i);
+            if (k && (k.startsWith('swap_chat_') || /^\d+$/.test(k))) {
+                localStorage.removeItem(k);
+                removed++;
+            }
+        }
+        showToast(t('settings.cache.cleared') + ' (' + removed + ')', 'success');
+    });
+});
+</script>
+<script>
+// 键盘快捷键
+const shortcutToggle = document.getElementById('shortcutToggle');
+const isShortcutEnabled = localStorage.getItem('shortcutsEnabled') === 'true';
+
+// 初始化快捷键设置
+if (isShortcutEnabled) {
+    shortcutToggle.checked = true;
+    enableShortcuts();
+}
+
+shortcutToggle.addEventListener('change', function() {
+    const enabled = this.checked;
+    localStorage.setItem('shortcutsEnabled', enabled);
+    if (enabled) {
+        enableShortcuts();
+        showToast(t('toast.shortcuts.enabled'), 'success');
+    } else {
+        disableShortcuts();
+        showToast(t('toast.shortcuts.disabled'), 'info');
+    }
+});
+
+let shortcutKeys = {};
+function enableShortcuts() {
+    document.addEventListener('keydown', handleShortcut);
+}
+
+function disableShortcuts() {
+    document.removeEventListener('keydown', handleShortcut);
+}
+
+function handleShortcut(e) {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    
+    if (e.key === 'g' || e.key === 'G') {
+        shortcutKeys.g = true;
+    }
+    
+    if (shortcutKeys.g && e.key.toLowerCase() === 'i') {
+        e.preventDefault();
+        window.location.href = "{% url 'goods:index' %}";
+    }
+    
+    if (shortcutKeys.g && e.key.toLowerCase() === 'l') {
+        e.preventDefault();
+        window.location.href = "{% url 'goods:list' %}";
+    }
+    
+    if (shortcutKeys.g && e.key.toLowerCase() === 'p') {
+        e.preventDefault();
+        window.location.href = "{% url 'goods:publish' %}";
+    }
+}
+
+// 浏览器通知
+const notificationToggle = document.getElementById('notificationToggle');
+const isNotificationEnabled = localStorage.getItem('notificationsEnabled') === 'true';
+
+// 初始化通知设置
+if (isNotificationEnabled) {
+    notificationToggle.checked = true;
+}
+
+notificationToggle.addEventListener('change', async function() {
+    const enabled = this.checked;
+    localStorage.setItem('notificationsEnabled', enabled);
+    
+    if (enabled) {
+        try {
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                showToast(t('toast.notifications.enabled'), 'success');
+            } else {
+                this.checked = false;
+                localStorage.setItem('notificationsEnabled', 'false');
+                showToast(t('toast.notifications.permission'), 'error');
+            }
+        } catch (err) {
+            this.checked = false;
+            localStorage.setItem('notificationsEnabled', 'false');
+            showToast(t('toast.notifications.failed'), 'error');
+        }
+    } else {
+        showToast(t('toast.notifications.disabled'), 'info');
+    }
+});
+
+// 多语言切换 - 自定义下拉框
+const languageDropdown = document.getElementById('languageDropdown');
+const languageTrigger = document.getElementById('languageTrigger');
+const languageMenu = document.getElementById('languageMenu');
+const languageCurrent = document.getElementById('languageCurrent');
+const langNames = { 'zh-CN': '简体中文', 'en-US': 'English' };
+let currentLang = localStorage.getItem('language') || 'zh-CN';
+
+// 初始化显示当前语言并翻译页面
+languageCurrent.textContent = langNames[currentLang];
+translatePage(currentLang);
+
+// 高亮当前语言选项
+function refreshLangActive() {
+    document.querySelectorAll('.language-option').forEach(function(opt) {
+        opt.classList.toggle('active', opt.dataset.value === currentLang);
+    });
+}
+refreshLangActive();
+
+// 点击触发框展开/收起
+languageTrigger.addEventListener('click', function(e) {
+    e.stopPropagation();
+    languageDropdown.classList.toggle('open');
+});
+
+// 点击页面其他地方收起
+document.addEventListener('click', function() {
+    languageDropdown.classList.remove('open');
+});
+
+// 阻止菜单内部点击冒泡
+languageMenu.addEventListener('click', function(e) {
+    e.stopPropagation();
+});
+
+// 选择语言
+document.querySelectorAll('.language-option').forEach(function(opt) {
+    opt.addEventListener('click', function() {
+        const lang = this.dataset.value;
+        languageDropdown.classList.remove('open');
+        if (lang === currentLang) return;
+
+        currentLang = lang;
+        localStorage.setItem('language', lang);
+        languageCurrent.textContent = langNames[lang];
+        refreshLangActive();
+        translatePage(lang);
+        showToast(t('toast.language.saved'), 'success');
+        setTimeout(() => location.reload(), 1500);
+    });
+});
+</script>
+{% endblock %}

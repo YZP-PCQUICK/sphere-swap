@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}广告投放 - SWAP校园二手交易平台{% endblock %}
+
+{% block extra_css %}
+<style>
+    .advertise-card {
+        max-width: 560px;
+        margin: 40px auto;
+        background: var(--bg-card);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        padding: 40px 36px;
+        text-align: center;
+    }
+
+    .advertise-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 18px;
+        background: var(--primary-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        color: var(--primary-color);
+    }
+
+    .advertise-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 12px;
+    }
+
+    .advertise-desc {
+        font-size: 14px;
+        color: var(--text-secondary);
+        line-height: 1.8;
+        margin-bottom: 28px;
+    }
+
+    .advertise-desc b {
+        color: var(--primary-color);
+    }
+
+    .qr-box {
+        display: inline-block;
+        padding: 14px;
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-md);
+        background: var(--bg-white);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .qr-box img {
+        width: 200px;
+        height: 200px;
+        display: block;
+        border-radius: 6px;
+    }
+
+    .qr-tip {
+        margin-top: 14px;
+        font-size: 13px;
+        color: var(--text-secondary);
+    }
+
+    .qr-tip b { color: var(--text-primary); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="advertise-card">
+        <div class="advertise-icon">
+            <svg class="icon" style="width:32px;height:32px;"><use href="#icon-megaphone"></use></svg>
+        </div>
+        <h1 class="advertise-title">广告投放合作</h1>
+        <p class="advertise-desc">
+            您的广告将展示在 SWAP 首页广告栏（16:9 黄金位），触达全校师生。<br>
+            <b>如需广告投放，请添加开发者微信进行报价洽谈。</b>
+        </p>
+        <div class="qr-box">
+            <img src="{% static 'images/contact_wechat_qr.png' %}" alt="开发者微信二维码" width="200" height="200" decoding="async">
+        </div>
+        <p class="qr-tip">微信扫一扫，添加开发者微信<br><b>备注「广告投放」</b>，将为您详细介绍报价方案</p>
+    </div>
+</div>
+{% endblock %}

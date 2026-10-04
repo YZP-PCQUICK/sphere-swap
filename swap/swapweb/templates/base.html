@@ -1,0 +1,190 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<script>document.documentElement.classList.add('js');</script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="format-detection" content="telephone=no,email=no,address=no">
+    <meta name="theme-color" content="#4A90E2">
+    <title>{% block title %}SWAP - 校园二手交易平台{% endblock %}</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
+    <!-- 关键资源预加载：首屏 logo 高优先级，CSS 预加载降低阻塞感知 -->
+    <link rel="preload" as="image" href="{% static 'images/logo.webp' %}" fetchpriority="high">
+    <link rel="preload" as="image" href="{% static 'images/logo.png' %}" fetchpriority="high">
+    <link rel="preload" as="style" href="{% static 'css/style.css' %}?v=20260914a">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=20260914a">
+    <link rel="stylesheet" href="{% static 'css/icons.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% include 'svg_sprite.html' %}
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-inner">
+                <a href="{% url 'goods:about' %}" class="navbar-logo">
+                    <picture>
+                        <source srcset="{% static 'images/logo.webp' %}" type="image/webp">
+                        <img src="{% static 'images/logo.png' %}" alt="SWAP" class="navbar-logo-icon" decoding="async" fetchpriority="high">
+                    </picture>
+                    <span>SWAP</span>
+                </a>
+
+                <div class="navbar-menu">
+                {% url 'goods:index' as index_url %}
+                <a href="{% url 'goods:index' %}" class="{% if request.path == index_url %}active{% endif %}" data-i18n="nav.home">首页</a>
+                {% url 'goods:list' as list_url %}
+                <a href="{% url 'goods:list' %}" class="{% if request.path == list_url %}active{% endif %}" data-i18n="nav.goods">全部商品</a>
+                {% url 'goods:support' as support_url %}
+                <a href="{% url 'goods:support' %}" class="{% if request.path == support_url %}active{% endif %}" data-i18n="nav.support">支持我们</a>
+                {% url 'goods:advertise' as advertise_url %}
+                <a href="{% url 'goods:advertise' %}" class="{% if request.path == advertise_url %}active{% endif %}" data-i18n="nav.advertise">广告投放</a>
+            </div>
+                
+                <div class="navbar-right">
+                    <form class="search-box" action="{% url 'goods:list' %}" method="get">
+                        <input type="text" name="keyword" placeholder="搜索你想要的商品..." value="{{ keyword|default:'' }}" aria-label="搜索商品" data-i18n-placeholder="search.placeholder">
+                        <button type="submit" class="search-btn" aria-label="搜索">
+                            <svg class="icon" style="width:16px;height:16px;"><use href="#icon-search"></use></svg>
+                        </button>
+                    </form>
+                    
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'chat:list' %}" class="navbar-msg" title="消息" aria-label="消息">
+                            <svg class="icon" style="width:20px;height:20px;"><use href="#icon-message"></use></svg>
+                            <span data-i18n="nav.messages">消息</span>
+                            <span class="unread-badge" id="messageUnreadBadge" style="display: none;"></span>
+                        </a>
+                        <a href="{% url 'goods:publish' %}" id="publishBtn" class="btn btn-primary btn-sm navbar-publish" aria-label="发布商品" data-i18n="nav.publish">发布商品</a>
+                        <div class="user-dropdown">
+                            <div class="user-avatar" aria-label="用户菜单">
+                                {% if user.avatar %}
+                                <img src="{{ user.avatar.url }}" alt="用户头像" onerror="this.onerror=null; this.outerHTML='<svg class=&quot;icon&quot; style=&quot;width:24px;height:24px;&quot;><use href=&quot;#icon-default-avatar&quot;></use></svg>';">
+                            {% else %}
+                                <svg class="icon" style="width:24px;height:24px;"><use href="#icon-default-avatar"></use></svg>
+                            {% endif %}
+                            </div>
+                            <div class="dropdown-menu" aria-label="用户菜单">
+                                <div style="padding: 8px 16px; border-bottom: 1px solid #f0f2f5;">
+                                    <div style="font-weight: 600;">{{ user.nickname|default:user.email }}</div>
+                                    <div style="font-size: 12px; color: #9ca3af;">{{ user.school|default:'未填写学校' }}</div>
+                                </div>
+                                <a href="{% url 'users:profile' %}" data-i18n="nav.profile">个人中心</a>
+                                <a href="{% url 'goods:transactions' %}" data-i18n="nav.transactions">交易信息</a>
+                                <a href="{% url 'goods:my_favorites' %}" data-i18n="nav.favorites">我的收藏</a>
+                                <a href="{% url 'users:profile_edit' %}" data-i18n="nav.edit_profile">编辑资料</a>
+                                <a href="{% url 'goods:settings' %}" data-i18n="nav.settings">设置</a>
+                                <a href="{% url 'users:logout' %}" style="color: #f5222d;" data-i18n="nav.logout">退出登录</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'users:login' %}" class="btn btn-outline btn-sm" aria-label="登录">登录</a>
+                        <a href="{% url 'users:register' %}" class="btn btn-primary btn-sm" aria-label="注册">注册</a>
+                    {% endif %}
+
+                    <button type="button" class="navbar-toggle" id="navbarToggle" aria-label="打开菜单" aria-expanded="false">
+                        <span class="navbar-toggle-bar"></span>
+                        <span class="navbar-toggle-bar"></span>
+                        <span class="navbar-toggle-bar"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 移动端抽屉菜单 -->
+    <div class="mobile-nav-mask" id="mobileNavMask"></div>
+    <aside class="mobile-nav" id="mobileNav" aria-hidden="true">
+        <div class="mobile-nav-header">
+            <a href="{% url 'goods:about' %}" class="navbar-logo">
+                <picture>
+                    <source srcset="{% static 'images/logo.webp' %}" type="image/webp">
+                    <img src="{% static 'images/logo.png' %}" alt="SWAP" class="navbar-logo-icon" decoding="async">
+                </picture>
+                <span>SWAP</span>
+            </a>
+            <button type="button" class="mobile-nav-close" id="mobileNavClose" aria-label="关闭菜单">&times;</button>
+        </div>
+        <form class="mobile-nav-search" action="{% url 'goods:list' %}" method="get">
+            <input type="text" name="keyword" placeholder="搜索你想要的商品..." aria-label="搜索商品" data-i18n-placeholder="search.placeholder">
+            <button type="submit" aria-label="搜索">
+                <svg class="icon" style="width:18px;height:18px;"><use href="#icon-search"></use></svg>
+            </button>
+        </form>
+        <nav class="mobile-nav-links">
+            <a href="{% url 'goods:index' %}" class="{% if request.path == index_url %}active{% endif %}" data-i18n="nav.home">首页</a>
+            <a href="{% url 'goods:list' %}" class="{% if request.path == list_url %}active{% endif %}" data-i18n="nav.goods">全部商品</a>
+            <a href="{% url 'goods:support' %}" data-i18n="nav.support">支持我们</a>
+            <a href="{% url 'goods:advertise' %}" data-i18n="nav.advertise">广告投放</a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'goods:publish' %}" data-i18n="nav.publish">发布商品</a>
+            <a href="{% url 'chat:list' %}" data-i18n="nav.messages">消息</a>
+            <a href="{% url 'users:profile' %}" data-i18n="nav.profile">个人中心</a>
+            <a href="{% url 'goods:transactions' %}" data-i18n="nav.transactions">交易信息</a>
+            <a href="{% url 'goods:my_favorites' %}" data-i18n="nav.favorites">我的收藏</a>
+            <a href="{% url 'users:profile_edit' %}" data-i18n="nav.edit_profile">编辑资料</a>
+            <a href="{% url 'goods:settings' %}" data-i18n="nav.settings">设置</a>
+            <a href="{% url 'users:logout' %}" class="mobile-nav-logout" data-i18n="nav.logout">退出登录</a>
+            {% else %}
+            <a href="{% url 'users:login' %}">登录</a>
+            <a href="{% url 'users:register' %}">注册</a>
+            {% endif %}
+        </nav>
+    </aside>
+
+    
+    <!-- 主内容区 -->
+    <main class="main-content">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div>
+                    <p>SWAP 校园二手交易平台 · 让闲置流转起来</p>
+                    <p style="margin-top: 6px; font-size: 12px;">© 2026 SWAP. All rights reserved.</p>
+                    <p style="margin-top: 4px; font-size: 12px;">
+                        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener"
+                           style="color: inherit; opacity: 0.75; text-decoration: none;">苏ICP备2025220043号-1</a>
+                    </p>
+                </div>
+                <div class="footer-links">
+                    <a href="{% url 'goods:about' %}" data-i18n="footer.about">关于我们</a>
+                    <a href="{% url 'goods:support' %}" data-i18n="nav.support">支持我们</a>
+                    <a href="{% url 'goods:advertise' %}" data-i18n="nav.advertise">广告投放</a>
+                    <a href="{% url 'goods:privacy' %}" data-i18n="footer.privacy">隐私政策</a>
+                    <a href="{% url 'goods:terms' %}" data-i18n="footer.terms">用户协议</a>
+                    <a href="{% url 'dashboard:login' %}" data-i18n="footer.admin">后台管理</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast 消息容器 -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- 浮动发布按钮（移动端） -->
+    {% if user.is_authenticated %}
+    <a href="{% url 'goods:publish' %}" class="fab" title="发布商品" aria-label="发布商品">
+        <svg class="icon" style="width:22px;height:22px;"><use href="#icon-plus"></use></svg>
+    </a>
+    {% endif %}
+
+    <!-- Django messages 数据注入（解析期注入，由 base.js 延迟渲染为 Toast） -->
+    <script>window.__djangoMessages = [{% for message in messages %}{"text": "{{ message|escapejs }}", "tag": "{{ message.tags|escapejs }}"}{% if not forloop.last %},{% endif %}{% endfor %}];</script>
+
+    <!-- 全局基础脚本与渐进式懒加载（defer，不阻塞首屏渲染） -->
+    <script src="{% static 'js/base.js' %}?v=20260914a" defer></script>
+    <script src="{% static 'js/lazyload.js' %}?v=20260914a" defer></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

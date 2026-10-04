@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}个人中心 - SWAP校园交易平台{% endblock %}
+
+
+
+{% block extra_css %}
+<style>
+    .profile-container {
+        display: flex;
+        gap: 24px;
+        align-items: flex-start;
+    }
+
+    .profile-sidebar {
+        width: 240px;
+        flex-shrink: 0;
+    }
+
+    .profile-card {
+        background: var(--bg-white);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 16px;
+    }
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: var(--primary-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 32px;
+        font-weight: 600;
+        margin: 0 auto 16px;
+        overflow: hidden;
+    }
+
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .profile-name {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .profile-school {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-bottom: 16px;
+    }
+
+    .profile-stats {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border-light);
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-num {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-top: 2px;
+    }
+
+    .profile-menu {
+        background: var(--bg-white);
+        border-radius: var(--radius-lg);
+        padding: 8px;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        border-radius: var(--radius-md);
+        color: var(--text-primary);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        font-size: 14px;
+    }
+
+    .menu-item:hover {
+        background: var(--primary-bg);
+        color: var(--primary-color);
+    }
+
+    .menu-item.active {
+        background: var(--primary-bg);
+        color: var(--primary-color);
+        font-weight: 500;
+    }
+
+    .menu-item .icon {
+        font-size: 18px;
+        width: 24px;
+        text-align: center;
+    }
+
+    .profile-main {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .content-card {
+        background: var(--bg-white);
+        border-radius: var(--radius-lg);
+        padding: 28px;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .content-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .info-group {
+        margin-bottom: 20px;
+    }
+
+    .info-label {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+    }
+
+    .info-value {
+        font-size: 15px;
+        color: var(--text-primary);
+    }
+
+    .payment-qrcode {
+        max-width: 200px;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-light);
+    }
+
+    .payment-empty {
+        width: 200px;
+        height: 200px;
+        border: 2px dashed var(--border-color);
+        border-radius: var(--radius-md);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-light);
+        font-size: 14px;
+    }
+
+    .btn-upload {
+        margin-top: 12px;
+        padding: 8px 20px;
+        background: var(--primary-bg);
+        color: var(--primary-color);
+        border-radius: var(--radius-md);
+        font-size: 14px;
+        display: inline-block;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+    }
+
+    .btn-upload:hover {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .profile-container {
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .profile-sidebar {
+            width: 100%;
+            display: flex;
+            gap: 12px;
+        }
+
+        .profile-card {
+            flex: 1;
+            padding: 16px;
+            margin-bottom: 0;
+        }
+
+        .profile-avatar {
+            width: 56px;
+            height: 56px;
+            font-size: 22px;
+        }
+
+        .profile-menu {
+            display: none;
+        }
+
+        .profile-main {
+            width: 100%;
+        }
+
+        .content-card {
+            padding: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <!-- 侧边栏 -->
+    <aside class="profile-sidebar">
+        <div class="profile-card">
+            <div class="profile-avatar" aria-label="个人头像">
+                {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" alt="个人头像" onerror="this.onerror=null; this.outerHTML='<svg class=&quot;icon&quot; style=&quot;width:40px;height:40px;&quot; aria-label=&quot;默认头像&quot;><use href=&quot;#icon-default-avatar&quot;></use></svg>';">
+                {% else %}
+                <svg class="icon" style="width:40px;height:40px;" aria-label="默认头像"><use href="#icon-default-avatar"></use></svg>
+                {% endif %}
+            </div>
+            <div class="profile-name">{{ user.nickname|default:"未设置昵称" }}</div>
+            <div class="profile-school">{{ user.school|default:"未填写学校" }}</div>
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <div class="stat-num">{{ user.goods.count }}</div>
+                    <div class="stat-label">发布</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num">{{ user.favorites.count }}</div>
+                    <div class="stat-label">收藏</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-menu">
+            <a href="{% url 'users:profile' %}" class="menu-item {% if request.path == '/users/profile/' %}active{% endif %}">
+                <span class="icon"><svg class="icon" style="width:18px;height:18px;"><use href="#icon-user"></use></svg></span>
+                <span>个人中心</span>
+            </a>
+            <a href="{% url 'goods:transactions' %}?tab=goods" class="menu-item">
+                <span class="icon"><svg class="icon" style="width:18px;height:18px;"><use href="#icon-box"></use></svg></span>
+                <span>我的发布</span>
+            </a>
+            <a href="{% url 'goods:my_favorites' %}" class="menu-item">
+                <span class="icon"><svg class="icon" style="width:18px;height:18px;"><use href="#icon-heart"></use></svg></span>
+                <span>我的收藏</span>
+            </a>
+            <a href="{% url 'users:profile_edit' %}" class="menu-item">
+                <span class="icon"><svg class="icon" style="width:18px;height:18px;"><use href="#icon-settings"></use></svg></span>
+                <span>编辑资料</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <div class="profile-main">
+        <div class="content-card">
+            <div class="content-title">个人信息</div>
+
+            <div class="info-group">
+                <div class="info-label">昵称</div>
+                <div class="info-value">{{ user.nickname|default:"未设置" }}</div>
+            </div>
+
+            <div class="info-group">
+                <div class="info-label">邮箱</div>
+                <div class="info-value">{{ user.email }}</div>
+            </div>
+
+            <div class="info-group">
+                <div class="info-label">学校</div>
+                <div class="info-value">{{ user.school|default:"未填写" }}</div>
+            </div>
+
+            <div class="info-group">
+                <div class="info-label">简介</div>
+                <div class="info-value">{{ user.bio|default:"这个人很懒，什么都没写~"|linebreaksbr }}</div>
+            </div>
+
+            <div class="info-group">
+                <div class="info-label">收款码</div>
+                {% if user.payment_qrcode %}
+                <img src="{{ user.payment_qrcode.url }}" class="payment-qrcode" alt="收款码">
+                {% else %}
+                <div class="payment-empty">
+                    <svg class="icon" style="width:32px;height:32px;margin-bottom:8px;color:var(--text-light);"><use href="#icon-qrcode"></use></svg>
+                    暂无收款码
+                </div>
+                {% endif %}
+                <p style="font-size:12px;color:var(--text-secondary);margin-top:8px;">
+                    上传收款码后，买家可以直接扫码付款
+                </p>
+            </div>
+
+            <a href="{% url 'users:profile_edit' %}" class="btn btn-primary">编辑资料</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

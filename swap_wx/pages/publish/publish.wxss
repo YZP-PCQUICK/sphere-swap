@@ -1,0 +1,318 @@
+.page {
+  padding: 24rpx;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.publish-card {
+  background: var(--bg-white);
+  border-radius: var(--radius-lg);
+  padding: 40rpx;
+  box-shadow: var(--shadow-sm);
+}
+
+.form-section {
+  margin-bottom: 44rpx;
+}
+
+.form-section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 24rpx;
+  display: flex;
+  align-items: center;
+}
+
+.form-section-title::before {
+  content: '';
+  width: 6rpx;
+  height: 28rpx;
+  background: var(--primary-gradient);
+  border-radius: 4rpx;
+  margin-right: 14rpx;
+}
+
+.section-tip {
+  font-size: 24rpx;
+  color: var(--error-color);
+  margin-left: 14rpx;
+  font-weight: 400;
+}
+
+.form-group {
+  margin-bottom: 28rpx;
+}
+
+/* 与网站 form-row 一致：售价/原价并排 */
+.form-row {
+  display: flex;
+}
+
+.form-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.form-col + .form-col {
+  margin-left: 20rpx;
+}
+
+.form-label {
+  font-weight: 500;
+  font-size: 28rpx;
+  margin-bottom: 14rpx;
+  display: flex;
+  align-items: center;
+  color: var(--text-primary);
+}
+
+.required {
+  color: var(--error-color);
+  margin-left: 4rpx;
+}
+
+.label-hint {
+  color: var(--text-light);
+  font-weight: 400;
+  font-size: 22rpx;
+  margin-left: 14rpx;
+}
+
+.form-input {
+  width: 100%;
+  height: 84rpx;
+  padding: 0 26rpx;
+  border: 1rpx solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 28rpx;
+  box-sizing: border-box;
+  background: var(--bg-white);
+}
+
+.form-textarea {
+  width: 100%;
+  min-height: 240rpx;
+  padding: 22rpx 26rpx;
+  border: 1rpx solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 28rpx;
+  line-height: 1.6;
+  box-sizing: border-box;
+  background: var(--bg-white);
+}
+
+.form-hint {
+  font-size: 22rpx;
+  color: var(--text-secondary);
+  margin-top: 10rpx;
+}
+
+/* ===== 图片上传 ===== */
+.image-upload-area {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.image-upload-item {
+  width: calc(33.33% - 14rpx);
+  height: 0;
+  padding-top: calc(33.33% - 14rpx);
+  margin: 0 21rpx 21rpx 0;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.image-upload-item:nth-child(3n) {
+  margin-right: 0;
+}
+
+.image-upload-item.add {
+  border: 2rpx dashed var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-page);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-upload-item.add:active {
+  border-color: var(--primary-color);
+  background: var(--primary-bg);
+}
+
+.upload-preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-md);
+}
+
+.upload-delete {
+  position: absolute;
+  top: 8rpx;
+  right: 8rpx;
+  width: 44rpx;
+  height: 44rpx;
+  line-height: 40rpx;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 32rpx;
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.upload-icon {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-70%);
+  text-align: center;
+  font-size: 48rpx;
+  color: var(--text-light);
+  line-height: 1;
+}
+
+.upload-text {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-10%);
+  text-align: center;
+  font-size: 22rpx;
+  color: var(--text-light);
+}
+
+/* ===== 大分类（与网站一致：图标 + 名称网格） ===== */
+.category-options {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.category-option {
+  width: calc(25% - 15rpx);
+  margin: 0 20rpx 20rpx 0;
+  padding: 16rpx 8rpx;
+  text-align: center;
+  border: 1rpx solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-white);
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+}
+
+.category-option:nth-child(4n) {
+  margin-right: 0;
+}
+
+.category-option:active {
+  border-color: var(--primary-color);
+  background: var(--primary-bg);
+}
+
+.category-option.active {
+  background: var(--primary-gradient);
+  border-color: transparent;
+}
+
+.category-icon {
+  width: 56rpx;
+  height: 56rpx;
+  margin: 0 auto 8rpx;
+  display: block;
+}
+
+.category-name {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.category-option.active .category-name {
+  color: #fff;
+}
+
+/* ===== 交易方式 ===== */
+.trade-type-row {
+  display: flex;
+}
+
+.trade-type-item {
+  flex: 1;
+  padding: 20rpx;
+  text-align: center;
+  background: var(--bg-page);
+  border-radius: var(--radius-md);
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  border: 2rpx solid transparent;
+  box-sizing: border-box;
+}
+
+.trade-type-item.active {
+  background: var(--primary-bg);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.trade-type-item + .trade-type-item {
+  margin-left: 20rpx;
+}
+
+/* ===== 允许重复售卖（网站为复选框） ===== */
+.repeat-row {
+  display: flex;
+  align-items: center;
+  padding: 26rpx;
+  background: var(--bg-page);
+  border-radius: var(--radius-md);
+}
+
+.checkbox {
+  width: 36rpx;
+  height: 36rpx;
+  border: 2rpx solid var(--border-color);
+  border-radius: 8rpx;
+  background: var(--bg-white);
+  margin-right: 20rpx;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.checkbox.checked {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.checkbox-check {
+  color: #fff;
+  font-size: 24rpx;
+  line-height: 1;
+}
+
+.repeat-info {
+  flex: 1;
+}
+
+.repeat-title {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.repeat-desc {
+  font-size: 22rpx;
+  color: var(--text-secondary);
+  margin-top: 6rpx;
+}

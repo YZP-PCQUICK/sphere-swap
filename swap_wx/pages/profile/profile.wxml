@@ -1,0 +1,121 @@
+<view class="page">
+  <!-- 已登录 -->
+  <block wx:if="{{isLogin && user}}">
+    <view class="profile-card">
+      <image wx:if="{{user.avatar}}" class="profile-avatar" src="{{user.avatar}}" mode="aspectFill"
+        bindtap="changeAvatar" />
+      <view wx:else class="profile-avatar profile-avatar-empty" bindtap="changeAvatar">
+        <image class="profile-avatar-empty-icon" src="/images/icon-default-avatar.png" mode="aspectFit" />
+      </view>
+      <view class="profile-avatar-edit" bindtap="changeAvatar">
+        <image class="profile-avatar-edit-icon" src="/images/icon-camera.png" mode="aspectFit" />
+      </view>
+      <view class="profile-name">{{user.nickname_display}}</view>
+      <view class="profile-email">{{user.email}}</view>
+      <view class="profile-school">{{user.school_display}}</view>
+
+      <view class="profile-stats">
+        <view class="stat-item">
+          <view class="stat-num">{{user.goods_count}}</view>
+          <view class="stat-label">{{t.profile_published}}</view>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <view class="stat-num">{{user.favorites_count}}</view>
+          <view class="stat-label">{{t.profile_favorites}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 菜单 -->
+    <view class="menu-card">
+      <view class="menu-item menu-item-publish" bindtap="goPublish">
+        <image class="menu-icon" src="/images/icon-plus.png" mode="aspectFit" />
+        <text class="menu-text menu-text-publish">{{t.profile_publish}}</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goMyGoods">
+        <image class="menu-icon" src="/images/icon-store.png" mode="aspectFit" />
+        <text class="menu-text">{{t.profile_my_goods}}</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goFavorites">
+        <image class="menu-icon" src="/images/icon-heart.png" mode="aspectFit" />
+        <text class="menu-text">{{t.profile_my_favorites}}</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goTransactions">
+        <image class="menu-icon" src="/images/icon-truck.png" mode="aspectFit" />
+        <text class="menu-text">{{t.profile_bought}}</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goProfileEdit">
+        <image class="menu-icon" src="/images/icon-edit.png" mode="aspectFit" />
+        <text class="menu-text">{{t.profile_edit}}</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goSettings">
+        <image class="menu-icon" src="/images/icon-sliders.png" mode="aspectFit" />
+        <text class="menu-text">{{t.profile_settings}}</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goAbout">
+        <image class="menu-icon" src="/images/icon-info.png" mode="aspectFit" />
+        <text class="menu-text">{{t.profile_about}}</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
+
+    <!-- 个人信息（与网站 profile.html 主内容区一致） -->
+    <view class="menu-card info-card">
+      <view class="info-title">{{t.profile_info}}</view>
+
+      <view class="info-group">
+        <view class="info-label">{{t.profile_label_nickname}}</view>
+        <view class="info-value">{{user.nickname_display}}</view>
+      </view>
+
+      <view class="info-group">
+        <view class="info-label">{{t.profile_label_email}}</view>
+        <view class="info-value">{{user.email}}</view>
+      </view>
+
+      <view class="info-group">
+        <view class="info-label">{{t.profile_label_school}}</view>
+        <view class="info-value">{{user.school ? user.school : t.not_filled}}</view>
+      </view>
+
+      <view class="info-group">
+        <view class="info-label">{{t.profile_label_bio}}</view>
+        <view class="info-value info-bio">{{user.bio ? user.bio : t.profile_no_bio}}</view>
+      </view>
+
+      <view class="info-group">
+        <view class="info-label">{{t.profile_label_payment}}</view>
+        <image wx:if="{{user.payment_qrcode}}" class="payment-qrcode" src="{{user.payment_qrcode}}" mode="aspectFit"
+          bindtap="previewQrcode" />
+        <view wx:else class="payment-empty">
+          <image class="payment-empty-icon" src="/images/icon-qrcode.png" mode="aspectFit" />
+          <view class="payment-empty-text">{{t.profile_no_payment}}</view>
+        </view>
+        <view class="info-tip">{{t.profile_payment_hint}}</view>
+      </view>
+
+      <view class="btn btn-primary info-edit-btn" bindtap="goProfileEdit">{{t.profile_edit}}</view>
+    </view>
+
+    <view class="logout-btn" bindtap="logout">{{t.profile_logout}}</view>
+  </block>
+  <!-- 未登录 -->
+  <block wx:else>
+    <view class="profile-card login-card">
+      <image class="login-logo" src="/images/logo.png" mode="aspectFit" />
+      <view class="login-title">{{t.profile_login_title}}</view>
+      <view class="login-desc">{{t.profile_login_desc}}</view>
+      <view class="btn btn-primary login-btn" bindtap="goLogin">{{t.profile_login_btn}}</view>
+      <view class="btn btn-outline login-btn" bindtap="goRegister">{{t.profile_register_btn}}</view>
+    </view>
+  </block>
+
+  <view class="profile-icp">{{t.icp_number}}</view>
+</view>

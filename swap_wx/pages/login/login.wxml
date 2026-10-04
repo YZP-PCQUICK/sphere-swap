@@ -1,0 +1,94 @@
+<view class="auth-page">
+  <view class="auth-card">
+    <view class="auth-header">
+      <image class="auth-logo" src="/images/logo.png" mode="aspectFit" />
+      <view class="auth-title">{{panel === 'login' ? t.login_welcome : t.reset_title}}</view>
+      <view class="auth-subtitle">{{panel === 'login' ? t.login_desc : t.reset_desc}}</view>
+    </view>
+
+    <!-- 密码登录面板 -->
+    <view class="auth-panel {{panel === 'login' ? 'active' : ''}}">
+      <view class="form-group">
+        <view class="form-label">{{t.login_email}}</view>
+        <input class="form-input" type="text" value="{{loginForm.email}}" placeholder="{{t.login_email_ph}}"
+          bindinput="onLoginEmail" />
+        <view wx:if="{{loginErrors.email}}" class="form-error">{{loginErrors.email}}</view>
+      </view>
+
+      <view class="form-group">
+        <view class="form-label">{{t.login_password}}</view>
+        <view class="password-wrap">
+          <input class="form-input password-input" password="{{!showPwd}}" value="{{loginForm.password}}"
+            placeholder="{{t.login_password_ph}}" bindinput="onLoginPassword" />
+          <view class="password-toggle" bindtap="togglePassword">{{showPwd ? t.login_hide : t.login_show}}</view>
+        </view>
+        <view wx:if="{{loginErrors.password}}" class="form-error">{{loginErrors.password}}</view>
+      </view>
+
+      <view class="auth-helper">
+        <view class="remember-me" bindtap="toggleRemember">
+          <view class="checkbox {{remember ? 'checked' : ''}}">
+            <image wx:if="{{remember}}" class="checkbox-icon" src="/images/icon-check-white.png" />
+          </view>
+          <text>{{t.login_remember}}</text>
+        </view>
+        <view class="helper-link" bindtap="showResetPanel">{{t.login_forgot}}</view>
+      </view>
+
+      <button class="btn btn-primary btn-block btn-lg" loading="{{loginLoading}}" disabled="{{loginLoading}}"
+        bindtap="handleLogin">{{t.login_btn}}</button>
+
+      <view class="auth-footer">
+        {{t.login_no_account}}<text class="footer-link" bindtap="goRegister">{{t.login_go_register}}</text>
+      </view>
+    </view>
+
+    <!-- 忘记密码面板 -->
+    <view class="auth-panel {{panel === 'reset' ? 'active' : ''}}">
+      <view class="form-group">
+        <view class="form-label">{{t.login_email}}</view>
+        <input class="form-input" type="text" value="{{resetForm.email}}" placeholder="{{t.reset_email_ph}}"
+          bindinput="onResetEmail" bindblur="checkResetEmail" />
+        <view wx:if="{{resetHint.text}}" class="{{resetHint.cls}}">{{resetHint.text}}</view>
+      </view>
+
+      <view class="form-group">
+        <view class="form-label">{{t.register_code}}</view>
+        <view class="verify-group">
+          <input class="form-input verify-input" type="number" maxlength="6" value="{{resetForm.code}}"
+            placeholder="{{t.reset_code_ph}}" bindinput="onResetCode" />
+          <button class="btn btn-outline verify-btn" size="mini" disabled="{{countdown > 0}}"
+            bindtap="sendResetCode">{{countdown > 0 ? countdown + t.reset_resend_suffix : t.reset_get_code}}</button>
+        </view>
+        <view wx:if="{{resetErrors.code}}" class="form-error">{{resetErrors.code}}</view>
+      </view>
+
+      <view class="form-group">
+        <view class="form-label">{{t.reset_new_password}}</view>
+        <view class="password-wrap">
+          <input class="form-input password-input" password="{{!showNewPwd}}" value="{{resetForm.newPassword}}"
+            placeholder="{{t.st_new_password_ph}}" bindinput="onNewPassword" />
+          <view class="password-toggle" bindtap="toggleNewPwd">{{showNewPwd ? t.login_hide : t.login_show}}</view>
+        </view>
+        <view wx:if="{{resetErrors.password}}" class="form-error">{{resetErrors.password}}</view>
+      </view>
+
+      <view class="form-group">
+        <view class="form-label">{{t.reset_confirm}}</view>
+        <view class="password-wrap">
+          <input class="form-input password-input" password="{{!showConfirmPwd}}" value="{{resetForm.confirmPassword}}"
+            placeholder="{{t.st_confirm_password_ph}}" bindinput="onConfirmPassword" />
+          <view class="password-toggle" bindtap="toggleConfirmPwd">{{showConfirmPwd ? t.login_hide : t.login_show}}</view>
+        </view>
+        <view wx:if="{{resetErrors.confirm}}" class="form-error">{{resetErrors.confirm}}</view>
+      </view>
+
+      <button class="btn btn-primary btn-block btn-lg" loading="{{resetLoading}}" disabled="{{resetLoading}}"
+        bindtap="handleReset">{{t.reset_btn}}</button>
+
+      <view class="auth-footer">
+        {{t.reset_remember}}<text class="footer-link" bindtap="showLoginPanel">{{t.reset_back_login}}</text>
+      </view>
+    </view>
+  </view>
+</view>

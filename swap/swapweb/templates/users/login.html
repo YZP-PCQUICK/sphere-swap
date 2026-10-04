@@ -1,0 +1,682 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}登录 - SWAP校园交易平台{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-page {
+        min-height: calc(100vh - 64px - 80px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 420px;
+        background: var(--bg-white);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: var(--shadow-lg);
+        animation: fadeInUp 0.5s ease;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .auth-logo {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 16px;
+        display: block;
+    }
+
+    .auth-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .auth-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+    }
+
+    .auth-subtitle {
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        font-weight: 500;
+    }
+
+    .form-input {
+        padding: 14px 16px;
+        font-size: 15px;
+    }
+
+    .verify-group {
+        display: flex;
+        gap: 12px;
+    }
+
+    .verify-group .form-input {
+        flex: 1;
+    }
+
+    .verify-group .btn {
+        flex-shrink: 0;
+        min-width: 120px;
+        white-space: nowrap;
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 24px;
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+
+    .auth-footer a {
+        color: var(--primary-color);
+        font-weight: 500;
+    }
+
+    .auth-helper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: -8px 0 20px;
+        font-size: 13px;
+    }
+
+    .remember-me {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .remember-me input[type="checkbox"] {
+        width: 15px;
+        height: 15px;
+        accent-color: var(--primary-color);
+        cursor: pointer;
+    }
+
+    .auth-helper a {
+        color: var(--text-secondary);
+    }
+
+    .auth-helper a:hover {
+        color: var(--primary-color);
+    }
+
+    /* 密码输入框包装 */
+    .password-wrap {
+        position: relative;
+    }
+
+    .password-wrap .form-input {
+        width: 100%;
+        padding-right: 56px;
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 13px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        user-select: none;
+        transition: color 0.2s;
+    }
+
+    .password-toggle:hover {
+        color: var(--primary-color);
+    }
+
+    /* 面板切换动画 */
+    .auth-panel {
+        display: none;
+        animation: fadeInUp 0.35s ease;
+    }
+
+    .auth-panel.active {
+        display: block;
+    }
+
+    @media (max-width: 768px) {
+        .auth-page {
+            padding: 20px 16px;
+            min-height: calc(100vh - 56px - 60px);
+        }
+
+        .auth-card {
+            padding: 28px 24px;
+        }
+
+        .auth-logo {
+            width: 64px;
+            height: 64px;
+        }
+
+        .auth-title {
+            font-size: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-logo">
+                <picture>
+                    <source srcset="{% static 'images/logo.webp' %}" type="image/webp">
+                    <img src="{% static 'images/logo.png' %}" alt="SWAP" decoding="async">
+                </picture>
+            </div>
+            <h2 class="auth-title" id="authTitle">欢迎回来</h2>
+            <p class="auth-subtitle" id="authSubtitle">登录 SWAP 校园交易平台</p>
+        </div>
+
+        <!-- 密码登录面板 -->
+        <div class="auth-panel active" id="loginPanel">
+            <form id="loginForm" onsubmit="return handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">邮箱</label>
+                    <input
+                        type="email"
+                        id="loginEmail"
+                        class="form-input"
+                        placeholder="请输入邮箱地址"
+                        autocomplete="email"
+                        aria-label="登录邮箱"
+                        oninput="clearFieldError('loginEmailError')"
+                    >
+                    <div id="loginEmailError" class="form-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">密码</label>
+                    <div class="password-wrap">
+                        <input
+                            type="password"
+                            id="loginPassword"
+                            class="form-input"
+                            placeholder="请输入密码"
+                            autocomplete="current-password"
+                            aria-label="登录密码"
+                            oninput="clearFieldError('loginPasswordError')"
+                        >
+                        <span class="password-toggle" onclick="togglePassword('loginPassword', this)">显示</span>
+                    </div>
+                    <div id="loginPasswordError" class="form-error"></div>
+                </div>
+
+                <div class="auth-helper">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberLogin" checked>
+                        <span>记住登录</span>
+                    </label>
+                    <a href="javascript:void(0)" onclick="showResetPanel()">忘记密码？</a>
+                </div>
+
+                <button type="submit" id="loginBtn" class="btn btn-primary btn-lg btn-block">
+                    登 录
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                还没有账号？<a href="{% url 'users:register' %}">立即注册</a>
+            </div>
+        </div>
+
+        <!-- 忘记密码面板 -->
+        <div class="auth-panel" id="resetPanel">
+            <form id="resetForm" onsubmit="return handleReset(event)">
+                <div class="form-group">
+                    <label class="form-label">邮箱</label>
+                    <input
+                        type="email"
+                        id="resetEmail"
+                        class="form-input"
+                        placeholder="请输入注册时的邮箱地址"
+                        autocomplete="email"
+                        aria-label="重置密码邮箱"
+                        onblur="checkResetEmail()"
+                    >
+                    <div id="resetEmailHint" class="form-hint"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">验证码</label>
+                    <div class="verify-group">
+                        <input
+                            type="text"
+                            id="resetCode"
+                            class="form-input"
+                            placeholder="6位数字验证码"
+                            maxlength="6"
+                            aria-label="重置密码验证码"
+                            oninput="clearFieldError('resetCodeError')"
+                        >
+                        <button type="button" id="sendResetCodeBtn" class="btn btn-outline" onclick="sendResetCode()">
+                            获取验证码
+                        </button>
+                    </div>
+                    <div id="resetCodeError" class="form-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">新密码</label>
+                    <div class="password-wrap">
+                        <input
+                            type="password"
+                            id="newPassword"
+                            class="form-input"
+                            placeholder="请输入新密码（至少6位）"
+                            autocomplete="new-password"
+                            aria-label="新密码"
+                        >
+                        <span class="password-toggle" onclick="togglePassword('newPassword', this)">显示</span>
+                    </div>
+                    <div id="resetPasswordError" class="form-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">确认新密码</label>
+                    <div class="password-wrap">
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            class="form-input"
+                            placeholder="请再次输入新密码"
+                            autocomplete="new-password"
+                            aria-label="确认新密码"
+                            oninput="clearFieldError('resetConfirmError')"
+                        >
+                        <span class="password-toggle" onclick="togglePassword('confirmPassword', this)">显示</span>
+                    </div>
+                    <div id="resetConfirmError" class="form-error"></div>
+                </div>
+
+                <button type="submit" id="resetBtn" class="btn btn-primary btn-lg btn-block">
+                    重置密码
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                想起密码了？<a href="javascript:void(0)" onclick="showLoginPanel()">返回登录</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let countdown = 0;
+    let countdownTimer = null;
+
+    // 获取CSRF token
+    function getCSRFToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, 'csrftoken'.length + 1) === 'csrftoken=') {
+                    cookieValue = decodeURIComponent(cookie.substring('csrftoken'.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // 字段级红字错误提醒
+    function showFieldError(id, msg) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = msg;
+    }
+
+    function clearFieldError(id) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = '';
+    }
+
+    // 密码显示/隐藏切换
+    function togglePassword(inputId, toggleEl) {
+        const input = document.getElementById(inputId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            toggleEl.textContent = '隐藏';
+        } else {
+            input.type = 'password';
+            toggleEl.textContent = '显示';
+        }
+    }
+
+    // 面板切换
+    function showResetPanel() {
+        document.getElementById('loginPanel').classList.remove('active');
+        document.getElementById('resetPanel').classList.add('active');
+        document.getElementById('authTitle').textContent = '重置密码';
+        document.getElementById('authSubtitle').textContent = '通过邮箱验证码设置新密码';
+        clearFieldError('loginEmailError');
+        clearFieldError('loginPasswordError');
+        // 默认带入登录页已填写的邮箱
+        const loginEmail = document.getElementById('loginEmail').value.trim();
+        if (loginEmail && !document.getElementById('resetEmail').value) {
+            document.getElementById('resetEmail').value = loginEmail;
+        }
+    }
+
+    function showLoginPanel() {
+        document.getElementById('resetPanel').classList.remove('active');
+        document.getElementById('loginPanel').classList.add('active');
+        document.getElementById('authTitle').textContent = '欢迎回来';
+        document.getElementById('authSubtitle').textContent = '登录 SWAP 校园交易平台';
+        clearFieldError('resetEmailHint');
+        clearFieldError('resetCodeError');
+        clearFieldError('resetPasswordError');
+        clearFieldError('resetConfirmError');
+        // 重置成功后带回邮箱
+        const resetEmail = document.getElementById('resetEmail').value.trim();
+        if (resetEmail && !document.getElementById('loginEmail').value) {
+            document.getElementById('loginEmail').value = resetEmail;
+        }
+    }
+
+    // 检查重置邮箱是否已注册
+    let resetEmailTimer = null;
+    function checkResetEmail() {
+        const email = document.getElementById('resetEmail').value.trim();
+        const hint = document.getElementById('resetEmailHint');
+
+        if (!email) {
+            hint.textContent = '';
+            hint.className = 'form-hint';
+            return;
+        }
+
+        if (!email.includes('@')) {
+            hint.textContent = '请输入有效的邮箱地址';
+            hint.className = 'form-error';
+            return;
+        }
+
+        hint.textContent = '检测中...';
+        hint.className = 'form-hint';
+
+        clearTimeout(resetEmailTimer);
+        resetEmailTimer = setTimeout(() => {
+            fetch("{% url 'users:check_email' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken(),
+                },
+                body: JSON.stringify({ email: email })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.exists) {
+                    hint.textContent = '';
+                    hint.className = 'form-hint';
+                } else {
+                    hint.textContent = '该邮箱未注册，请先注册';
+                    hint.className = 'form-error';
+                }
+            })
+            .catch(() => {
+                hint.textContent = '';
+                hint.className = 'form-hint';
+            });
+        }, 300);
+    }
+
+    // 发送重置密码验证码
+    function sendResetCode() {
+        const email = document.getElementById('resetEmail').value.trim();
+
+        if (!email || !email.includes('@')) {
+            showToast('请输入有效的邮箱地址', 'error');
+            return;
+        }
+
+        if (countdown > 0) return;
+
+        const btn = document.getElementById('sendResetCodeBtn');
+        btn.disabled = true;
+
+        fetch("{% url 'users:send_code' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+            },
+            body: JSON.stringify({
+                email: email,
+                purpose: 'reset'
+            })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showToast('验证码已发送，请查收邮件', 'success');
+                startCountdown();
+            } else {
+                showToast(data.msg, 'error');
+                btn.disabled = false;
+            }
+        })
+        .catch(() => {
+            showToast('发送失败，请重试', 'error');
+            btn.disabled = false;
+        });
+    }
+
+    // 倒计时
+    function startCountdown() {
+        countdown = 60;
+        const btn = document.getElementById('sendResetCodeBtn');
+
+        countdownTimer = setInterval(() => {
+            countdown--;
+            if (countdown > 0) {
+                btn.textContent = countdown + 's后重发';
+            } else {
+                clearInterval(countdownTimer);
+                btn.textContent = '获取验证码';
+                btn.disabled = false;
+            }
+        }, 1000);
+    }
+
+    // 密码登录
+    function handleLogin(e) {
+        e.preventDefault();
+
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        const remember = document.getElementById('rememberLogin').checked;
+        const btn = document.getElementById('loginBtn');
+
+        clearFieldError('loginEmailError');
+        clearFieldError('loginPasswordError');
+
+        if (!email) {
+            showFieldError('loginEmailError', '请输入邮箱');
+            return false;
+        }
+
+        if (!email.includes('@')) {
+            showFieldError('loginEmailError', '请输入有效的邮箱地址');
+            return false;
+        }
+
+        if (!password) {
+            showFieldError('loginPasswordError', '请输入密码');
+            return false;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading"></span> 登录中...';
+
+        fetch("{% url 'users:login_api' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+            },
+            body: JSON.stringify({ email: email, password: password, remember: remember })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showToast('登录成功', 'success');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 800);
+            } else {
+                // 重要错误直接红字显示在对应输入框下方
+                if (data.msg.indexOf('未注册') !== -1) {
+                    showFieldError('loginEmailError', data.msg);
+                } else if (data.msg.indexOf('邮箱') !== -1 || data.msg.indexOf('密码') !== -1) {
+                    showFieldError('loginPasswordError', data.msg);
+                } else {
+                    showToast(data.msg, 'error');
+                }
+                btn.disabled = false;
+                btn.textContent = '登 录';
+            }
+        })
+        .catch(() => {
+            showToast('登录失败，请重试', 'error');
+            btn.disabled = false;
+            btn.textContent = '登 录';
+        });
+
+        return false;
+    }
+
+    // 重置密码
+    function handleReset(e) {
+        e.preventDefault();
+
+        const email = document.getElementById('resetEmail').value.trim();
+        const code = document.getElementById('resetCode').value.trim();
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const btn = document.getElementById('resetBtn');
+
+        clearFieldError('resetEmailHint');
+        clearFieldError('resetCodeError');
+        clearFieldError('resetPasswordError');
+        clearFieldError('resetConfirmError');
+
+        if (!email || !email.includes('@')) {
+            showFieldError('resetEmailHint', '请输入有效的邮箱地址');
+            return false;
+        }
+
+        if (!code) {
+            showFieldError('resetCodeError', '请输入验证码');
+            return false;
+        }
+
+        if (newPassword.length < 6) {
+            showFieldError('resetPasswordError', '新密码至少6位');
+            return false;
+        }
+
+        if (newPassword !== confirmPassword) {
+            showFieldError('resetConfirmError', '两次密码输入不一致');
+            return false;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading"></span> 提交中...';
+
+        fetch("{% url 'users:reset_password' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+            },
+            body: JSON.stringify({
+                email: email,
+                code: code,
+                new_password: newPassword,
+                confirm_password: confirmPassword
+            })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showToast('密码重置成功，请使用新密码登录', 'success');
+                setTimeout(() => {
+                    showLoginPanel();
+                    document.getElementById('resetCode').value = '';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+                    btn.disabled = false;
+                    btn.textContent = '重置密码';
+                }, 800);
+            } else {
+                // 重要错误直接在对应输入框下方红字显示
+                if (data.msg.indexOf('验证码') !== -1) {
+                    showFieldError('resetCodeError', data.msg);
+                } else if (data.msg.indexOf('不一致') !== -1) {
+                    showFieldError('resetConfirmError', data.msg);
+                } else if (data.msg.indexOf('密码') !== -1) {
+                    showFieldError('resetPasswordError', data.msg);
+                } else if (data.msg.indexOf('邮箱') !== -1 || data.msg.indexOf('未注册') !== -1) {
+                    showFieldError('resetEmailHint', data.msg);
+                } else {
+                    showToast(data.msg, 'error');
+                }
+                btn.disabled = false;
+                btn.textContent = '重置密码';
+            }
+        })
+        .catch(() => {
+            showToast('重置失败，请重试', 'error');
+            btn.disabled = false;
+            btn.textContent = '重置密码';
+        });
+
+        return false;
+    }
+</script>
+{% endblock %}

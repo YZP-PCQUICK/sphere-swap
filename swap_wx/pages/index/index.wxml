@@ -1,0 +1,93 @@
+<view class="container">
+  <!-- Hero 区域 -->
+  <view class="hero">
+    <view class="hero-circle hero-circle-1"></view>
+    <view class="hero-circle hero-circle-2"></view>
+    <view class="hero-content">
+      <view class="hero-title">{{t.index_hero_pre}}<text class="hero-highlight">{{t.index_hero_hl}}</text>{{t.index_hero_post}}</view>
+      <view class="hero-title-sub">{{t.index_hero_sub}}</view>
+      <view class="hero-desc">{{t.index_hero_desc}}</view>
+      <view class="hero-search">
+        <input class="hero-search-input" placeholder="{{t.index_search_placeholder}}" value="{{keyword}}"
+          confirm-type="search" bindinput="onKeywordInput" bindconfirm="doSearch" />
+        <view class="hero-search-btn" bindtap="doSearch">{{t.index_search}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 广告展示栏（16:9，当日无广告时整体隐藏，与网站一致） -->
+  <swiper wx:if="{{ads.length > 0}}" class="ad-banner" circular="{{ads.length > 1}}" autoplay="{{ads.length > 1}}"
+    interval="5000" indicator-dots="{{ads.length > 1}}" indicator-color="rgba(255,255,255,0.6)"
+    indicator-active-color="#ffffff">
+    <swiper-item wx:for="{{ads}}" wx:key="id">
+      <image class="ad-banner-img" src="{{item.image}}" mode="aspectFill" bindtap="onAdTap" data-link="{{item.link}}" />
+    </swiper-item>
+  </swiper>
+
+  <!-- 分类导航 -->
+  <view class="category-section">
+    <view class="section-header">
+      <view class="section-title">{{t.index_hot_cats}}</view>
+      <view class="section-more" bindtap="goAllGoods">{{t.index_view_all}}</view>
+    </view>
+    <view class="category-grid">
+      <view class="category-item" wx:for="{{categories}}" wx:key="key" bindtap="goCategory" data-key="{{item.key}}">
+        <view class="category-card">
+          <view class="category-icon">
+            <image class="category-icon-img" src="/images/cat-{{item.key}}.png" mode="aspectFit" />
+          </view>
+          <view class="category-name">{{t[item.labelKey] || item.name}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 最新商品 -->
+  <view class="goods-section">
+    <view class="section-header">
+      <view class="section-title">{{t.index_latest}}</view>
+      <view class="section-more" bindtap="goAllGoods">{{t.index_more_goods}}</view>
+    </view>
+
+    <block wx:if="{{goods.length > 0}}">
+      <view class="goods-grid">
+        <view class="goods-card" wx:for="{{goods}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+          <view class="goods-card-img">
+            <image wx:if="{{item.image}}" class="goods-card-img-el" src="{{item.image}}" mode="aspectFill" lazy-load />
+            <view wx:else class="goods-card-img-empty">
+              <image class="goods-card-img-empty-icon" src="/images/icon-image.png" mode="aspectFit" />
+              <text class="goods-card-img-empty-text">{{t.no_image}}</text>
+            </view>
+          </view>
+          <view class="goods-card-body">
+            <view class="goods-card-title">{{item.title}}</view>
+            <view class="goods-card-price">
+              <text class="goods-card-price-num">{{item.price}}</text>
+              <text wx:if="{{item.original_price}}" class="goods-card-original-price">¥{{item.original_price}}</text>
+            </view>
+            <view class="goods-card-meta">
+              <text class="goods-card-school">{{item.school}}</text>
+              <view class="goods-card-views">
+                <image class="goods-card-views-icon" src="/images/icon-eye.png" mode="aspectFit" />
+                <text>{{item.views}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+    <view wx:else class="empty-state">
+      <image class="empty-state-icon" src="/images/icon-box.png" mode="aspectFit" />
+      <view class="empty-state-text">{{t.index_empty_cta}}</view>
+    </view>
+  </view>
+</view>
+
+<!-- 发布商品悬浮按钮 -->
+<view class="fab-publish" bindtap="goPublish">
+  <image class="fab-publish-icon" src="/images/icon-plus.png" mode="aspectFit" />
+  <text class="fab-publish-text">{{t.index_publish}}</text>
+</view>
+
+<!-- 快捷跳转浮球 -->
+<quicknav />

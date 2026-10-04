@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}支持我们 - SWAP校园二手交易平台{% endblock %}
+
+{% block content %}
+<div class="about-container" style="max-width: 800px; margin: 0 auto; padding: 40px 20px;">
+    <h1 style="text-align: center; margin-bottom: 16px; color: #1f2937;">支持我们</h1>
+    <p style="text-align: center; color: #6b7280; margin-bottom: 40px;">SWAP 是完全免费的非盈利校园平台</p>
+
+    <div class="about-content" style="line-height: 1.8; color: #4b5563; font-size: 16px;">
+        <!-- 平台声明 -->
+        <div style="margin-bottom: 32px; padding: 20px 24px; background-color: #f0f7ff; border-radius: 12px; border: 1px solid #d6e8ff;">
+            <p style="margin-bottom: 12px; font-weight: 600; color: #1f2937;">我们承诺</p>
+            <p style="margin-bottom: 8px;">· 本网站<strong>不收取任何费用</strong>，无任何盈利行为，所有功能永久免费使用。</p>
+            <p>· 您的每一笔赞赏都将<strong>仅用于服务器租赁和网站维护</strong>，帮助 SWAP 长久运转下去。</p>
+        </div>
+
+        <!-- 赞赏码 -->
+        <div style="margin: 40px 0; padding: 32px 20px; background-color: #f9fafb; border-radius: 12px; text-align: center;">
+            <p style="margin-bottom: 8px; font-weight: 600; font-size: 17px; color: #1f2937;">如果你觉得 SWAP 好用，欢迎请开发者喝杯咖啡</p>
+            <p style="margin-bottom: 24px; color: #9ca3af; font-size: 14px;">金额随意，心意最重要</p>
+            <picture>
+                <source srcset="{% static 'images/reward_code.webp' %}" type="image/webp">
+                <img src="{% static 'images/reward_code.png' %}"
+     alt="赞赏码"
+     loading="lazy" decoding="async"
+                     style="display: block; width: 260px; max-width: 80%; margin: 0 auto; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); background: #fff; padding: 8px;"
+                     onerror="this.style.display='none'; document.getElementById('rewardPlaceholder').style.display='block';">
+            </picture>
+            <p id="rewardPlaceholder" style="display: none; color: #9ca3af; font-size: 14px;">赞赏码加载失败，请稍后重试</p>
+            <p style="margin-top: 24px; color: #6b7280; font-size: 14px;">使用微信扫码赞赏</p>
+        </div>
+
+        <!-- 广告位（联盟审核通过后，把联盟提供的 JS/HTML 代码粘贴到下面的 div 内即可；
+             PC 与手机会展示联盟自动适配的样式） -->
+        <div id="ad-slot-support" style="margin: 32px 0; text-align: center;">
+            <!-- 在此粘贴广告联盟代码 -->
+        </div>
+
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+            <p style="text-align: center; color: #9ca3af;">
+                感谢每一位支持 SWAP 的同学，是你们让校园闲置流转得更远。
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

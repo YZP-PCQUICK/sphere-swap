@@ -1,0 +1,74 @@
+# ===== 秘密配置（严禁上传GitHub） =====
+# 含SECRET_KEY、SMTP授权码、后台TOKEN，只随项目文件复制到服务器，不入库
+.env
+.env.*
+!.env.example
+
+# ===== 数据库与用户/商品数据（运行时数据，不入库） =====
+# data目录：db.sqlite3数据库、media/用户头像、商品图片、聊天附件等
+data/
+*.sqlite3
+*.db
+*.sqlite3-journal
+*.sqlite3-wal
+
+# ===== 备份与打包产物 =====
+# swap_buckup：数据库定时备份zip；swap.zip：打包残留
+swap_buckup/
+*.zip
+
+# ===== Python缓存 =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# ===== 虚拟环境 =====
+venv/
+.venv/
+env/
+env.bak/
+venv.bak/
+
+# ===== 日志与临时文件 =====
+*.log
+*.tmp
+*.bak
+*.swp
+*~
+
+# ===== IDE/编辑器 =====
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ===== 系统文件 =====
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# ===== Django相关 =====
+staticfiles/
+/media/
+*.pot
+local_settings.py
+
+# ===== 微信小程序（本地编译产物与隐私文件） =====
+swap_wx/node_modules/
+swap_wx/miniprogram_npm/
+# 开发者工具私有配置（含本地路径，不同机器不同）
+swap_wx/project.private.config.json
+
+# ===== 测试与覆盖率 =====
+.coverage
+htmlcov/
+.pytest_cache/

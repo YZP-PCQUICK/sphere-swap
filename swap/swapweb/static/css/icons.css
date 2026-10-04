@@ -1,0 +1,104 @@
+/* ========================================
+   SWAP 图标库 - 简约线条风格
+   所有图标使用 SVG 内联 base64，统一线条风格
+   ======================================== */
+
+/* 图标通用样式 */
+.icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
+.icon svg {
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* 搜索图标 */
+.icon-search svg { stroke: currentColor; }
+
+/* 心形图标（空/满） */
+.icon-heart svg { stroke: currentColor; fill: none; }
+.icon-heart.filled svg { fill: currentColor; }
+
+/* 眼睛/浏览图标 */
+.icon-eye svg { stroke: currentColor; }
+
+/* 相机/图片图标 */
+.icon-camera svg { stroke: currentColor; }
+
+/* 警告图标 */
+.icon-warning svg { stroke: currentColor; }
+
+/* 信息/提示图标 */
+.icon-info svg { stroke: currentColor; }
+
+/* 加号图标 */
+.icon-plus svg { stroke: currentColor; }
+
+/* 关闭/叉号图标 */
+.icon-close svg { stroke: currentColor; }
+
+/* 笔记本电脑 - 数码电子 */
+.icon-laptop svg { stroke: currentColor; }
+
+/* 书本 - 书籍教材 */
+.icon-book svg { stroke: currentColor; }
+
+/* 房子 - 生活用品 */
+.icon-home svg { stroke: currentColor; }
+
+/* T恤 - 服饰鞋包 */
+.icon-shirt svg { stroke: currentColor; }
+
+/* 篮球 - 运动器材 */
+.icon-ball svg { stroke: currentColor; }
+
+/* 毕业帽 - 校园服务 */
+.icon-graduation svg { stroke: currentColor; }
+
+/* 盒子 - 其他 */
+.icon-box svg { stroke: currentColor; }
+
+/* 购物袋 */
+.icon-bag svg { stroke: currentColor; }
+
+/* 用户 */
+.icon-user svg { stroke: currentColor; }
+
+/* 设置 */
+.icon-settings svg { stroke: currentColor; }
+
+/* 上传 */
+.icon-upload svg { stroke: currentColor; }
+
+/* 筛选 */
+.icon-filter svg { stroke: currentColor; }
+
+/* 手机 */
+.icon-phone svg { stroke: currentColor; }
+
+/* 二维码 */
+.icon-qrcode svg { stroke: currentColor; }
+
+/* 向右箭头 */
+.icon-arrow-right svg { stroke: currentColor; }
+
+/* 定位 */
+.icon-map-pin svg { stroke: currentColor; }
+
+/* 价格/标签 */
+.icon-tag svg { stroke: currentColor; }
+
+/* 聊天 */
+.icon-message svg { stroke: currentColor; }

@@ -1,0 +1,189 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}后台首页 - SWAP管理系统{% endblock %}
+
+{% block content %}
+<div class="adm-page">
+    <div class="adm-header">
+        <div>
+            <h1>后台概览</h1>
+            <p class="adm-sub">欢迎使用SWAP校园二手交易平台后台管理系统</p>
+        </div>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="adm-stats">
+        <div class="adm-stat">
+            <div class="adm-stat-icon blue">
+                <svg class="icon"><use href="#icon-user"></use></svg>
+            </div>
+            <div>
+                <div class="adm-stat-num">{{ total_users }}</div>
+                <div class="adm-stat-label">总用户数</div>
+            </div>
+        </div>
+
+        <div class="adm-stat">
+            <div class="adm-stat-icon green">
+                <svg class="icon"><use href="#icon-box"></use></svg>
+            </div>
+            <div>
+                <div class="adm-stat-num">{{ total_goods }}</div>
+                <div class="adm-stat-label">总商品数</div>
+            </div>
+        </div>
+
+        <div class="adm-stat">
+            <div class="adm-stat-icon blue">
+                <svg class="icon"><use href="#icon-store"></use></svg>
+            </div>
+            <div>
+                <div class="adm-stat-num">{{ total_published_goods }}</div>
+                <div class="adm-stat-label">已发布商品</div>
+            </div>
+        </div>
+
+        <div class="adm-stat">
+            <div class="adm-stat-icon orange">
+                <svg class="icon"><use href="#icon-message"></use></svg>
+            </div>
+            <div>
+                <div class="adm-stat-num">{{ total_conversations }}</div>
+                <div class="adm-stat-label">总会话数</div>
+            </div>
+        </div>
+
+        <div class="adm-stat">
+            <div class="adm-stat-icon green">
+                <svg class="icon"><use href="#icon-check"></use></svg>
+            </div>
+            <div>
+                <div class="adm-stat-num">{{ completed_trades }}</div>
+                <div class="adm-stat-label">已完成交易</div>
+            </div>
+        </div>
+
+        <div class="adm-stat">
+            <div class="adm-stat-icon orange">
+                <svg class="icon"><use href="#icon-clock"></use></svg>
+            </div>
+            <div>
+                <div class="adm-stat-num">{{ active_trades }}</div>
+                <div class="adm-stat-label">进行中交易</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 最近数据 -->
+    <div class="adm-grid adm-page adm-delay-1">
+        <div class="adm-card">
+            <h2 class="adm-card-title">
+                <svg class="icon"><use href="#icon-user"></use></svg>最近用户
+            </h2>
+            {% if recent_users %}
+            <div class="adm-table-wrap" style="box-shadow:none; border:none; padding:0;">
+                <table class="adm-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>邮箱/昵称</th>
+                            <th>学校</th>
+                            <th>注册时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in recent_users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>
+                                <div class="adm-title-cell">{{ user.nickname|default:user.email }}</div>
+                                <div class="adm-sub-line">{{ user.email }}</div>
+                            </td>
+                            <td>{{ user.school|default:'未填写' }}</td>
+                            <td>{{ user.date_joined|date:'Y-m-d H:i' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="adm-empty-block" style="box-shadow:none; border:none; padding:32px 16px;">暂无用户数据</div>
+            {% endif %}
+        </div>
+
+        <div class="adm-card">
+            <h2 class="adm-card-title">
+                <svg class="icon"><use href="#icon-box"></use></svg>最近商品
+            </h2>
+            {% if recent_goods %}
+            <div class="adm-table-wrap" style="box-shadow:none; border:none; padding:0;">
+                <table class="adm-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>商品名称</th>
+                            <th>卖家</th>
+                            <th>价格</th>
+                            <th>发布时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for good in recent_goods %}
+                        <tr>
+                            <td>{{ good.id }}</td>
+                            <td class="adm-title-cell">{{ good.title }}</td>
+                            <td>{{ good.seller.nickname|default:good.seller.email }}</td>
+                            <td>¥{{ good.price }}</td>
+                            <td>{{ good.created_at|date:'Y-m-d H:i' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="adm-empty-block" style="box-shadow:none; border:none; padding:32px 16px;">暂无商品数据</div>
+            {% endif %}
+        </div>
+
+        <div class="adm-card">
+            <h2 class="adm-card-title">
+                <svg class="icon"><use href="#icon-message"></use></svg>最近交易
+            </h2>
+            {% if recent_trades %}
+            <div class="adm-table-wrap" style="box-shadow:none; border:none; padding:0;">
+                <table class="adm-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>商品</th>
+                            <th>买卖双方</th>
+                            <th>状态</th>
+                            <th>更新时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for conv in recent_trades %}
+                        <tr>
+                            <td>{{ conv.id }}</td>
+                            <td class="adm-title-cell">{{ conv.goods.title }}</td>
+                            <td>
+                                <div>买: {{ conv.buyer.nickname|default:conv.buyer.email }}</div>
+                                <div>卖: {{ conv.seller.nickname|default:conv.seller.email }}</div>
+                            </td>
+                            <td>
+                                <span class="adm-badge {% if conv.status == 'completed' %}success{% elif conv.status == 'confirmed' %}warning{% else %}info{% endif %}">
+                                    {{ conv.get_status_display }}
+                                </span>
+                            </td>
+                            <td>{{ conv.updated_at|date:'Y-m-d H:i' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="adm-empty-block" style="box-shadow:none; border:none; padding:32px 16px;">暂无交易数据</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

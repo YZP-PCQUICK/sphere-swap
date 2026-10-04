@@ -1,0 +1,574 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}注册 - SWAP校园交易平台{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-page {
+        min-height: calc(100vh - 64px - 80px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 420px;
+        background: var(--bg-white);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: var(--shadow-lg);
+        animation: fadeInUp 0.5s ease;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .auth-logo {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 16px;
+        display: block;
+    }
+
+    .auth-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .auth-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+    }
+
+    .auth-subtitle {
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-label {
+        font-weight: 500;
+    }
+
+    .form-input {
+        padding: 12px 14px;
+        font-size: 14px;
+    }
+
+    .verify-group {
+        display: flex;
+        gap: 12px;
+    }
+
+    .verify-group .form-input {
+        flex: 1;
+    }
+
+    .verify-group .btn {
+        flex-shrink: 0;
+        min-width: 120px;
+        white-space: nowrap;
+    }
+
+
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+
+    .auth-footer a {
+        color: var(--primary-color);
+        font-weight: 500;
+    }
+
+    .password-strength {
+        height: 4px;
+        border-radius: 2px;
+        background: var(--border-light);
+        margin-top: 6px;
+        overflow: hidden;
+    }
+
+    .password-strength-bar {
+        height: 100%;
+        width: 0;
+        transition: all 0.3s ease;
+        border-radius: 2px;
+    }
+
+    .strength-weak {
+        width: 33%;
+        background: var(--error-color);
+    }
+
+    .strength-medium {
+        width: 66%;
+        background: var(--warning-color);
+    }
+
+    .strength-strong {
+        width: 100%;
+        background: var(--success-color);
+    }
+
+    @media (max-width: 768px) {
+        .auth-page {
+            padding: 20px 16px;
+            min-height: calc(100vh - 56px - 60px);
+        }
+
+        .auth-card {
+            padding: 28px 24px;
+        }
+
+        .auth-logo {
+            width: 64px;
+            height: 64px;
+        }
+
+        .auth-title {
+            font-size: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-logo">
+                <picture>
+                    <source srcset="{% static 'images/logo.webp' %}" type="image/webp">
+                    <img src="{% static 'images/logo.png' %}" alt="SWAP" decoding="async">
+                </picture>
+            </div>
+            <h2 class="auth-title">创建账号</h2>
+            <p class="auth-subtitle">加入 SWAP 校园交易平台</p>
+        </div>
+
+        <form id="registerForm" onsubmit="return handleRegister(event)">
+            <div class="form-group">
+                <label class="form-label">邮箱</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    class="form-input" 
+                    placeholder="请输入邮箱地址"
+                    oninput="checkEmail()"
+                    autocomplete="email"
+                >
+                <div id="emailHint" class="form-hint"></div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">设置密码</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    class="form-input" 
+                    placeholder="请输入密码（至少6位）"
+                    oninput="checkPassword()"
+                    autocomplete="new-password"
+                >
+                <div class="password-strength">
+                    <div id="strengthBar" class="password-strength-bar"></div>
+                </div>
+                <div id="passwordHint" class="form-hint"></div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">确认密码</label>
+                <input 
+                    type="password" 
+                    id="confirmPassword" 
+                    class="form-input" 
+                    placeholder="请再次输入密码"
+                    oninput="checkConfirmPassword()"
+                    autocomplete="new-password"
+                >
+                <div id="confirmHint" class="form-hint"></div>
+            </div>
+
+
+
+            <div class="form-group">
+                <label class="form-label">邮箱验证码</label>
+                <div class="verify-group">
+                    <input 
+                        type="text" 
+                        id="code" 
+                        class="form-input" 
+                        placeholder="6位数字验证码"
+                        maxlength="6"
+                        oninput="document.getElementById('codeError').textContent=''"
+                    >
+                    <button type="button" id="sendCodeBtn" class="btn btn-outline btn-sm" onclick="sendCode()">
+                        获取验证码
+                    </button>
+                </div>
+                <div id="codeError" class="form-error"></div>
+            </div>
+
+            <button type="submit" id="registerBtn" class="btn btn-primary btn-lg btn-block">
+                注 册
+            </button>
+
+            <!-- 平台免责声明 -->
+            <div class="disclaimer-box" style="margin-top: 20px; padding: 14px; background: #FFF7E6; border: 1px solid #FFD591; border-radius: 8px; font-size: 12px; line-height: 1.6; color: #AD6800;">
+                <div style="font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                    <svg class="icon" style="width:14px;height:14px;"><use href="#icon-warning"></use></svg>
+                    平台温馨提示
+                </div>
+                <p style="margin: 4px 0;">1. 本平台仅提供商品信息发布与管理服务，不提供支付监管，交易款项不经过平台，平台不收取任何费用。</p>
+                <p style="margin: 4px 0;">2. 请务必在<strong>线下当面</strong>验货确认后再付款交易，谨防网络诈骗。</p>
+                <p style="margin: 4px 0;">3. 为保护您的信息安全和财产安全，<strong>请勿</strong>私自添加第三方社交软件好友进行交易。</p>
+            </div>
+        </form>
+
+        <div class="auth-footer">
+            已有账号？<a href="{% url 'users:login' %}">立即登录</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let countdown = 0;
+    let countdownTimer = null;
+    let emailValid = false;
+    let passwordValid = false;
+    let confirmValid = false;
+
+    function getCSRFToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, 'csrftoken'.length + 1) === 'csrftoken=') {
+                    cookieValue = decodeURIComponent(cookie.substring('csrftoken'.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // 字段级红字错误提醒
+    function showFieldError(id, msg) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = msg;
+    }
+
+    function clearFieldError(id) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = '';
+    }
+
+    // 检查邮箱是否已注册
+    let emailCheckTimer = null;
+    function checkEmail() {
+        const email = document.getElementById('email').value.trim();
+        const hint = document.getElementById('emailHint');
+        
+        if (!email) {
+            hint.textContent = '';
+            hint.className = 'form-hint';
+            emailValid = false;
+            return;
+        }
+        
+        if (!email.includes('@')) {
+            hint.textContent = '请输入有效的邮箱地址';
+            hint.className = 'form-error';
+            emailValid = false;
+            return;
+        }
+        
+        hint.textContent = '检测中...';
+        hint.className = 'form-hint';
+        emailValid = false;
+        
+        clearTimeout(emailCheckTimer);
+        emailCheckTimer = setTimeout(() => {
+            fetch("{% url 'users:check_email' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+            },
+            body: JSON.stringify({ email: email })
+        })
+        .then(r => {
+            if (!r.ok) {
+                // 获取真实的错误响应信息
+                return r.text().then(errorText => {
+                    throw new Error(`请求失败: ${r.status} - ${errorText}`);
+                });
+            }
+            return r.json();
+        })
+        .then(data => {
+            if (data.exists) {
+                hint.textContent = '该邮箱已注册，请直接登录';
+                hint.className = 'form-error';
+                emailValid = false;
+            } else {
+                hint.textContent = '✓ 邮箱可用';
+                hint.className = 'form-success';
+                emailValid = true;
+            }
+        })
+        .catch(error => {
+            console.error('邮箱检测错误:', error);
+            hint.textContent = `检测失败: ${error.message}`;
+            hint.className = 'form-error';
+            emailValid = false;
+        });
+        }, 400);
+    }
+
+    // 密码强度检测
+    function checkPassword() {
+        const pwd = document.getElementById('password').value;
+        const hint = document.getElementById('passwordHint');
+        const bar = document.getElementById('strengthBar');
+        
+        bar.className = 'password-strength-bar';
+        
+        if (!pwd) {
+            hint.textContent = '';
+            passwordValid = false;
+            return;
+        }
+        
+        if (pwd.length < 6) {
+            hint.textContent = '密码至少6位';
+            hint.className = 'form-error';
+            passwordValid = false;
+            return;
+        }
+        
+        passwordValid = true;
+        
+        // 计算强度
+        let strength = 0;
+        if (pwd.length >= 8) strength++;
+        if (/[a-z]/.test(pwd) && /[A-Z]/.test(pwd)) strength++;
+        if (/\d/.test(pwd)) strength++;
+        if (/[^a-zA-Z0-9]/.test(pwd)) strength++;
+        
+        if (strength <= 1) {
+            bar.classList.add('strength-weak');
+            hint.textContent = '密码强度：弱';
+        } else if (strength <= 2) {
+            bar.classList.add('strength-medium');
+            hint.textContent = '密码强度：中';
+        } else {
+            bar.classList.add('strength-strong');
+            hint.textContent = '密码强度：强';
+        }
+        hint.className = 'form-hint';
+        
+        checkConfirmPassword();
+    }
+
+    // 确认密码验证
+    function checkConfirmPassword() {
+        const pwd = document.getElementById('password').value;
+        const confirm = document.getElementById('confirmPassword').value;
+        const hint = document.getElementById('confirmHint');
+        
+        if (!confirm) {
+            hint.textContent = '';
+            confirmValid = false;
+            return;
+        }
+        
+        if (pwd !== confirm) {
+            hint.textContent = '两次密码输入不一致，请重新输入';
+            hint.className = 'form-error';
+            confirmValid = false;
+        } else {
+            hint.textContent = '✓ 两次密码一致';
+            hint.className = 'form-success';
+            confirmValid = true;
+        }
+    }
+
+
+
+    // 发送验证码
+    function sendCode() {
+        const email = document.getElementById('email').value.trim();
+        
+        if (!email || !email.includes('@')) {
+            showToast('请输入有效的邮箱地址', 'error');
+            return;
+        }
+
+        if (countdown > 0) return;
+
+        const btn = document.getElementById('sendCodeBtn');
+        btn.disabled = true;
+
+        fetch("{% url 'users:send_code' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+            },
+            body: JSON.stringify({
+                email: email,
+                purpose: 'register'
+            })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showToast('验证码已发送，请查收邮件', 'success');
+                startCountdown();
+            } else {
+                // 发送失败原因直接红字显示在对应输入框下方
+                if (data.msg.indexOf('邮箱') !== -1) {
+                    showFieldError('emailHint', data.msg);
+                    document.getElementById('emailHint').className = 'form-error';
+                } else {
+                    showFieldError('codeError', data.msg);
+                }
+                btn.disabled = false;
+            }
+        })
+        .catch(() => {
+            showToast('发送失败，请重试', 'error');
+            btn.disabled = false;
+        });
+    }
+
+    // 倒计时
+    function startCountdown() {
+        countdown = 60;
+        const btn = document.getElementById('sendCodeBtn');
+        
+        countdownTimer = setInterval(() => {
+            countdown--;
+            if (countdown > 0) {
+                btn.textContent = `${countdown}s后重发`;
+            } else {
+                clearInterval(countdownTimer);
+                btn.textContent = '获取验证码';
+                btn.disabled = false;
+            }
+        }, 1000);
+    }
+
+    // 注册
+    function handleRegister(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const code = document.getElementById('code').value.trim();
+        const btn = document.getElementById('registerBtn');
+
+        clearFieldError('codeError');
+        
+        if (!email || !email.includes('@')) {
+            showFieldError('emailHint', '请输入有效的邮箱地址');
+            document.getElementById('emailHint').className = 'form-error';
+            return false;
+        }
+        
+        if (!passwordValid) {
+            showFieldError('passwordHint', '密码至少6位');
+            document.getElementById('passwordHint').className = 'form-error';
+            return false;
+        }
+        
+        if (!confirmValid) {
+            showFieldError('confirmHint', '两次密码输入不一致');
+            document.getElementById('confirmHint').className = 'form-error';
+            return false;
+        }
+        
+        if (!code) {
+            showFieldError('codeError', '请输入验证码');
+            return false;
+        }
+        
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading"></span> 注册中...';
+        
+        fetch("{% url 'users:register_api' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+            },
+            body: JSON.stringify({ email, password, confirm_password: confirmPassword, code })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showToast('注册成功，正在跳转...', 'success');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1000);
+            } else {
+                // 重要错误直接在对应输入框下方红字显示
+                if (data.msg.indexOf('验证码') !== -1) {
+                    showFieldError('codeError', data.msg);
+                } else if (data.msg.indexOf('邮箱') !== -1) {
+                    showFieldError('emailHint', data.msg);
+                    document.getElementById('emailHint').className = 'form-error';
+                } else if (data.msg.indexOf('不一致') !== -1) {
+                    showFieldError('confirmHint', data.msg);
+                    document.getElementById('confirmHint').className = 'form-error';
+                } else if (data.msg.indexOf('密码') !== -1) {
+                    showFieldError('passwordHint', data.msg);
+                    document.getElementById('passwordHint').className = 'form-error';
+                } else {
+                    showToast(data.msg, 'error');
+                }
+                btn.disabled = false;
+                btn.textContent = '注 册';
+            }
+        })
+        .catch(() => {
+            showToast('注册失败，请重试', 'error');
+            btn.disabled = false;
+            btn.textContent = '注 册';
+        });
+        
+        return false;
+    }
+</script>
+{% endblock %}
